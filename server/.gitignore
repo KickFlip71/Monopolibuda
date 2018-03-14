@@ -17,3 +17,4 @@ tests/.coverage
 build/
 tests/report/
 monopolibuda/db.sqlite3
+.vscode
