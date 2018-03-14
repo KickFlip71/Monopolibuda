@@ -6,9 +6,9 @@
 {% block content %}
 
     <form action="." method="POST">
-        {{ form }}
+        {{ form.as_p }}
         {% csrf_token %}
-        <button>Login</button>
+        <button class="btn btn-info">Login</button>
     </form>
 
 {% endblock %}
