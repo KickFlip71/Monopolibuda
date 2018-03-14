@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}Welcome{% endblock %}
+{% block header_text %}Welcome{% endblock %}
+
+{% block content %}
+    <h1>Hello {{user}}</h1>
+{% endblock %}
+
+{% block extra_body %}
+<button class="send">Send</button>
+<script src="{% static "js/websocket-initialize.js" %}" type="text/javascript"></script>
+<script>
+    $('.send').click(function(){
+      window.socket.send("Hi");
+    })
+</script>
+{% endblock %}
