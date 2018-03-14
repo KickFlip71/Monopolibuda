@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'game',
     'monopolibuda',
     'django.contrib.auth',
     'django.contrib.admin',
