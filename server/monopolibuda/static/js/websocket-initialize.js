@@ -8,13 +8,25 @@ $(function () {
   window.socket = socket;
 
   socket.onmessage = function (message) {
-    console.log("Got websocket message " + message.data);
+    data = JSON.parse(message.data)
+    command = data.command
+    if(command == "check"){
+      var info = $("<div id='info' class='alert alert-info'>CONNECTED</div>")
+      $('#info').remove()
+      $('#infobox').append(info)
+    }
+    else if(command == "message"){
+      var message = $("<div id='message' class='alert alert-primary'>"+data.user+": "+data.response+"</div>")
+      $('#messagebox').append(message)
+    }
+    else
+      console.log("Got websocket message " + data.response);
   };
 
   socket.onopen = function () {
-    console.log("Connected to chat socket");
+    console.log("Connected to socket");
   };
   socket.onclose = function () {
-    console.log("Disconnected from chat socket");
+    console.log("Disconnected from socket");
   }
 });

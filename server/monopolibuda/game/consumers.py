@@ -1,28 +1,48 @@
-# from django.conf import settings
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
-# from channels.generic.websocket import AsyncJsonWebsocketConsumer
+class GameConsumer(AsyncJsonWebsocketConsumer):
 
-# class GameConsumer(AsyncJsonWebsocketConsumer):
+  async def connect(self):
+    await self.channel_layer.group_add(
+      "all",
+      self.channel_name,
+    )
+    await self.accept()
 
-#     async def connect(self):
-#         await self.close()
+  async def receive_json(self, content):
+    command = content.get("command", None)
 
-from channels.generic.websocket import SyncConsumer
+    if command == "check":
+      await self.send_json({
+        "command": "check",
+        "response": "CONNECTED",
+      })
+    elif command == "message":
+      await self.channel_layer.group_send(
+      "all",
+      {
+        "type": "chat.message",
+        "user": self.scope["user"].username,
+        "message": content['message'],
+      })
+    else:
+      await self.send_json({
+        "response": content.message,
+      })
 
-class GameConsumer(SyncConsumer):
+  async def chat_message(self, content):
+    await self.send_json({
+      "command": "message",
+      "user": content['user'],
+      "response": content['message'],
+    })
 
-    def websocket_connect(self, event):
-        self.send({
-            "type": "websocket.accept",
-        })
-
-    def websocket_receive(self, event):
-        self.send({
-            "type": "websocket.send",
-            "text": self.scope["user"].username + " message: " + event["text"],
-        })
-
-    def websocket_disconnect(self):
-        self.send({
-            "type": "websocket.disconnect"        
-        })
+  async def disconnect(self, code):
+    await self.channel_layer.group_discard(
+      "all",
+      self.channel_name,
+    )
+    await self.send_json({
+      "command": "disconnect",
+      "response": "disconnected"        
+  })
