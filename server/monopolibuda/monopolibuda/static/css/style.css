@@ -7,9 +7,43 @@
     border: 2px solid #000;
     display: table;
 }
-#board div{
+#board > div{
     display: table-row;
 }
-#board div div{
+#board > div > div{
     display: table-cell;
+    position: relative;
+    width: 14%;
+    height: 14%;
+}
+
+#board .pointer{
+    width: 3vh;
+    height: 3vh;
+    border-radius: 50%;
+    position: absolute;
+}
+
+#board .pointer#player1{
+    background-color: red;
+    top: 2vh;
+    left: 2vh;
+}
+
+#board .pointer#player2{
+    background-color: green;
+    top: 2vh;
+    right: 2vh;
+}
+
+#board .pointer#player3{
+    bottom: 2vh;
+    left: 2vh;
+    background-color: blue;
+}
+
+#board .pointer#player4{
+    bottom: 2vh;
+    right: 2vh;
+    background-color: yellow;
 }
