@@ -1,7 +1,7 @@
-$(function () {
-  var move = function(id, position){
-    $('#player'+id).appendTo("#pos"+position)
-  }
+var new_player = function(player_id) {
+  $("<div class='pointer' id='player"+player_id+"'></div>").appendTo("#pos0")
+}
 
-  window.move = move;
-});
+var move_pointer = function(id, position){
+  $('#player'+id).appendTo("#pos"+position)
+}

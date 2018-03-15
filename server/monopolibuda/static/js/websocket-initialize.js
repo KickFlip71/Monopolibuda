@@ -19,6 +19,12 @@ $(function () {
       var message = $("<div id='message' class='alert alert-primary'>"+data.user+": "+data.response+"</div>")
       $('#messagebox').append(message)
     }
+    else if(command == "move"){
+      //TODO: temporary
+      var current_position = $("#player"+data.player_id).parent().attr('id').slice(3);
+      var new_position = (parseInt(current_position) + parseInt(data.response)) % 24
+      move_pointer(data.player_id, new_position)
+    }
     else
       console.log("Got websocket message " + data.response);
   };

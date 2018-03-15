@@ -1,4 +1,5 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from random import randint
 
 class GameConsumer(AsyncJsonWebsocketConsumer):
 
@@ -25,6 +26,14 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         "user": self.scope["user"].username,
         "message": content['message'],
       })
+    elif command == "move":
+      await self.channel_layer.group_send(
+      "all",
+      {
+        "type": "board.move",
+        "player_id": content["player_id"],
+        "response": randint(1,7),
+      })
     else:
       await self.send_json({
         "response": content.message,
@@ -35,6 +44,13 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
       "command": "message",
       "user": content['user'],
       "response": content['message'],
+    })
+
+  async def board_move(self, content):
+    await self.send_json({
+      "command": "move",
+      "player_id": content['player_id'],
+      "response": content['response'],
     })
 
   async def disconnect(self, code):
