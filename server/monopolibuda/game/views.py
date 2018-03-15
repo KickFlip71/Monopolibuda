@@ -9,3 +9,6 @@ def index(request):
     return render(request, 'home/index.html', {
         "user": current_user,
     })
+
+def board(request):
+    return render(request, 'board.html')

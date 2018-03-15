@@ -48,6 +48,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'channels',
+    'game',
     'monopolibuda',
     'django.contrib.auth',
     'django.contrib.admin',
