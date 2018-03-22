@@ -4,6 +4,7 @@ from django.conf import settings
 from pytest_factoryboy import register
 from tests.factories.user_factory import UserFactory
 from tests.factories.game_factory import GameFactory
+# from tests.factories.player_factory import PlayerFactory
 
 # We manually designate which settings we will be using in an environment variable
 # This is similar to what occurs in the `manage.py`
@@ -18,4 +19,4 @@ def pytest_configure():
 
 register(UserFactory)
 register(GameFactory)
-    
+# register(PlayerFactory)
