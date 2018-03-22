@@ -10,23 +10,14 @@ $(function () {
   socket.onmessage = function (message) {
     data = JSON.parse(message.data)
     command = data.command
-    if(command == "check"){
-      var info = $("<div id='info' class='alert alert-info'>CONNECTED</div>")
-      $('#info').remove()
-      $('#infobox').append(info)
-    }
-    else if(command == "message"){
-      var message = $("<div id='message' class='alert alert-primary'>"+data.user+": "+data.response+"</div>")
-      $('#messagebox').append(message)
-    }
-    else if(command == "move"){
+    if(command == "move"){
       //TODO: temporary
       var current_position = $("#player"+data.player_id).parent().attr('id').slice(3);
       var new_position = (parseInt(current_position) + parseInt(data.response)) % 24
       move_pointer(data.player_id, new_position)
     }
     else
-      console.log("Got websocket message " + data.response);
+      console.log("Got websocket message " + data);
   };
 
   socket.onopen = function () {

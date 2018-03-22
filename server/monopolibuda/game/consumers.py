@@ -9,6 +9,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
       self.channel_name,
     )
     await self.accept()
+    
 
   async def receive_json(self, content):
     command = content.get("command", None)
@@ -26,6 +27,14 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         "user": self.scope["user"].username,
         "message": content['message'],
       })
+    elif command == "join":
+      await self.send_json(
+      {
+        "command": "playerdata",
+        "balance": 10000,
+        "properties": ["Obiekt testowy " + str(randint(0,15)), "Obiekt testowy " + str(randint(0,15))]
+      })
+
     elif command == "move":
       await self.channel_layer.group_send(
       "all",
