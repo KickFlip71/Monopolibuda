@@ -9,8 +9,8 @@ class BoardService:
     game.save()
     return game
 
-  def add_player(self, user_id):
-    player = Player.create(
+  def add_player(self, user_id, game_id):
+    player = Player(
               user_id=user_id, 
               game_id=game_id,
               balance=3000,
@@ -20,6 +20,7 @@ class BoardService:
               jail_free_card=False,
               move=0,
             )
+    player.save()
     return player
 
   def generate_code(self, code_length):
