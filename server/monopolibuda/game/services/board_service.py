@@ -5,11 +5,8 @@ from random import *
 class BoardService:
   def add_board(self, host_id, players_amount):
     code = self.generate_code(code_length=5)
-    game = Game(
-            code=code,
-            players_amount=players_amount,
-            host_id=host_id,
-          )
+    game = Game(code=code, players_amount=players_amount, host_id=host_id)
+    game.save()
     return game
 
   def add_player(self, user_id):
@@ -27,7 +24,8 @@ class BoardService:
 
   def generate_code(self, code_length):
     allchar = string.ascii_letters
-    return "".join(choice(allchar) for x in range(code_length)).upper
+    code = "".join(choice(allchar) for x in range(code_length)).upper()
+    return code
 
 
     
