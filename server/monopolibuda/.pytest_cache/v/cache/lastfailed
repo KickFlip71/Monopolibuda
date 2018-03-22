@@ -1,5 +1,0 @@
-{
-  "tests/services/game_service_tests.py::test_factories": true,
-  "tests/services/game_service_tests.py::test_new_board": true,
-  "tests/services/game_service_tests.py::test_save": true
-}
