@@ -4,15 +4,19 @@ from random import *
 from django.core import serializers
 import pdb
 
-class BoardService:
+class GameService:
   def get_player(self, game_id, user_id):
     player = Player.objects.filter(game_id=game_id, user_id=user_id).first()
     return player
 
-  def add_board(self, host_id, players_amount):
+  def add_game(self, host_id, players_amount):
     code = self.generate_code(code_length=5)
     game = Game(code=code, players_amount=players_amount, host_id=host_id)
     game.save()
+    return game
+
+  def get_game(self, game_id):
+    game = Game.objects.get(pk=game_id)
     return game
 
   def add_player(self, user_id, game_id):
