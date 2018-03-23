@@ -26,21 +26,44 @@ def test_add_game_creates_new_game():
 
 
 @pytest.mark.django_db(transaction=True)
-def test_add_player_creates_new_player():
+def test_join_player_creates_new_player():
     # GIVEN
     game = GameFactory()
     user = UserFactory()
     # WHEN
-    GameService().add_player(game_id=game.id, user_id=user.id)
+    GameService().join_player(game_id=game.id, user_id=user.id)
     # THEN
-    assert Player.objects.all().count() == 1
+    assert Player.objects.filter(game=game).count() == 1
+
+@pytest.mark.django_db(transaction=True)
+def test_join_player_does_not_create_new_player_if_already_on_board():
+    # GIVEN
+    game = GameFactory()
+    user = UserFactory()
+    GameService().join_player(game_id=game.id, user_id=user.id)
+    # WHEN
+    GameService().join_player(game_id=game.id, user_id=user.id)
+    # THEN
+    assert Player.objects.filter(game=game).count() == 1
+
+@pytest.mark.django_db(transaction=True)
+def test_join_player_does_not_create_new_player_if_board_is_full():
+    # GIVEN
+    game = GameFactory()
+    for i in range(4):
+        user = UserFactory()
+        GameService().join_player(game_id=game.id, user_id=user.id)
+    # WHEN
+    GameService().join_player(game_id=game.id, user_id=user.id)
+    # THEN
+    assert Player.objects.filter(game=game).count() == 4
 
 @pytest.mark.django_db(transaction=True)
 def test_set_player_defeated_changes_active_to_false():
     # GIVEN
     user = UserFactory()
     game = GameFactory()
-    player = GameService().add_player(game_id=game.id, user_id=user.id)
+    player = GameService().join_player(game_id=game.id, user_id=user.id)
     # WHEN
     GameService().set_player_defeated(player.id)
     # THEN
@@ -51,7 +74,7 @@ def test_get_player_returns_proper_player():
     # GIVEN
     user = UserFactory()
     game = GameFactory()
-    player = GameService().add_player(game_id=game.id, user_id=user.id)
+    player = GameService().join_player(game_id=game.id, user_id=user.id)
     # WHEN
     get_player = GameService().get_player(game.id, user.id)
     # THEN
@@ -72,7 +95,7 @@ def test_remove_player_removes_player_from_game():
     # GIVEN
     user = UserFactory()
     game = GameFactory()
-    player = GameService().add_player(game_id=game.id, user_id=user.id)
+    player = GameService().join_player(game_id=game.id, user_id=user.id)
     # WHEN
     GameService().remove_player(game.id, user.id)
     # THEN
