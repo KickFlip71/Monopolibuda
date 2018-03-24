@@ -1,39 +1,102 @@
-{% extends "base_mobile.html" %}
-{% load staticfiles %}
-{% block title %}Client{% endblock %}
-{% block content %}
-    <div class="jumbotron">
-        <h1 id="balance">0</h1>
-        <p></p>
-        <button id="dice-button" class="btn btn-outline-secondary" type="button">Roll a Dice</button>        
-        <button id="buy-button" class="btn btn-outline-secondary" type="button">Buy</button>
-        <button id="end-round-button" class="btn btn-outline-secondary" type="button">End round</button>
-        <p></p>
-        <div id="properties" class="list-group">
+{% extends "base_mobile.html" %} {% load staticfiles %} {% block title %}Client{% endblock %} {% block content %}
+<div class="jumbotron">
+    <h1 id="balance">0</h1>
+    <p></p>
+    <button id="dice-button" class="btn btn-outline-secondary" type="button">Roll a Dice</button>
+    <button id="buy-button" class="btn btn-outline-secondary" type="button">Buy</button>
+    <button id="end-round-button" class="btn btn-outline-secondary" type="button">End round</button>
+    <p></p>
+    <div id="properties">
+        <div id="card-1" class="card">
+            <div class="card-header color-group-1 collapsed">
+                <h5 class="mb-0">
+                    <button class="btn text-white btn-link" data-toggle="collapse" data-target=".card-1.collapse" aria-expanded="false">
+                        Budynek B-4
+                    </button>
+                </h5>
+            </div>
+            <div class="card-1 collapse" data-parent="#accordion">
+                <div class="card-body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Buidings</td>
+                                <td class="buildings">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mx-auto mb-1">
+                        <button class="btn btn-outline-secondary buy-apartment-button" type="button">Buy apartment</button>
+                        <button class="btn btn-outline-secondary sell-apartment-button" type="button">Sell apartment</button>
+                    </div>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Deposit value</td>
+                                <td class="deposit_value">800</td>
+                            </tr>
+                            <tr>
+                                <td>Apartment cost</td>
+                                <td class="apartment_cost">500</td>
+                            </tr>
+                            <tr>
+                                <td>Hotel cost</td>
+                                <td class="hotel_cost">1000</td>
+                            </tr>
+                            <tr>
+                                <td>Rent</td>
+                                <td class="a0">100</td>
+                            </tr>
+                            <tr>
+                                <td>Rent (1 apartment)</td>
+                                <td class="a1">400</td>
+                            </tr>
+                            <tr>
+                                <td>Rent (2 apartments)</td>
+                                <td class="a2">1600</td>
+                            </tr>
+                            <tr>
+                                <td>Rent (3 apartments)</td>
+                                <td class="a3">4000</td>
+                            </tr>
+                            <tr>
+                                <td>Rent (4 apartments)</td>
+                                <td class="a4">6000</td>
+                            </tr>
+                            <tr>
+                                <td>Rent (hotel)</td>
+                                <td class="a5">9000</td>
+                            </tr>
+                            <tr>
+                                <td>Buying cost</td>
+                                <td class="cost">1000</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-
     </div>
-{% endblock %}
-    
-{% block extra_body %}
-    <script src="{% static "js/websocket-client.js" %}" type="text/javascript"></script>
-    <script src="{% static "js/board.js" %}" type="text/javascript"></script>
-    <script>
 
-        $('#dice-button').click(function(){
-            window.socket.send(JSON.stringify({
-                "command": "move",
-                "player_id": "1"
-            }));
-        });
-        $('#buy-button').click(function(){
-            console.log("buy button click");
-        });
-        $('#end-round-button').click(function(){
-            console.log("end-round button click");
-        })
+</div>
+{% endblock %} {% block extra_body %}
+<script src="{% static 'js/websocket-client.js' %}" type="text/javascript"></script>
+<script>
 
+    $('#dice-button').click(function () {
+        window.socket.send(JSON.stringify({
+            "command": "move",
+            "player_id": "1"
+        }));
+    });
+    $('#buy-button').click(function () {
+        console.log("buy button click");
+    });
+    $('#end-round-button').click(function () {
+        console.log("end-round button click");
+    })
 
 
-    </script>
-{% endblock %}
+
+</script> {% endblock %}
