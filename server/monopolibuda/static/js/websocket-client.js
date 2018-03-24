@@ -11,6 +11,7 @@ $(function () {
       data = JSON.parse(message.data)
       command = data.command
       if(command == "playerdata"){
+        //{balance, properties: {[card_id,buildings,deposited,name,cost,apartment_cost,hotel_cost,deposit_value,group,a0,a1,a2,a3,a4,a5]}}
         $('#balance').html(data.balance);
         data.properties.forEach(element => {
           var property = $("<a href='#' class='list-group-item list-group-item-action'>"+ element +"</a>");
