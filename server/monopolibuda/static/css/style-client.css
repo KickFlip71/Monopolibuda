@@ -1,29 +1,40 @@
 .color-group-1{
     background-color: #E8C51A;
+    border-color: #E8C51A;
 }
 .color-group-2{
     background-color: #E8901A;
+    border-color: #E8901A;
 }
 .color-group-3{
     background-color: #4022A0;
+    border-color: #4022A0;
 }
 .color-group-4{
     background-color: #195F95;
+    border-color: #195F95;
 }
 .color-group-5{
     background-color: #15BA15;
+    border-color: #15BA15;
 }
 .color-group-6{
     background-color: #E81A1A;
+    border-color: #E81A1A;
 }
 .color-group-7{
     background-color: #971197;
+    border-color: #971197;
 }
 .color-group-8{
     background-color: #BEE019;
+    border-color: #BEE019;
 }
 .template,
 .hidden
 {
     display: none;
+}
+.name.btn.group{
+    width: 100%;
 }
