@@ -24,22 +24,21 @@ class GameService:
     return user    
 
   def join_player(self, user_id, game_id):
-    game = self.get_game(game_id)
-    user = self.get_user(user_id)
-    if(self.__free_slot(game) and not self.__is_already_on_board(game, user)):
+    player = self.get_player(game_id, user_id)
+    if(self.__free_slot(game_id) and player == None):
       player = self.__add_player(user_id, game_id)
-    else:
-      player = self.get_player(user.id, game.id)
+      
     return player
 
   def remove_player(self, user_id, game_id):
     player = self.get_player(user_id, game_id)
     player.delete()
 
-  def set_player_defeated(self, player_id):
-    player = Player.objects.get(pk=player_id)
-    player.active = False
-    player.save()
+  def set_player_defeated(self, user_id, game_id):
+    player = self.get_player(user_id=user_id, game_id=game_id)
+    if(player != None):
+      player.active = False
+      player.save()
     return player
 
   def generate_code(self, code_length):
@@ -61,12 +60,9 @@ class GameService:
     player.save()
     return player
 
-
-  def __free_slot(self, game):
-    players_amount = Player.objects.filter(game=game).count()
+  def __free_slot(self, game_id):
+    players_amount = Player.objects.filter(game_id=game_id).count()
     return players_amount < 4
 
-  def __is_already_on_board(self, game, user):
-    return self.get_player(game.id, user.id) != None
 
     

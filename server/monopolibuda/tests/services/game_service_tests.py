@@ -65,7 +65,7 @@ def test_set_player_defeated_changes_active_to_false():
     game = GameFactory()
     player = GameService().join_player(game_id=game.id, user_id=user.id)
     # WHEN
-    GameService().set_player_defeated(player.id)
+    GameService().set_player_defeated(user_id=user.id, game_id=game.id)
     # THEN
     assert Player.objects.get(pk=player.id).active == False
 
