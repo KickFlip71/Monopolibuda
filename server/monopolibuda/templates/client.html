@@ -7,25 +7,31 @@
     <button id="end-round-button" class="btn btn-outline-secondary" type="button">End round</button>
     <p></p>
     <div id="properties">
-        <div id="card-1" class="card">
-            <div class="card-header color-group-1 collapsed">
+        <div class="card template">
+            <div class="card-header collapsed">
                 <h5 class="mb-0">
-                    <button class="btn text-white btn-link" data-toggle="collapse" data-target=".card-1.collapse" aria-expanded="false">
+                    <button class="title btn text-white btn-link" data-toggle="collapse" aria-expanded="false">
                         Budynek B-4
                     </button>
+                    <span class="badge badge-secondary deposited hidden">Deposited</span>
                 </h5>
             </div>
-            <div class="card-1 collapse" data-parent="#accordion">
+            <div class="collapse" data-parent="#accordion">
                 <div class="card-body">
+                        <div class="mb-1">
+                                <button class="btn btn-outline-secondary sell-property-button" type="button">Sell property</button>
+                                <button class="btn btn-outline-secondary deposit-property-button" type="button">Deposit property</button>
+                                <button class="btn btn-outline-secondary buyback-property-button" type="button">Buyback property</button>
+                            </div>
                     <table class="table">
                         <tbody>
                             <tr>
-                                <td>Buidings</td>
+                                <td>Buildings</td>
                                 <td class="buildings">0</td>
                             </tr>
                         </tbody>
                     </table>
-                    <div class="mx-auto mb-1">
+                    <div class="mb-1">
                         <button class="btn btn-outline-secondary buy-apartment-button" type="button">Buy apartment</button>
                         <button class="btn btn-outline-secondary sell-apartment-button" type="button">Sell apartment</button>
                     </div>
