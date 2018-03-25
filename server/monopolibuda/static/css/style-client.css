@@ -22,3 +22,8 @@
 .color-group-8{
     background-color: #BEE019;
 }
+.template,
+.hidden
+{
+    display: none;
+}
