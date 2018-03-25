@@ -97,7 +97,7 @@ def test_remove_player_removes_player_from_game():
     game = GameFactory()
     player = GameService().join_player(game_id=game.id, user_id=user.id)
     # WHEN
-    GameService().remove_player(game.id, user.id)
+    GameService().remove_player(game_id=game.id, user_id=user.id)
     # THEN
     assert len(Player.objects.filter(game=game)) == 0
 

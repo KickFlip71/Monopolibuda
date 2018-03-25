@@ -1,26 +1,31 @@
-from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.generic.websocket import JsonWebsocketConsumer
+from rest_framework.renderers import JSONRenderer
+from game.serializers import GameSerializer
+from game.services.game_service import GameService
 from random import randint
 
-class GameConsumer(AsyncJsonWebsocketConsumer):
+from game.models import Game #TODO: remove
 
-  async def connect(self):
-    await self.channel_layer.group_add(
+class GameConsumer(JsonWebsocketConsumer):
+
+  def connect(self):
+    self.channel_layer.group_add(
       "all",
       self.channel_name,
     )
-    await self.accept()
+    self.accept()
     
 
-  async def receive_json(self, content):
+  def receive_json(self, content):
     command = content.get("command", None)
 
     if command == "check":
-      await self.send_json({
+      self.send_json({
         "command": "check",
         "response": "CONNECTED",
       })
     elif command == "message":
-      await self.channel_layer.group_send(
+      self.channel_layer.group_send(
       "all",
       {
         "type": "chat.message",
@@ -28,15 +33,13 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         "message": content['message'],
       })
     elif command == "join":
-      await self.send_json(
-      {
-        "command": "playerdata",
-        "balance": 10000,
-        "properties": ["Obiekt testowy " + str(randint(0,15)), "Obiekt testowy " + str(randint(0,15))]
-      })
+      self.join_player(self.scope['user'].id)
+
+      self.remove_player(self.scope['user'].id)
+    elif command == "disconnect":
 
     elif command == "move":
-      await self.channel_layer.group_send(
+      self.channel_layer.group_send(
       "all",
       {
         "type": "board.move",
@@ -44,30 +47,48 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         "response": randint(1,7),
       })
     else:
-      await self.send_json({
+      self.send_json({
         "response": content.message,
       })
 
-  async def chat_message(self, content):
-    await self.send_json({
+  def chat_message(self, content):
+    self.send_json({
       "command": "message",
       "user": content['user'],
       "response": content['message'],
     })
 
-  async def board_move(self, content):
-    await self.send_json({
+  def join_player(self, user_id):
+    game = Game.objects.first() #TODO: Replace with actual game
+    GameService().join_player(game_id=game.id, user_id=user_id)
+    json = GameSerializer(game).data
+    self.send_json({
+      "success": "true",
+      "response": json,
+    })
+
+  def remove_player(self, user_id):
+    game = Game.objects.first() #TODO: Replace with actual game
+    GameService().remove_player(game_id=game.id, user_id=user_id)
+    json = GameSerializer(game).data
+    self.send_json({
+      "success": "true",
+      "response": json,
+    })
+
+  def board_move(self, content):
+    self.send_json({
       "command": "move",
       "player_id": content['player_id'],
       "response": content['response'],
     })
 
-  async def disconnect(self, code):
-    await self.channel_layer.group_discard(
+  def disconnect(self, code):
+    self.channel_layer.group_discard(
       "all",
       self.channel_name,
     )
-    await self.send_json({
+    self.send_json({
       "command": "disconnect",
       "response": "disconnected"        
   })

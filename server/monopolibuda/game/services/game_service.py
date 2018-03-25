@@ -31,8 +31,9 @@ class GameService:
     return player
 
   def remove_player(self, user_id, game_id):
-    player = self.get_player(user_id, game_id)
-    player.delete()
+    player = self.get_player(game_id, user_id)
+    if(player != None):
+      player.delete()
 
   def set_player_defeated(self, user_id, game_id):
     player = self.get_player(user_id=user_id, game_id=game_id)

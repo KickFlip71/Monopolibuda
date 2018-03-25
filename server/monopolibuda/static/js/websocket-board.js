@@ -9,6 +9,7 @@ $(function () {
 
   socket.onmessage = function (message) {
     data = JSON.parse(message.data)
+    console.log(data)
     command = data.command
     if(command == "move"){
       //TODO: temporary
