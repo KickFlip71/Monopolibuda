@@ -34,10 +34,8 @@ class GameConsumer(JsonWebsocketConsumer):
       })
     elif command == "join":
       self.join_player(self.scope['user'].id)
-
-      self.remove_player(self.scope['user'].id)
     elif command == "disconnect":
-
+      self.remove_player(self.scope['user'].id)
     elif command == "move":
       self.channel_layer.group_send(
       "all",
