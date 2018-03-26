@@ -1,74 +1,215 @@
-{% extends "base.html" %}
-{% load staticfiles %}
-{% block title %}Board{% endblock %}
-{% block content %}
-    <div id="board">
-        <div>
-            <div id="pos12"></div>
-            <div id="pos13"></div>
-            <div id="pos14"></div>
-            <div id="pos15"></div>
-            <div id="pos16"></div>
-            <div id="pos17"></div>
-            <div id="pos18"></div>
+{% extends "base.html" %} {% load staticfiles %} {% block title %}Board{% endblock %} {% block content %}
+<div id="board">
+    <div class="top-row">
+        <div id="pos12" class="position"></div>
+        <div id="pos13" class="position color-group-5">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
-        <div>
-            <div id="pos11"></div>
-            <div></div><div></div><div></div><div></div><div></div>
-            <div id="pos19"></div>
+        <div id="pos14" class="position color-group-5">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
-        <div>
-            <div id="pos10"></div>
-            <div></div><div></div><div></div><div></div><div></div>
-            <div id="pos20"></div>
+        <div id="pos15" class="position"></div>
+        <div id="pos16" class="position color-group-6">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
-        <div>
-            <div id="pos9"></div>
-            <div></div><div></div><div></div><div></div><div></div>
-            <div id="pos21"></div>
+        <div id="pos17" class="position color-group-6">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
-        <div>
-            <div id="pos8"></div>
-            <div></div><div></div><div></div><div></div><div></div>
-            <div id="pos22"></div>
+        <div id="pos18" class="position"></div>
+    </div>
+    <div class="center-row">
+        <div id="pos11" class="position color-group-4">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
-        <div>
-            <div id="pos7"></div>
-            <div></div><div></div><div></div><div></div><div></div>
-            <div id="pos23"></div>
-        </div>
-        <div>
-            <div id="pos6"></div>
-            <div id="pos5"></div>
-            <div id="pos4"></div>
-            <div id="pos3"></div>
-            <div id="pos2"></div>
-            <div id="pos1"></div>
-            <div id="pos0">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div id="pos19" class="position color-group-7">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
             </div>
         </div>
     </div>
-    <div class="jumbotron">
-        <button id="dice-button" class="btn btn-outline-secondary" type="button">Roll a Dice</button>        
-        <button id="join-button" class="btn btn-outline-secondary" type="button">Join</button>        
+    <div class="center-row">
+        <div id="pos10" class="position color-group-4">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div id="pos20" class="position color-group-7">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
     </div>
-{% endblock %}
-    
-{% block extra_body %}
-    <script src="{% static "js/websocket-board.js" %}" type="text/javascript"></script>
-    <script src="{% static "js/board.js" %}" type="text/javascript"></script>
-    <script>
-            $('#dice-button').click(function(){
-              window.socket.send(JSON.stringify({
-                  "command": "move",
-                  "player_id": "1"
-                }));
-            })
+    <div class="center-row">
+        <div id="pos9" class="position"></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div id="pos21" class="position"></div>
+    </div>
+    <div class="center-row">
+        <div id="pos8" class="position color-group-3">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div id="pos22" class="position color-group-8">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <div class="center-row">
+        <div id="pos7" class="position color-group-3">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div id="pos23" class="position color-group-8">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-row">
+        <div id="pos6" class="position"></div>
+        <div id="pos5" class="position color-group-2">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div id="pos4" class="position color-group-2">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div id="pos3" class="position"></div>
+        <div id="pos2" class="position color-group-1">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div id="pos1" class="position color-group-1">
+            <div class="apartments">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div id="pos0" class="position"></div>
+    </div>
+</div>
+<div class="jumbotron">
+    <button id="dice-button" class="btn btn-outline-secondary" type="button">Roll a Dice</button>
+    <button id="join-button" class="btn btn-outline-secondary" type="button">Join</button>
+</div>
+{% endblock %} {% block extra_body %}
+<script src="{% static 'js/websocket-board.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/board.js' %}" type="text/javascript"></script>
+<script>
+    $('#dice-button').click(function () {
+        window.socket.send(JSON.stringify({
+            "command": "move",
+            "player_id": "1"
+        }));
+    })
 
-            $('#join-button').click(function(){
-              window.socket.send(JSON.stringify({
-                  "command": "join",
-                }));
-            })
-    </script>
-{% endblock %}
+    $('#join-button').click(function () {
+        window.socket.send(JSON.stringify({
+            "command": "join",
+        }));
+    })
+</script> {% endblock %}
