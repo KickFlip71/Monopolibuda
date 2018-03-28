@@ -8,6 +8,7 @@ $(function () {
   window.socket = socket;
 
   socket.onmessage = function (message) {
+    debugger
     data = JSON.parse(message.data)
     console.log(data)
     command = data.command

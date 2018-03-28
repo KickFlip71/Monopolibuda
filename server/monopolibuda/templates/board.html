@@ -51,6 +51,10 @@
     <div class="jumbotron">
         <button id="dice-button" class="btn btn-outline-secondary" type="button">Roll a Dice</button>        
         <button id="join-button" class="btn btn-outline-secondary" type="button">Join</button>        
+        <button id="leave-button" class="btn btn-outline-secondary" type="button">Leave</button>        
+        <button id="check-button" class="btn btn-outline-secondary" type="button">Check</button>        
+        <button id="move-button" class="btn btn-outline-secondary" type="button">Move</button>        
+        <button id="skip-button" class="btn btn-outline-secondary" type="button">Skip</button>        
     </div>
 {% endblock %}
     
@@ -60,15 +64,34 @@
     <script>
             $('#dice-button').click(function(){
               window.socket.send(JSON.stringify({
-                  "command": "move",
-                  "player_id": "1"
-                }));
+                "command": "move",
+              }));
             })
 
             $('#join-button').click(function(){
               window.socket.send(JSON.stringify({
-                  "command": "join",
-                }));
+                "command": "join",
+              }));
+            })
+            $('#leave-button').click(function(){
+              window.socket.send(JSON.stringify({
+                "command": "leave",
+              }));
+            })
+            $('#check-button').click(function(){
+              window.socket.send(JSON.stringify({
+                "command": "check",
+              }));
+            })
+            $('#move-button').click(function(){
+              window.socket.send(JSON.stringify({
+                "command": "move",
+              }));
+            })
+            $('#skip-button').click(function(){
+              window.socket.send(JSON.stringify({
+                "command": "skip",
+              }));
             })
     </script>
 {% endblock %}
