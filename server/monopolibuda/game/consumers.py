@@ -22,15 +22,10 @@ class GameConsumer(JsonWebsocketConsumer):
 
   def receive_json(self, content):
     command = content.get("command", None)
-    content['user_id'] = self.scope['user'].id
-
-    method = getattr(self, command, "check_status")
+    content['user'] = self.scope['user']
+    content['game'] = Game.objects.first() # TODO: temporary hardcoded
+    method = getattr(self, command, self.wrong_command)
     method(content)
-
-  def default_message(self, content):
-    self.send_response({
-      "response": content.message,
-    })
 
   def message(self, content):
      self.send_response({
@@ -38,34 +33,31 @@ class GameConsumer(JsonWebsocketConsumer):
         "message": content['message']
      })
 
+  def wrong_command(self, content):
+     self.send_response({
+        "error": "Command not supported"
+     })
+
   def check(self, content):
     self.send_response(
       {
         "command": "check",
         "response": "connected"
-      }
+      },
+      False
     )
 
-
   def join(self, content):
-    game = Game.objects.first() #TODO: Replace with actual game
-    user = content['user_id']
-    GameService().join_player(game_id=game.id, user_id=user)
-    self.__respond_with(game, "game")
+    GameService().join_player(game_id=content['game'].id, user_id=content['user'].id)
+    self.__respond_with(content['game'], "game")
 
   def leave(self, content):
-    game = Game.objects.first() #TODO: Replace with actual game
-    user = content['user_id']
-    GameService().remove_player(game_id=game.id, user_id=user)
-    self.__respond_with(game, "game")    
-
+    GameService().remove_player(game_id=content['game'].id, user_id=content['user'].id)
+    self.__respond_with(content['game'], "game")    
   
   def move(self, content):
-    game = Game.objects.first() #TODO: Replace with actual game
-    user = content['user_id']
-    player = GameService().get_player(game_id=game.id, user_id=user)
-    PositionService().change_position(player)
-    self.__respond_with(game, "game")
+    player = PositionService().move_player(game_id=content['game'].id, user_id=content['user'].id)
+    self.__respond_with(player, "player")
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(

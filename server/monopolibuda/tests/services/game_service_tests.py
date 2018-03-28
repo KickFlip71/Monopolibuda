@@ -4,7 +4,6 @@ from tests.factories.user_factory import UserFactory
 from tests.factories.game_factory import GameFactory
 from tests.factories.player_factory import PlayerFactory
 import pytest
-import pdb
 
 
 @pytest.mark.django_db(transaction=True)
@@ -69,17 +68,6 @@ def test_set_player_defeated_changes_active_to_false():
     GameService().set_player_defeated(user_id=user.id, game_id=game.id)
     # THEN
     assert Player.objects.get(pk=player.id).active == False
-
-@pytest.mark.django_db(transaction=True)
-def test_get_player_returns_proper_player():
-    # GIVEN
-    user = UserFactory()
-    game = GameFactory()
-    player = GameService().join_player(game_id=game.id, user_id=user.id)
-    # WHEN
-    get_player = GameService().get_player(game.id, user.id)
-    # THEN
-    assert get_player == player
 
 @pytest.mark.django_db(transaction=True)
 def test_get_game_returns_proper_player():

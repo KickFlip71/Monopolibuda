@@ -1,17 +1,19 @@
 from game.models import Player
+from game.providers import PlayerProvider
 from random import randint
 
 
 class PositionService:
-	def change_position(self, player):
-		if player.move == 2:
+	def move_player(self, game_id, user_id):
+		player = PlayerProvider().get_player(game_id, user_id)
+		if player != None and player.move == 2:
 			rolled_dice = randint(1,6)
 			player.position += rolled_dice
 			if player.position > 24:
 				self.update_balance(player)
 			player.position = player.position % 24
 			self.disable_move(player)
-		player.save()	
+			player.save()	
 		return player
 
 	def update_balance(self, player):
