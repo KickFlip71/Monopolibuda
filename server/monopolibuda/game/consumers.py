@@ -1,8 +1,7 @@
 from channels.generic.websocket import JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
 from rest_framework.renderers import JSONRenderer
-from asgiref.sync import async_to_sync
-from game.serializers import GameSerializer
+from game.serializers import GameSerializer, PlayerSerializer, PropertySerializer
 from game.services.game_service import GameService
 from game.services.position_service import PositionService
 from random import randint
@@ -29,42 +28,44 @@ class GameConsumer(JsonWebsocketConsumer):
     method(content)
 
   def default_message(self, content):
-    self.__send_response({
+    self.send_response({
       "response": content.message,
     })
 
   def message(self, content):
-     self.__send_response({
+     self.send_response({
         "user": self.scope["user"].username,
         "message": content['message']
      })
 
   def check(self, content):
-    self.__send_response({
-      "command": "check",
-      "response": "CONNECTED",
-    })
+    self.send_response(
+      {
+        "command": "check",
+        "response": "connected"
+      }
+    )
+
 
   def join(self, content):
     game = Game.objects.first() #TODO: Replace with actual game
-    GameService().join_player(game_id=game.id, user_id=content['user_id'])
-    json = GameSerializer(game).data
-    self.__send_response(json)
-
+    user = content['user_id']
+    GameService().join_player(game_id=game.id, user_id=user)
+    self.__respond_with(game, "game")
 
   def leave(self, content):
     game = Game.objects.first() #TODO: Replace with actual game
-    GameService().remove_player(game_id=game.id, user_id=content['user_id'])
-    json = GameSerializer(game).data
-    self.__send_response(json)
+    user = content['user_id']
+    GameService().remove_player(game_id=game.id, user_id=user)
+    self.__respond_with(game, "game")    
 
   
   def move(self, content):
     game = Game.objects.first() #TODO: Replace with actual game
-    player = GameService.get_player(game_id=game.id, user_id=content['user_id'])
+    user = content['user_id']
+    player = GameService().get_player(game_id=game.id, user_id=user)
     PositionService().change_position(player)
-    json = GameSerializer(game).data
-    self.__send_response(json)
+    self.__respond_with(game, "game")
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(
@@ -76,28 +77,29 @@ class GameConsumer(JsonWebsocketConsumer):
       "response": "disconnected"        
     })
 
-  def __send_response(self, response, broadcast=False):
+  def __respond_with(self, record, response_type, broadcast=True):
+    serializers = {
+      "game": GameSerializer,
+      "player": PlayerSerializer,
+      "property": PropertySerializer
+    }
+
+    serializer = serializers.get(response_type, GameSerializer)
+    json = serializer(record).data
+    self.send_response(json, broadcast)
+
+  def send_response(self, response, broadcast=True):
     if(broadcast):
       async_to_sync(self.channel_layer.group_send)(
-        "all", 
-        {
-          "type": "board.move",
-          "user": 'message',
-        }
-      )
-      # self.channel_layer.group_send(
-      # "all",
-      # {
-      #   "type": "chat.message",
-      #   "response": randint(1,7),
-      # })
-
+      "all",
+      {
+        "type": "broadcast",
+        "response": response
+      })
     else:
       self.send_json(response)
   
-  def board_move(self, event):
-    self.send_json(
-      {
-        "response": event["response"],
-      },
-    )
+  # usable only with send_response with arg broadcast=True
+  def broadcast(self, content):
+    self.send_json(content["response"])
+
