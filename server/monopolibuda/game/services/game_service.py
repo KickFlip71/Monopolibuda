@@ -23,6 +23,13 @@ class GameService:
     user = User.objects.get(pk=user_id)
     return user    
 
+  def skip_turn(self, user_id, game_id):
+    player = self.get_player(game_id, user_id)
+    if(player != None and player.move == 1):
+      player.move = 0
+      player.save()
+    return player
+
   def join_player(self, user_id, game_id):
     player = self.get_player(game_id, user_id)
     if(self.__free_slot(game_id) and player == None):
