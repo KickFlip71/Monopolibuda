@@ -51,6 +51,10 @@ class GameConsumer(JsonWebsocketConsumer):
     GameService().join_player(game_id=content['game'].id, user_id=content['user'].id)
     self.__respond_with(content['game'], "game")
 
+  def skip(self, content):
+    player = GameService().skip_turn(game_id=content['game'].id, user_id=content['user'].id)
+    self.__respond_with(player, "player")
+
   def leave(self, content):
     GameService().remove_player(game_id=content['game'].id, user_id=content['user'].id)
     self.__respond_with(content['game'], "game")    
@@ -77,8 +81,18 @@ class GameConsumer(JsonWebsocketConsumer):
     }
 
     serializer = serializers.get(response_type, GameSerializer)
-    json = serializer(record).data
-    self.send_response(json, broadcast)
+    data = serializer(record).data
+    response = self.__prepare_response(data)
+    self.send_response(response, broadcast)
+
+  def __prepare_response(self, data, errors = {}):
+    response = {}
+    success = not bool(errors)
+
+    response['payload'] = data
+    response['errors'] = errors
+    response['success'] = success
+    return response
 
   def send_response(self, response, broadcast=True):
     if(broadcast):
