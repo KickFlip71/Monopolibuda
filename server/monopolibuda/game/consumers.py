@@ -1,4 +1,5 @@
 from channels.generic.websocket import JsonWebsocketConsumer
+from asgiref.sync import async_to_sync
 from rest_framework.renderers import JSONRenderer
 from asgiref.sync import async_to_sync
 from game.serializers import GameSerializer
@@ -14,8 +15,8 @@ class GameConsumer(JsonWebsocketConsumer):
     if self.scope["user"].is_anonymous:
       self.close()
     
-    self.channel_layer.group_add(
-      "all",
+    async_to_sync(self.channel_layer.group_add)(
+      'all',
       self.channel_name
     )
     self.accept()
@@ -66,7 +67,7 @@ class GameConsumer(JsonWebsocketConsumer):
     self.__send_response(json)
 
   def disconnect(self, code):
-    self.channel_layer.group_discard(
+    async_to_sync(self.channel_layer.group_discard)(
       "all",
       self.channel_name,
     )
@@ -75,11 +76,15 @@ class GameConsumer(JsonWebsocketConsumer):
       "response": "disconnected"        
     })
 
-  def __send_response(self, response, broadcast=True):
+  def __send_response(self, response, broadcast=False):
     if(broadcast):
-      self.channel_layer.group_send("all", {
-        "user": response['message'],
-      })
+      async_to_sync(self.channel_layer.group_send)(
+        "all", 
+        {
+          "type": "board.move",
+          "user": 'message',
+        }
+      )
       # self.channel_layer.group_send(
       # "all",
       # {
@@ -90,8 +95,7 @@ class GameConsumer(JsonWebsocketConsumer):
     else:
       self.send_json(response)
   
-  def chat_message(self, event):
-    import pdb; pdb.set_trace()
+  def board_move(self, event):
     self.send_json(
       {
         "response": event["response"],
