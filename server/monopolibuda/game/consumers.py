@@ -48,20 +48,21 @@ class GameConsumer(JsonWebsocketConsumer):
     )
 
   def join(self, content):
-    GameService().join_player(game_id=content['game'].id, user_id=content['user'].id)
-    self.__respond_with(content['game'], "game")
+    player = GameService().join_player(game_id=content['game'].id, user_id=content['user'].id)
+    self.__respond_with(player, "player", "playerdata", broadcast=False)
+    self.__respond_with(player, "player", "board_join")
 
   def skip(self, content):
     player = GameService().skip_turn(game_id=content['game'].id, user_id=content['user'].id)
-    self.__respond_with(player, "player")
+    self.__respond_with(player, "player", "skip")
 
   def leave(self, content):
     GameService().remove_player(game_id=content['game'].id, user_id=content['user'].id)
-    self.__respond_with(content['game'], "game")    
+    self.__respond_with(content['game'], "game", "leave")    
   
   def move(self, content):
     player = PositionService().move_player(game_id=content['game'].id, user_id=content['user'].id)
-    self.__respond_with(player, "player")
+    self.__respond_with(player, "player", "board_move")
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(
@@ -73,7 +74,7 @@ class GameConsumer(JsonWebsocketConsumer):
       "response": "disconnected"        
     })
 
-  def __respond_with(self, record, response_type, broadcast=True):
+  def __respond_with(self, record, response_type, command, broadcast=True):
     serializers = {
       "game": GameSerializer,
       "player": PlayerSerializer,
@@ -82,14 +83,15 @@ class GameConsumer(JsonWebsocketConsumer):
 
     serializer = serializers.get(response_type, GameSerializer)
     data = serializer(record).data
-    response = self.__prepare_response(data)
+    response = self.__prepare_response(data, command)
     self.send_response(response, broadcast)
 
-  def __prepare_response(self, data, errors = {}):
+  def __prepare_response(self, data, command, errors = {}):
     response = {}
     success = not bool(errors)
 
     response['payload'] = data
+    response['command'] = command
     response['errors'] = errors
     response['success'] = success
     return response
