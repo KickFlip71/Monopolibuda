@@ -2,8 +2,8 @@ from game.services.game_service import GameService
 from game.models import Game, Player
 from tests.factories.user_factory import UserFactory
 from tests.factories.game_factory import GameFactory
+from tests.factories.player_factory import PlayerFactory
 import pytest
-import pdb
 
 
 @pytest.mark.django_db(transaction=True)
@@ -65,20 +65,9 @@ def test_set_player_defeated_changes_active_to_false():
     game = GameFactory()
     player = GameService().join_player(game_id=game.id, user_id=user.id)
     # WHEN
-    GameService().set_player_defeated(player.id)
+    GameService().set_player_defeated(user_id=user.id, game_id=game.id)
     # THEN
     assert Player.objects.get(pk=player.id).active == False
-
-@pytest.mark.django_db(transaction=True)
-def test_get_player_returns_proper_player():
-    # GIVEN
-    user = UserFactory()
-    game = GameFactory()
-    player = GameService().join_player(game_id=game.id, user_id=user.id)
-    # WHEN
-    get_player = GameService().get_player(game.id, user.id)
-    # THEN
-    assert get_player == player
 
 @pytest.mark.django_db(transaction=True)
 def test_get_game_returns_proper_player():
@@ -97,9 +86,27 @@ def test_remove_player_removes_player_from_game():
     game = GameFactory()
     player = GameService().join_player(game_id=game.id, user_id=user.id)
     # WHEN
-    GameService().remove_player(game.id, user.id)
+    GameService().remove_player(game_id=game.id, user_id=user.id)
     # THEN
     assert len(Player.objects.filter(game=game)) == 0
+
+@pytest.mark.django_db(transaction=True)
+def test_skip_turn_sets_player_move_to_zero():
+    # GIVEN
+    player = PlayerFactory(move=1)
+    # WHEN
+    GameService().skip_turn(game_id=player.game_id, user_id=player.user_id)
+    # THEN
+    assert Player.objects.get(pk=player.id).move == 0
+
+@pytest.mark.django_db(transaction=True)
+def test_skip_turn_doestn_set_move_to_zero_if_move_eq_two():
+    # GIVEN
+    player = PlayerFactory(move=2)
+    # WHEN
+    GameService().skip_turn(game_id=player.game_id, user_id=player.user_id)
+    # THEN
+    assert Player.objects.get(pk=player.id).move == 2
 
 def test_code_generator_returns_code_with_proper_length():
     # GIVEN

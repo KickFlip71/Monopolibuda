@@ -1,14 +1,14 @@
 from game.models import Game, Player, User
+from game.providers import PlayerProvider
 import string
 from random import *
 from django.core import serializers
-import pdb
 
 class GameService:
-  def get_player(self, game_id, user_id):
+  def get_player(self, user_id, game_id):
     player = Player.objects.filter(game_id=game_id, user_id=user_id).first()
     return player
-
+    
   def add_game(self, host_id, players_amount):
     code = self.generate_code(code_length=5)
     game = Game(code=code, players_amount=players_amount, host_id=host_id)
@@ -23,23 +23,30 @@ class GameService:
     user = User.objects.get(pk=user_id)
     return user    
 
+  def skip_turn(self, user_id, game_id):
+    player = PlayerProvider().get_player(game_id, user_id)
+    if(player != None and player.move == 1):
+      player.move = 0
+      player.save()
+    return player
+
   def join_player(self, user_id, game_id):
-    game = self.get_game(game_id)
-    user = self.get_user(user_id)
-    if(self.__free_slot(game) and not self.__is_already_on_board(game, user)):
+    player = PlayerProvider().get_player(game_id, user_id)
+    if(self.__free_slot(game_id) and player == None):
       player = self.__add_player(user_id, game_id)
-    else:
-      player = self.get_player(user.id, game.id)
+      
     return player
 
   def remove_player(self, user_id, game_id):
-    player = self.get_player(user_id, game_id)
-    player.delete()
+    player = PlayerProvider().get_player(game_id, user_id)
+    if(player != None):
+      player.delete()
 
-  def set_player_defeated(self, player_id):
-    player = Player.objects.get(pk=player_id)
-    player.active = False
-    player.save()
+  def set_player_defeated(self, user_id, game_id):
+    player = PlayerProvider().get_player(game_id, user_id)    
+    if(player != None):
+      player.active = False
+      player.save()
     return player
 
   def generate_code(self, code_length):
@@ -61,12 +68,9 @@ class GameService:
     player.save()
     return player
 
-
-  def __free_slot(self, game):
-    players_amount = Player.objects.filter(game=game).count()
+  def __free_slot(self, game_id):
+    players_amount = Player.objects.filter(game_id=game_id).count()
     return players_amount < 4
 
-  def __is_already_on_board(self, game, user):
-    return self.get_player(game.id, user.id) != None
 
     

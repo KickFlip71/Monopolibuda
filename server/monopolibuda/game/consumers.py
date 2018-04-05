@@ -1,73 +1,111 @@
-from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.generic.websocket import JsonWebsocketConsumer
+from asgiref.sync import async_to_sync
+from rest_framework.renderers import JSONRenderer
+from game.serializers import GameSerializer, PlayerSerializer, PropertySerializer
+from game.services.game_service import GameService
+from game.services.position_service import PositionService
 from random import randint
 
-class GameConsumer(AsyncJsonWebsocketConsumer):
+from game.models import Game #TODO: remove
 
-  async def connect(self):
-    await self.channel_layer.group_add(
-      "all",
-      self.channel_name,
-    )
-    await self.accept()
+class GameConsumer(JsonWebsocketConsumer):
+
+  def connect(self):
+    if self.scope["user"].is_anonymous:
+      self.close()
     
+    async_to_sync(self.channel_layer.group_add)(
+      'all',
+      self.channel_name
+    )
+    self.accept()
 
-  async def receive_json(self, content):
+  def receive_json(self, content):
     command = content.get("command", None)
+    content['user'] = self.scope['user']
+    content['game'] = Game.objects.first() # TODO: temporary hardcoded
+    method = getattr(self, command, self.wrong_command)
+    method(content)
 
-    if command == "check":
-      await self.send_json({
-        "command": "check",
-        "response": "CONNECTED",
-      })
-    elif command == "message":
-      await self.channel_layer.group_send(
-      "all",
-      {
-        "type": "chat.message",
+  def message(self, content):
+     self.send_response({
         "user": self.scope["user"].username,
-        "message": content['message'],
-      })
-    elif command == "join":
-      await self.send_json(
+        "message": content['message']
+     })
+
+  def wrong_command(self, content):
+     self.send_response({
+        "error": "Command not supported"
+     })
+
+  def check(self, content):
+    self.send_response(
       {
-        "command": "playerdata",
-        "balance": 10000,
-        "properties": ["Obiekt testowy " + str(randint(0,15)), "Obiekt testowy " + str(randint(0,15))]
-      })
+        "command": "check",
+        "response": "connected"
+      },
+      False
+    )
 
-    elif command == "move":
-      await self.channel_layer.group_send(
-      "all",
-      {
-        "type": "board.move",
-        "player_id": content["player_id"],
-        "response": randint(1,7),
-      })
-    else:
-      await self.send_json({
-        "response": content.message,
-      })
+  def join(self, content):
+    GameService().join_player(game_id=content['game'].id, user_id=content['user'].id)
+    self.__respond_with(content['game'], "game")
 
-  async def chat_message(self, content):
-    await self.send_json({
-      "command": "message",
-      "user": content['user'],
-      "response": content['message'],
-    })
+  def skip(self, content):
+    player = GameService().skip_turn(game_id=content['game'].id, user_id=content['user'].id)
+    self.__respond_with(player, "player")
 
-  async def board_move(self, content):
-    await self.send_json({
-      "command": "move",
-      "player_id": content['player_id'],
-      "response": content['response'],
-    })
+  def leave(self, content):
+    GameService().remove_player(game_id=content['game'].id, user_id=content['user'].id)
+    self.__respond_with(content['game'], "game")    
+  
+  def move(self, content):
+    player = PositionService().move_player(game_id=content['game'].id, user_id=content['user'].id)
+    self.__respond_with(player, "player")
 
-  async def disconnect(self, code):
-    await self.channel_layer.group_discard(
+  def disconnect(self, code):
+    async_to_sync(self.channel_layer.group_discard)(
       "all",
       self.channel_name,
     )
-    await self.send_json({
+    self.send_json({
       "command": "disconnect",
       "response": "disconnected"        
-  })
+    })
+
+  def __respond_with(self, record, response_type, broadcast=True):
+    serializers = {
+      "game": GameSerializer,
+      "player": PlayerSerializer,
+      "property": PropertySerializer
+    }
+
+    serializer = serializers.get(response_type, GameSerializer)
+    data = serializer(record).data
+    response = self.__prepare_response(data)
+    self.send_response(response, broadcast)
+
+  def __prepare_response(self, data, errors = {}):
+    response = {}
+    success = not bool(errors)
+
+    response['payload'] = data
+    response['errors'] = errors
+    response['success'] = success
+    return response
+
+  def send_response(self, response, broadcast=True):
+    if(broadcast):
+      async_to_sync(self.channel_layer.group_send)(
+      "all",
+      {
+        "type": "broadcast",
+        "response": response
+      })
+    else:
+      self.send_json(response)
+  
+  # usable only with send_response with arg broadcast=True
+  def broadcast(self, content):
+    self.send_json(content["response"])
+
