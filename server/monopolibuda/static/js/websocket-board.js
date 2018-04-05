@@ -11,11 +11,14 @@ $(function () {
     data = JSON.parse(message.data)
     console.log(data)
     command = data.command
-    if(command == "move"){
-      //TODO: temporary
+    if(command == "playerPositionChange"){
+      //{command:"playerPositionChange",playerID,position}
       var current_position = $("#player"+data.player_id).parent().attr('id').slice(3);
       var new_position = (parseInt(current_position) + parseInt(data.response)) % 24
       move_pointer(data.player_id, new_position)
+    }
+    else if(command=="propertyChange"){
+      //{command:"propertyChange",cardID,apartments}
     }
     else
       console.log("Got websocket message " + data);
