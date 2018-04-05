@@ -44,7 +44,7 @@ class GameConsumer(JsonWebsocketConsumer):
   def join(self, content):
     player = GameService().join_player(game_id=content['game'].id, user_id=content['user'].id)
     self.__respond_with(player, "player", "playerdata", broadcast=False)
-    self.__respond_with(player, "player", "board_join")
+    self.__respond_with(player, "player", "board_player_join")
 
   def skip(self, content):
     player = GameService().skip_turn(game_id=content['game'].id, user_id=content['user'].id)
@@ -56,7 +56,7 @@ class GameConsumer(JsonWebsocketConsumer):
   
   def move(self, content):
     player = PositionService().move_player(game_id=content['game'].id, user_id=content['user'].id)
-    self.__respond_with(player, "player", "board_move")
+    self.__respond_with(player, "player", "board_player_move")
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(

@@ -4,24 +4,29 @@ $(function () {
     var ws_path = ws_scheme + '://' + window.location.host + "/game/stream/";
     console.log("Connecting to " + ws_path);
     var socket = new ReconnectingWebSocket(ws_path);
-  
+    var user_id;
+
     window.socket = socket;
   
     socket.onmessage = function (message) {
       data = JSON.parse(message.data)
       command = data.command
       if(command == "playerdata"){
+        user_id = data.payload.user.id;
         //{balance, properties: {[card_id,buildings,deposited,name,cost,apartment_cost,hotel_cost,deposit_value,group,a0,a1,a2,a3,a4,a5]}}
-        $('#balance').html(data.balance);
-        //data.properties.forEach(element => {
-          //var property = $("");
-          //$('#properties').append(property);
-        //});
+        $('#balance').html(data.payload.balance);
+        
+        data.payload.property_set.forEach(property => {
+          $('#properties').append(getPreparedCard(property));
+        });
 
         //mockup data:
-        $('#properties').append(getPreparedCard({"card_id":2,"buildings":0,"deposited":true,"name":"Budynek B-4","cost":2999,"apartment_cost":500,"hotel_cost":1000,"deposit_value":1000,"group":1,"a0":100,"a1":300,"a2":1000,"a3":3000,"a4":6000,"a5":9000}));
-        $('#properties').append(getPreparedCard({"card_id":4,"buildings":1,"deposited":false,"name":"Budynek A-1","cost":2999,"apartment_cost":500,"hotel_cost":1000,"deposit_value":1000,"group":3,"a0":100,"a1":300,"a2":1000,"a3":3000,"a4":6000,"a5":9000}));
-        showPreparedPropertyBuyModal({"card_id":4,"buildings":1,"deposited":false,"name":"Budynek A-1","cost":2999,"apartment_cost":500,"hotel_cost":1000,"deposit_value":1000,"group":3,"a0":100,"a1":300,"a2":1000,"a3":3000,"a4":6000,"a5":9000});
+      //   $('#properties').append(getPreparedCard({"card_id":2,"buildings":0,"deposited":true,"name":"Budynek B-4","cost":2999,"apartment_cost":500,"hotel_cost":1000,"deposit_value":1000,"group":1,"a0":100,"a1":300,"a2":1000,"a3":3000,"a4":6000,"a5":9000}));
+      //   $('#properties').append(getPreparedCard({"card_id":4,"buildings":1,"deposited":false,"name":"Budynek A-1","cost":2999,"apartment_cost":500,"hotel_cost":1000,"deposit_value":1000,"group":3,"a0":100,"a1":300,"a2":1000,"a3":3000,"a4":6000,"a5":9000}));
+      //   showPreparedPropertyBuyModal({"card_id":4,"buildings":1,"deposited":false,"name":"Budynek A-1","cost":2999,"apartment_cost":500,"hotel_cost":1000,"deposit_value":1000,"group":3,"a0":100,"a1":300,"a2":1000,"a3":3000,"a4":6000,"a5":9000});
+      }
+      else if(command=="offer"){
+        showPreparedPropertyBuyModal(data.payload.offer);
       }
       else
         console.log("Got websocket message " + data);

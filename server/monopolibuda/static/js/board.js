@@ -1,7 +1,9 @@
-var new_player = function(player_id) {
-  $("<div class='pointer' id='player"+player_id+"'></div>").appendTo("#pos0")
+var move_player = function(player_id, position){
+  $('#player'+player_id).appendTo("#pos"+position)
 }
 
-var move_pointer = function(id, position){
-  $('#player'+id).appendTo("#pos"+position)
+var add_player = function(player_id, position) {
+  if($('#player'+player_id).length==0){
+    $("<div class='pointer' id='player"+player_id+"'></div>").appendTo("#pos"+position)
+  }
 }
