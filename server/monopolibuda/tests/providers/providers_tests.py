@@ -5,7 +5,7 @@ import pytest
 
 
 @pytest.mark.django_db(transaction=True)
-def test_player_service_returns_valid_player():
+def test_player_provider_returns_valid_player():
     # GIVEN
     player = PlayerFactory()
     # WHEN
@@ -14,11 +14,11 @@ def test_player_service_returns_valid_player():
     assert provided_player == player
 
 @pytest.mark.django_db(transaction=True)
-def test_player_service_returns_valid_player_when_there_are_more_players():
+def test_player_provider_returns_valid_player_when_there_are_more_players():
     # GIVEN
     player1 = PlayerFactory()
-    player2 = PlayerFactory(game_id=player1.game_id)
-    player3 = PlayerFactory(game_id=player1.game_id)
+    player2 = PlayerFactory(game_id=player1.game_id, order=1)
+    player3 = PlayerFactory(game_id=player1.game_id, order=2)
     # WHEN
     provided_player = PlayerProvider().get_player(user_id=player1.user_id, game_id=player1.game_id)
     # THEN

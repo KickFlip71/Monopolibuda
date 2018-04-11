@@ -25,15 +25,19 @@ class GameService:
 
   def skip_turn(self, user_id, game_id):
     player = PlayerProvider().get_player(game_id, user_id)
-    if(player != None and player.move == 1):
+    if self.__skip_constraint(player):
       player.move = 0
       player.save()
+      next_player = player.next_player()
+      next_player.move = 2
+      next_player.save()
     return player
 
   def join_player(self, user_id, game_id):
     player = PlayerProvider().get_player(game_id, user_id)
     if(self.__free_slot(game_id) and player == None):
-      player = self.__add_player(user_id, game_id)
+      player_order = Player.objects.filter(game_id=game_id).count() + 1
+      player = self.__add_player(user_id, game_id, player_order)
       
     return player
 
@@ -54,7 +58,7 @@ class GameService:
     code = "".join(choice(allchar) for x in range(code_length)).upper()
     return code
 
-  def __add_player(self, user_id, game_id):
+  def __add_player(self, user_id, game_id, order):
     player = Player(
               user_id=user_id, 
               game_id=game_id,
@@ -64,13 +68,18 @@ class GameService:
               active=True,
               jail_free_card=False,
               move=0,
+              order=order,
             )
     player.save()
     return player
 
+  def __skip_constraint(self, player):
+    return player != None and player.move == 1
+
   def __free_slot(self, game_id):
     players_amount = Player.objects.filter(game_id=game_id).count()
-    return players_amount < 4
+    allowed_players_amount = Game.objects.filter(id=game_id).first().players_amount
+    return players_amount < allowed_players_amount
 
 
     

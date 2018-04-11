@@ -94,6 +94,7 @@ def test_remove_player_removes_player_from_game():
 def test_skip_turn_sets_player_move_to_zero():
     # GIVEN
     player = PlayerFactory(move=1)
+    player = PlayerFactory(move=0, game_id=player.game_id)
     # WHEN
     GameService().skip_turn(game_id=player.game_id, user_id=player.user_id)
     # THEN

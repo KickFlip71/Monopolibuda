@@ -15,6 +15,13 @@ class Player(models.Model):
     active = models.BooleanField()
     jail_free_card = models.BooleanField()
     move = models.IntegerField()
+    order = models.IntegerField()
+
+    def next_player(self):
+        players_count = Player.objects.filter(game_id=self.game_id).count()
+        next_player_order = (self.order + 1) % players_count
+        return Player.objects.filter(game_id=self.game_id, order=next_player_order).first()
+        
 
 class Charge(models.Model):
     zero_apartments = models.IntegerField()

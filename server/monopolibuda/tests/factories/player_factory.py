@@ -18,3 +18,4 @@ class PlayerFactory(DjangoModelFactory):
 	active=True
 	jail_free_card=False
 	move=0
+	order=0
