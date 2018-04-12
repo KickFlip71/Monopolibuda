@@ -1,0 +1,21 @@
+1000 - 1999 - Success
+2000 - 2999 - Failure
+> 3000 - Undefined
+
+
+Success:
+
+1000 - OK
+1001 - Joined
+1002 - Leave
+1003 - Skip Turn
+1004 - Move
+
+Errors:
+
+2000 - Unspecified Error
+2001 - Game not found
+2002 - Player not found
+2003 - User not found
+2010 - Player.move != 1 (cannot skip)
+2011 - Player.move != 2 (cannot move)
