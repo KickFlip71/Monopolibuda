@@ -10,23 +10,30 @@ $(function () {
   socket.onmessage = function (message) {
     data = JSON.parse(message.data)
     command = data.command
-    if(command == "check"){
-      var info = $("<div id='info' class='alert alert-info'>CONNECTED</div>")
-      $('#info').remove()
-      $('#infobox').append(info)
+    if(command=="check"){
+      data.payload.player_set.forEach(player => {
+        add_player(player.order,player.position);
+      });
     }
-    else if(command == "message"){
-      var message = $("<div id='message' class='alert alert-primary'>"+data.user+": "+data.response+"</div>")
-      $('#messagebox').append(message)
+    else if(command=="board_join"){
+      add_player(data.payload.order,data.payload.position);
     }
-    else
-      console.log("Got websocket message " + data.response);
+    else if(command=="board_move"){
+      console.log(data.payload.order)
+      move_player(data.payload.order,data.payload.position)
+    }
+    else if(command=="disconnect"){
+      remove_player(data.payload.id,data.payload.position)
+    }
   };
 
   socket.onopen = function () {
     console.log("Connected to socket");
+    window.socket.send(JSON.stringify({
+      "command": "check",
+  }));
   };
   socket.onclose = function () {
     console.log("Disconnected from socket");
-  }
+  };
 });

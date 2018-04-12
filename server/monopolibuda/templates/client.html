@@ -1,0 +1,194 @@
+{% extends "base_mobile.html" %} {% load staticfiles %} {% block title %}Client{% endblock %} {% block content %}
+<div class="jumbotron">
+    <h1 id="balance">0</h1>
+    <p></p>
+    <button id="dice-button" class="btn btn-outline-secondary" type="button">Roll a Dice</button>
+    <button id="end-round-button" class="btn btn-outline-secondary" type="button">End round</button>
+    <p></p>
+    <div id="properties">
+        <div class="card template">
+            <div class="card-header collapsed">
+                <h5 class="mb-0">
+                    <button class="title btn text-white btn-link" data-toggle="collapse" aria-expanded="false">
+
+                    </button>
+                    <span class="badge badge-secondary deposited hidden">Deposited</span>
+                </h5>
+            </div>
+            <div class="collapse" data-parent="#accordion">
+                <div class="card-body">
+                    <div class="mb-1">
+                        <button class="btn btn-outline-secondary sell-property-button" type="button">Sell property</button>
+                        <button class="btn btn-outline-secondary deposit-property-button" type="button">Deposit property</button>
+                        <button class="btn btn-outline-secondary buyback-property-button" type="button">Buyback property</button>
+                    </div>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Buildings</td>
+                                <td class="buildings"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mb-1">
+                        <button class="btn btn-outline-secondary buy-apartment-button" type="button">Buy apartment</button>
+                        <button class="btn btn-outline-secondary sell-apartment-button" type="button">Sell apartment</button>
+                    </div>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Deposit value</td>
+                                <td class="deposit_value"></td>
+                            </tr>
+                            <tr>
+                                <td>Apartment cost</td>
+                                <td class="apartment_cost"></td>
+                            </tr>
+                            <tr>
+                                <td>Hotel cost</td>
+                                <td class="hotel_cost"></td>
+                            </tr>
+                            <tr>
+                                <td>Rent</td>
+                                <td class="a0"></td>
+                            </tr>
+                            <tr>
+                                <td>Rent (1 apartment)</td>
+                                <td class="a1"></td>
+                            </tr>
+                            <tr>
+                                <td>Rent (2 apartments)</td>
+                                <td class="a2"></td>
+                            </tr>
+                            <tr>
+                                <td>Rent (3 apartments)</td>
+                                <td class="a3"></td>
+                            </tr>
+                            <tr>
+                                <td>Rent (4 apartments)</td>
+                                <td class="a4"></td>
+                            </tr>
+                            <tr>
+                                <td>Rent (hotel)</td>
+                                <td class="a5"></td>
+                            </tr>
+                            <tr>
+                                <td>Buying cost</td>
+                                <td class="cost"></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cardModal" tabindex="-1" role="dialog" aria-labelledby="cardModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cardModalLabel">Buying offer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+
+
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Buying cost</td>
+                            <td class="cost"></td>
+                        </tr>
+                        <tr>
+                            <td>Deposit value</td>
+                            <td class="deposit_value"></td>
+                        </tr>
+                        <tr>
+                            <td>Apartment cost</td>
+                            <td class="apartment_cost"></td>
+                        </tr>
+                        <tr>
+                            <td>Hotel cost</td>
+                            <td class="hotel_cost"></td>
+                        </tr>
+                        <tr>
+                            <td>Rent</td>
+                            <td class="a0"></td>
+                        </tr>
+                        <tr>
+                            <td>Rent (1 apartment)</td>
+                            <td class="a1"></td>
+                        </tr>
+                        <tr>
+                            <td>Rent (2 apartments)</td>
+                            <td class="a2"></td>
+                        </tr>
+                        <tr>
+                            <td>Rent (3 apartments)</td>
+                            <td class="a3"></td>
+                        </tr>
+                        <tr>
+                            <td>Rent (4 apartments)</td>
+                            <td class="a4"></td>
+                        </tr>
+                        <tr>
+                            <td>Rent (hotel)</td>
+                            <td class="a5"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Don't buy</button>
+                <button type="button" class="btn btn-success">Buy</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="makeOfferModal" tabindex="-1" role="dialog" aria-labelledby="makeOfferModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="makeOfferModalLabel">Make an offer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="inputValue">Price</label>
+                    <input id="inputValue" type="number" class="form-control" min="1">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Make a public offer</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block extra_body %}
+<script src="{% static 'js/websocket-client.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/client.js' %}" type="text/javascript"></script>
+<script>
+
+    $('#dice-button').click(function () {
+        window.socket.send(JSON.stringify({
+            "command": "move"
+        }));
+    });
+    $('#end-round-button').click(function () {
+        window.socket.send(JSON.stringify({
+            "command": "skip"
+        }));
+    })
+
+
+
+</script> {% endblock %}

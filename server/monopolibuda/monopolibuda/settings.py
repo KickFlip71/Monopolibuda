@@ -41,7 +41,7 @@ SECRET_KEY = '(mxw++bn2rp4$7fb1!$q%l(_5j9sue_tubgf=q509q+^z%evcr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','192.168.1.111', '10.182.20.138']
 
 
 # Application definition
@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -103,6 +105,15 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '',
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    )
 }
 
 LOGIN_REDIRECT_URL = "/"

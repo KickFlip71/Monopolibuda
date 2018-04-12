@@ -12,3 +12,10 @@ def index(request):
 
 def board(request):
     return render(request, 'board.html')
+
+@login_required
+def client(request):
+    current_user = request.user
+    return render(request, 'client.html', {
+        "user": current_user,
+    })
