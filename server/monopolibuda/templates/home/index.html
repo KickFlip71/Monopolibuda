@@ -6,38 +6,36 @@
 {% block header_text %}Welcome{% endblock %}
 
 {% block content %}
-    <h1>Hello {{user}}</h1>
-    <div class="alert alert-warning" id="buttonbox">
-      <p>ButtonBox:</p>
-      <button id="connection-button" class="btn btn-info">Connection Checker</button>
-      <div style="margin-top: 20px" class="input-group">
-        <input id="message" type="text" class="form-control" placeholder="Message">
-        <div class="input-group-append">
-          <button id="message-button" class="btn btn-outline-secondary" type="button">Send</button>
+  <div class="jumbotron">
+  {% if error %}
+    <div class="alert alert-danger">
+      {{ error }}
+    </div>
+  {% endif %}
+  <h1>Hello {{user}}</h1>
+  <div class="alert alert-info">
+    <form method="get" action="{% url 'new_game' %}">
+      <p>New game:</p>      
+      <input type="text" name="players_amount" placeholder="players_amount">
+      <button class="btn btn-info" type="submit">Create Game</button>
+    </form>
+  </div>  
+  <div>
+    {% for game in games %}
+        <div class="alert alert-success">
+          <form method="get" action="{% url 'board' game.id %}">
+            <p>Game hosted by {{ game.host }}:</p>
+            <input type="text" name="code" placeholder="Code">
+            <div>
+              <button type="submit" class="btn btn-success">Connect</a>
+            </div>
+          </form>
         </div>
-      </div>
-    </div>
-    <div class="alert alert-info" id="infobox">
-      <p>InfoBox</p>
-    </div>
-    <div class="alert alert-success" id="messagebox">
-      <p>MessageBox</p>
-    </div>
+    {% empty %}
+        <p class="empty">No games defined.</p>
+    {% endfor %}
+  </div>
 {% endblock %}
 
 {% block extra_body %}
-
-<script src="{% static "js/websocket-board.js" %}" type="text/javascript"></script>
-<script>
-    $('#connection-button').click(function(){
-      window.socket.send(JSON.stringify({"command": "check"}));
-    })
-    $('#message-button').click(function(){
-      window.socket.send(JSON.stringify(
-        {
-          "command": "message",
-          "message": $("#message").val(),
-        }));
-    })
-</script>
 {% endblock %}
