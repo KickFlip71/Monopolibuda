@@ -53,3 +53,7 @@ var getPreparedCard = function(property){
     }
     modal.modal('show');
   }
+
+  function updateBalance(money) {
+    $('#balance').html(data.payload.balance);
+  }

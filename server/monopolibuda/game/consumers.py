@@ -65,6 +65,8 @@ class GameConsumer(JsonWebsocketConsumer):
     response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)        
     response['command'] = 'board_move'
     self.send_response(response, broadcast=True)
+    response['command'] = 'player_move'
+    self.send_response(response)
 
   def buy(self, content):
     #TODO

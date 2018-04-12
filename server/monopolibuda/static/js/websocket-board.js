@@ -10,7 +10,6 @@ $(function () {
   socket.onmessage = function (message) {
     data = JSON.parse(message.data)
     command = data.command
-
     if(command=="check"){
       data.payload.player_set.forEach(player => {
         console.log(player);
@@ -18,13 +17,13 @@ $(function () {
       });
     }
     else if(command=="board_join"){
-      add_player(data.payload.id,data.payload.position);
+      add_player(data.payload.order,data.payload.position);
     }
     else if(command=="board_move"){
-      move_player(data.payload.id,data.payload.position)
+      move_player(data.payload.order,data.payload.position)
     }
     else if(command=="disconnect"){
-      move_player(data.payload.id,data.payload.position)
+      remove_player(data.payload.id,data.payload.position)
     }
   };
 

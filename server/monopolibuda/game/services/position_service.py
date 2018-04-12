@@ -10,7 +10,7 @@ class PositionService:
 	def move_player(self, game_id, user_id):
 		self.status = 1004
 		player = PlayerProvider().get_player(game_id, user_id)
-		if player != None:# and player.move == 2:
+		if self.__player_exists(player) and self.__players_turn(player):
 			rolled_dice = randint(1,6)
 			player.position += rolled_dice
 			if player.position > 24:

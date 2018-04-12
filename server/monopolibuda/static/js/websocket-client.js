@@ -11,18 +11,23 @@ $(function () {
     socket.onmessage = function (message) {
       data = JSON.parse(message.data)
       command = data.command
-      if(command == "player_join"){
+      success = handleError(data['status'])
+      if(command == "player_join" && success){
         user_id = data.payload.user.id;
-        $('#balance').html(data.payload.balance);
-        debugger;
+        //{balance, properties: {[card_id,buildings,deposited,name,cost,apartment_cost,hotel_cost,deposit_value,group,a0,a1,a2,a3,a4,a5]}}
+        updateBalance(data.payload.balance)        
         data.payload.property_set.forEach(property => {
           $('#properties').append(getPreparedCard(property));
         });
       }
-      else if(command=="player_offer"){
-          showPreparedPropertyBuyModal(data.payload.offer);
+      else if(command=="player_offer" && success){
+        showPreparedPropertyBuyModal(data.payload.offer);
       }
-      
+      else if(command=="player_move"){
+        updateBalance(data.payload.balance)
+      }
+      else
+        console.log("Got websocket message " + data);
     };
   
     socket.onopen = function () {

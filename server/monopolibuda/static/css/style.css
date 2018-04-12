@@ -57,25 +57,25 @@
     border: 2px solid #000;    
 }
 
-#board .pointer#player1{
+#board .pointer#player0{
     background-color: red;
     top: 2vh;
     left: 2vh;
 }
 
-#board .pointer#player2{
+#board .pointer#player1{
     background-color: green;
     top: 2vh;
     right: 2vh;
 }
 
-#board .pointer#player3{
+#board .pointer#player2{
     bottom: 2vh;
     left: 2vh;
     background-color: blue;
 }
 
-#board .pointer#player4{
+#board .pointer#player3{
     bottom: 2vh;
     right: 2vh;
     background-color: yellow;
