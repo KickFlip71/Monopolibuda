@@ -9,6 +9,7 @@ var status_codes =
   2001: 'Game not found',
   2002: 'Player not found',
   2003: 'User not found',
+  2004: 'Player already exists',
   2010: 'Cannot skip',
   2011: 'Cannot move'
 }

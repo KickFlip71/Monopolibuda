@@ -57,3 +57,30 @@ var getPreparedCard = function(property){
   function updateBalance(money) {
     $('#balance').html(data.payload.balance);
   }
+
+  function updateButtons(move){
+    if(move == 2){
+      $("#dice-button").prop('disabled', false)
+      $("#end-round-button").prop('disabled', true)
+    }
+    else if(move == 1){
+      $("#dice-button").prop('disabled', true)
+      $("#end-round-button").prop('disabled', false)
+    }
+    else{
+      $("#dice-button").prop('disabled', true)
+      $("#end-round-button").prop('disabled', true)
+    }
+
+  }
+
+  function findPlayer(players, current_player) {
+    var player = null
+    $.each(players, function(k,v) {
+      if(v.order == current_player){
+        player = v
+        return false
+      }
+    })
+    return player
+  }

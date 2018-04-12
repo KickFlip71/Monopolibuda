@@ -46,14 +46,17 @@ class GameConsumer(JsonWebsocketConsumer):
 
   def join(self, content):
     response = WebsocketService().join(game_id=content['game'].id, user_id=content['user'].id)
-    response['command'] = 'player_join'
-    self.send_response(response, broadcast=False)
     response['command'] = 'board_join'    
     self.send_response(response)
+    response['command'] = 'player_join'
+    self.send_response(response, broadcast=False)
+
 
   def skip(self, content):
     response = WebsocketService().skip(game_id=content['game'].id, user_id=content['user'].id)
     response['command'] = 'board_skip'
+    self.send_response(response)
+    response['command'] = 'player_skip'
     self.send_response(response)
 
   def leave(self, content):
@@ -64,9 +67,10 @@ class GameConsumer(JsonWebsocketConsumer):
   def move(self, content):
     response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)        
     response['command'] = 'board_move'
-    self.send_response(response, broadcast=True)
-    response['command'] = 'player_move'
+    print(response['command'])
     self.send_response(response)
+    response['command'] = 'player_move'
+    self.send_response(response, broadcast=False)
 
   def buy(self, content):
     #TODO

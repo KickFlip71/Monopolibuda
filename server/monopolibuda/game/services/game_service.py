@@ -16,21 +16,22 @@ class GameService:
 
   def skip_turn(self, user_id, game_id):
     self.status = 1003
-
     player = PlayerProvider().get_player(game_id, user_id)
+    game = Game.objects.get(pk=game_id)
+
     if self.__player_exists(player) and self.__skip_constraint(player):
       player.move = 0
       player.save()
       next_player = player.next_player()
       next_player.move = 2
       next_player.save()
-    return player, self.status
+    return game, self.status
 
   def join_player(self, user_id, game_id):
     self.status = 1001
     player = PlayerProvider().get_player(game_id, user_id)
-    if(self.__free_slot(game_id) and not self.__player_exists(player)):
-      player_order = Player.objects.filter(game_id=game_id).count() + 1
+    if(self.__free_slot(game_id) and player == None):
+      player_order = Player.objects.filter(game_id=game_id).count()
       player = self.__add_player(user_id, game_id, player_order)
       
     return player, self.status

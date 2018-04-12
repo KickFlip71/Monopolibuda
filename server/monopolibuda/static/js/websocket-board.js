@@ -12,14 +12,14 @@ $(function () {
     command = data.command
     if(command=="check"){
       data.payload.player_set.forEach(player => {
-        console.log(player);
-        add_player(player.id,player.position);
+        add_player(player.order,player.position);
       });
     }
     else if(command=="board_join"){
       add_player(data.payload.order,data.payload.position);
     }
     else if(command=="board_move"){
+      console.log(data.payload.order)
       move_player(data.payload.order,data.payload.position)
     }
     else if(command=="disconnect"){
