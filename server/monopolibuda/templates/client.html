@@ -3,7 +3,6 @@
     <h1 id="balance">0</h1>
     <p></p>
     <button id="dice-button" class="btn btn-outline-secondary" type="button">Roll a Dice</button>
-    <button id="buy-button" class="btn btn-outline-secondary" type="button">Buy</button>
     <button id="end-round-button" class="btn btn-outline-secondary" type="button">End round</button>
     <p></p>
     <div id="properties">
@@ -176,6 +175,7 @@
 </div>
 {% endblock %} {% block extra_body %}
 <script src="{% static 'js/websocket-client.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/client.js' %}" type="text/javascript"></script>
 <script>
 
     $('#dice-button').click(function () {
@@ -183,12 +183,11 @@
             "command": "move"
         }));
     });
-    $('#buy-button').click(function () {
-        console.log("buy button click");
-    });
     $('#end-round-button').click(function () {
-        console.log("end-round button click");
-    })
+        window.socket.send(JSON.stringify({
+            "command": "skip"
+        }));
+    });
 
 
 

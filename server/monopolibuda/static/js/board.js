@@ -7,3 +7,8 @@ var add_player = function(player_id, position) {
     $("<div class='pointer' id='player"+player_id+"'></div>").appendTo("#pos"+position)
   }
 }
+
+var disable_player = function(player_id){
+  $('#player'+player_id).addClass('player_disconnected')
+}
+

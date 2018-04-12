@@ -81,6 +81,10 @@
     background-color: yellow;
 }
 
+.player_disconnected{
+    opacity: 0.3;
+}
+
 .position{
     border: 1px solid #000;
 }
