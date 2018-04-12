@@ -1,7 +1,11 @@
 $(function () {
   // Correctly decide between ws:// and wss://
+  var code = getUrlParameter('code')
+  var game_id = getGameId()
+  var websocket_channel = "/game/stream/"+game_id+"/"+code
+
   var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-  var ws_path = ws_scheme + '://' + window.location.host + "/game/stream/";
+  var ws_path = ws_scheme + '://' + window.location.host + websocket_channel;
   console.log("Connecting to " + ws_path);
   var socket = new ReconnectingWebSocket(ws_path);
 
@@ -37,3 +41,22 @@ $(function () {
     console.log("Disconnected from socket");
   };
 });
+
+var getUrlParameter = function getUrlParameter(sParam) {
+  var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+      sURLVariables = sPageURL.split('&'),
+      sParameterName,
+      i;
+
+  for (i = 0; i < sURLVariables.length; i++) {
+      sParameterName = sURLVariables[i].split('=');
+
+      if (sParameterName[0] === sParam) {
+          return sParameterName[1] === undefined ? true : sParameterName[1];
+      }
+  }
+};
+
+var getGameId = function(){
+  return window.location.pathname.substr(window.location.pathname.lastIndexOf('/')-1)[0]
+}

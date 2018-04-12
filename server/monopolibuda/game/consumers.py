@@ -14,17 +14,25 @@ class GameConsumer(JsonWebsocketConsumer):
   def connect(self):
     if self.scope["user"].is_anonymous:
       self.close()
+
+    code = self.scope["url_route"]["kwargs"]["code"]
+    game_id = self.scope["url_route"]["kwargs"]["game_id"]
+
+    if not self.__auth_player(game_id=game_id, code=code):
+      self.close()
     
     async_to_sync(self.channel_layer.group_add)(
-      'all',
+      str(game_id),
       self.channel_name
     )
     self.accept()
 
   def receive_json(self, content):
+    game_id = self.scope["url_route"]["kwargs"]["game_id"]
+    
     command = content.get("command", None)
     content['user'] = self.scope['user']
-    content['game'] = Game.objects.first() # TODO: temporary hardcoded
+    content['game'] = Game.objects.get(pk=game_id) # TODO: temporary hardcoded
     method = getattr(self, command, self.wrong_command)
     method(content)
 
@@ -102,3 +110,10 @@ class GameConsumer(JsonWebsocketConsumer):
   def broadcast(self, content):
     self.send_json(content["response"])
 
+  def __auth_player(self, game_id, code):
+    auth = False
+    if Game.objects.get(pk=game_id).host_id == self.scope['user'].id:
+      auth = True
+    if Game.objects.get(pk=game_id).code == code:
+      auth = True
+    return auth

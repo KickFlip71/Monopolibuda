@@ -28,7 +28,7 @@ application = ProtocolTypeRouter({
     # WebSocket chat handler
     "websocket": AuthMiddlewareStack(
         URLRouter([
-            url(r"^game/stream/$", GameConsumer),
+            url(r"^game/stream/(?P<game_id>\w+)/(?P<code>\w*)$", GameConsumer),
         ])
     ),
 })
