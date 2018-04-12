@@ -25,7 +25,19 @@ class Player(models.Model):
     def defeat(self):
         self.active = False
         self.save()
-        
+
+    def update_balance(self):
+        money = 100
+        self.balance += money
+
+    def disable_move(self):
+        self.move=1
+
+    def check_position(self):
+        return self.position > 24
+
+    def fix_position(self):
+        self.position = self.position % 24
 
 class Charge(models.Model):
     zero_apartments = models.IntegerField()
