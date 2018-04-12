@@ -32,4 +32,11 @@ def test_move_when_success():
   response = WebsocketService().move(player.game_id, player.user_id)
   assert response['status'] == 1004
 
+@pytest.mark.django_db(transaction=True)
+def test_check_when_success():
+  game = GameFactory()
+  user = UserFactory()
+  response = WebsocketService().check(game.id, user.id)
+  assert response['status'] == 1000
+
 # ERRORS TESTS

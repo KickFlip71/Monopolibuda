@@ -40,7 +40,11 @@ class GameConsumer(JsonWebsocketConsumer):
      })
 
   def check(self, content):
-    self.__respond_with(content['game'], 'game', 'board_data', broadcast=False)
+    response = WebsocketService().check(game_id=content['game'].id, user_id=content['user'].id)
+    response['command'] = 'player_check'
+    self.send_response(response, broadcast=False)
+    response['command'] = 'board_check'    
+    self.send_response(response)
 
   def join(self, content):
     response = WebsocketService().join(game_id=content['game'].id, user_id=content['user'].id)

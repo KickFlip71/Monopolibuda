@@ -51,7 +51,7 @@ class GameService:
 
   def get_game(self, game_id):
     game = Game.objects.get(pk=game_id)
-    return game
+    return game, self.status
 
   def get_user(self, user_id):
     user = User.objects.get(pk=user_id)

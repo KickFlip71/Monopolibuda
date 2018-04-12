@@ -14,6 +14,11 @@ class WebsocketService:
       'payload': None
     }
 
+  def check(self, game_id, user_id):
+    record, status = GameService().get_game(game_id=game_id)
+    self.__prepare_response(record, status)
+    return self.response
+
   def join(self, game_id, user_id):
     record, status = GameService().join_player(game_id=game_id, user_id=user_id)
     self.__prepare_response(record, status)
