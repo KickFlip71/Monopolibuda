@@ -5,10 +5,11 @@
 
 {% block content %}
 <div class="jumbotron">
-		    <form action="." method="POST">
+	<form action="." method="POST">
         {{ form.as_p }}
         {% csrf_token %}
         <button class="btn btn-info">Login</button>
+        <a href="/accounts/signup" class="btn btn-info">Sign Up</a>
     </form>	
 </div>
 
