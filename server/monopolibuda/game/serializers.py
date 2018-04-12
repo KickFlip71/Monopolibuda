@@ -24,7 +24,7 @@ class PlayerSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Player
-    fields = ('id', 'user', 'balance', 'jailed', 'position', 'active', 'jail_free_card', 'move', 'property_set')
+    fields = ('id', 'user', 'balance', 'jailed', 'position', 'active', 'jail_free_card', 'move', 'property_set', 'order')
 
 class GameSerializer(serializers.ModelSerializer):
   player_set = PlayerSerializer(many=True) 
