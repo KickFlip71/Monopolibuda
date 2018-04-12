@@ -59,6 +59,7 @@ var getPreparedCard = function(property){
   }
 
   function updateButtons(move){
+    console.log(move)
     if(move == 2){
       $("#dice-button").prop('disabled', false)
       $("#end-round-button").prop('disabled', true)

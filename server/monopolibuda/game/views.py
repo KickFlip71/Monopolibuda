@@ -17,13 +17,16 @@ def index(request):
         "error": request.GET.get('error', '')
     })
 
+@login_required
 def board(request, game_id):
     code = request.GET.get('code', '')
-    game = Game.objects.filter(pk=game_id).first()
+    game = Game.objects.get(pk=game_id)
     current_user = request.user
 
     if current_user.id == game.host.id or game.code == code:
-        return render(request, 'board.html')        
+        return render(request, 'board.html', {
+            'game': game
+        })        
     else:
         return redirect('/' + "?error=Code Invalid")
 
@@ -42,10 +45,12 @@ def new_game(request):
 
 
 @login_required
-def client(request):
+def client(request, game_id):
     current_user = request.user
+    game = Game.objects.get(pk=game_id)
     return render(request, 'client.html', {
         "user": current_user,
+        "game": game
     })
 
 def signup(request):

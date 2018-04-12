@@ -13,6 +13,7 @@ $(function () {
 
   socket.onmessage = function (message) {
     data = JSON.parse(message.data)
+    console.log(data)
     command = data.command
     if(command=="check"){
       data.payload.player_set.forEach(player => {
