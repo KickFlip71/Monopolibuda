@@ -10,35 +10,31 @@ from game.providers import PlayerProvider
 class WebsocketService:
   def __init__(self):
     self.response = {
-      'error': 1000,
+      'status': 1000,
       'payload': None
     }
 
   def join(self, game_id, user_id):
-    record = GameService().join_player(game_id=game_id, user_id=user_id)
-    error = 1201
-    self.__prepare_response(record, error)
+    record, status = GameService().join_player(game_id=game_id, user_id=user_id)
+    self.__prepare_response(record, status)
     return self.response
 
   def leave(self, game_id, user_id):
-    record = GameService().remove_player(game_id=game_id, user_id=user_id)
-    error = 1202
-    self.__prepare_response(record, error)
+    record, status = GameService().remove_player(game_id=game_id, user_id=user_id)
+    self.__prepare_response(record, status)
     return self.response
   
   def skip(self, game_id, user_id):
-    record = GameService().skip_turn(game_id=game_id, user_id=user_id)
-    error = 1203
-    self.__prepare_response(record, error)
+    record, status = GameService().skip_turn(game_id=game_id, user_id=user_id)
+    self.__prepare_response(record, status)
     return self.response
   
   def move(self, game_id, user_id):
-    record = PositionService().move_player(game_id=game_id, user_id=user_id)
-    error = 1204
-    self.__prepare_response(record, error)
+    record, status = PositionService().move_player(game_id=game_id, user_id=user_id)
+    self.__prepare_response(record, status)
     return self.response
 
-  def __prepare_response(self, record, error = 1000):
+  def __prepare_response(self, record, status = 1000):
     serializers = {
       "Game": GameSerializer,
       "Player": PlayerSerializer,
@@ -50,5 +46,5 @@ class WebsocketService:
     serializer = serializers.get(serializer_name, GameSerializer)
     data = serializer(record).data
 
-    self.response['error'] = error
+    self.response['status'] = status
     self.response['payload'] = data

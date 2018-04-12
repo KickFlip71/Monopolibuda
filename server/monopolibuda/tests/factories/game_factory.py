@@ -10,5 +10,5 @@ class GameFactory(DjangoModelFactory):
     model = Game
 
   code = "QWERT" 
-  players_amount = 5 
+  players_amount = 4
   host = factory.SubFactory(UserFactory)

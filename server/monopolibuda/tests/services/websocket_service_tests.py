@@ -6,26 +6,30 @@ import pytest
 import pdb
 
 
+# SUCCESS TESTS
+
 @pytest.mark.django_db(transaction=True)
 def test_join_when_success():
   player = PlayerFactory()
   response = WebsocketService().join(player.game_id, player.user_id)
-  assert response['error'] == 1201
+  assert response['status'] == 1001
 
 @pytest.mark.django_db(transaction=True)
 def test_leave_player_when_success():
   player = PlayerFactory()
   response = WebsocketService().leave(player.game_id, player.user_id)
-  assert response['error'] == 1202
+  assert response['status'] == 1002
 
 @pytest.mark.django_db(transaction=True)
 def test_skip_when_success():
   player = PlayerFactory(move=1)
   response = WebsocketService().skip(player.game_id, player.user_id)
-  assert response['error'] == 1203
+  assert response['status'] == 1003
 
 @pytest.mark.django_db(transaction=True)
 def test_move_when_success():
   player = PlayerFactory(move=2)
   response = WebsocketService().move(player.game_id, player.user_id)
-  assert response['error'] == 1204
+  assert response['status'] == 1004
+
+# ERRORS TESTS

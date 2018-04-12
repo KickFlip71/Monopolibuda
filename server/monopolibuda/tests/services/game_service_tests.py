@@ -11,7 +11,7 @@ def test_add_game_sets_proper_players_amount():
     # GIVEN
     user = UserFactory()
     # WHEN
-    new_game = GameService().add_game(host_id=user.id, players_amount=5)
+    new_game, _ = GameService().add_game(host_id=user.id, players_amount=5)
     # THEN
     assert new_game.players_amount == 5
 
@@ -20,7 +20,7 @@ def test_add_game_creates_new_game():
     # GIVEN
     user = UserFactory()
     # WHEN
-    new_game = GameService().add_game(host_id=user.id, players_amount=5)
+    new_game, _ = GameService().add_game(host_id=user.id, players_amount=5)
     # THEN
     assert Game.objects.all().count() == 1
 
@@ -63,7 +63,7 @@ def test_set_player_defeated_changes_active_to_false():
     # GIVEN
     user = UserFactory()
     game = GameFactory()
-    player = GameService().join_player(game_id=game.id, user_id=user.id)
+    player, _ = GameService().join_player(game_id=game.id, user_id=user.id)
     # WHEN
     GameService().set_player_defeated(user_id=user.id, game_id=game.id)
     # THEN
@@ -94,7 +94,7 @@ def test_remove_player_removes_player_from_game():
 def test_skip_turn_sets_player_move_to_zero():
     # GIVEN
     player = PlayerFactory(move=1)
-    player = PlayerFactory(move=0, game_id=player.game_id)
+    player = PlayerFactory(move=0, game_id=player.game_id, order=1)
     # WHEN
     GameService().skip_turn(game_id=player.game_id, user_id=player.user_id)
     # THEN
