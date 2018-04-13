@@ -20,3 +20,4 @@ monopolibuda/db.sqlite3
 .vscode
 .pytest_cache/
 .pytest_cache
+dump.rdb

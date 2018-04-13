@@ -204,7 +204,6 @@
     $('#dice-button').click(function () {
         window.socket.send(JSON.stringify({
             "command": "move",
-            "player_id": "1"
         }));
     })
 

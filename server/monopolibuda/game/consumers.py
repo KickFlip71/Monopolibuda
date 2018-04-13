@@ -1,13 +1,10 @@
 from channels.generic.websocket import JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
 from rest_framework.renderers import JSONRenderer
-from game.serializers import GameSerializer, PlayerSerializer, PropertySerializer
-from game.services.game_service import GameService
 from game.services.websocket_service import WebsocketService
-from game.services.position_service import PositionService
 from random import randint
 
-from game.models import Game #TODO: remove
+from game.models import Game
 
 class GameConsumer(JsonWebsocketConsumer):
 
@@ -16,23 +13,23 @@ class GameConsumer(JsonWebsocketConsumer):
       self.close()
 
     code = self.__get_code()
-    game_id = self.__get_channel()
+    game_id = self.__get_game()
 
     if not self.__auth_player(game_id=game_id, code=code):
       self.close()
     
     async_to_sync(self.channel_layer.group_add)(
-      self.__get_channel(),
+      self.__get_game(),
       self.channel_name
     )
     self.accept()
 
   def receive_json(self, content):
-    game_id = self.scope["url_route"]["kwargs"]["game_id"]
+    game_id = self.__get_game()
     
     command = content.get("command", None)
     content['user'] = self.scope['user']
-    content['game'] = Game.objects.get(pk=game_id) # TODO: temporary hardcoded
+    content['game'] = Game.objects.get(pk=game_id)
     method = getattr(self, command, self.wrong_command)
     method(content)
 
@@ -86,7 +83,7 @@ class GameConsumer(JsonWebsocketConsumer):
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(
-      self.__get_channel(),
+      self.__get_game(),
       self.channel_name,
     )
     self.send_json({
@@ -98,7 +95,7 @@ class GameConsumer(JsonWebsocketConsumer):
   def send_response(self, response, broadcast=True):
     if(broadcast):
       async_to_sync(self.channel_layer.group_send)(
-      self.__get_channel(),
+      self.__get_game(),
       {
         "type": "broadcast",
         "response": response
@@ -118,7 +115,7 @@ class GameConsumer(JsonWebsocketConsumer):
       auth = True
     return auth
   
-  def __get_channel(self):
+  def __get_game(self):
     return self.scope["url_route"]["kwargs"]["game_id"]
   
   def __get_code(self):
