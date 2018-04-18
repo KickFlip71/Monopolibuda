@@ -47,6 +47,20 @@ class Charge(models.Model):
     four_apartments = models.IntegerField()
     five_apartments = models.IntegerField()
 
+    def get_charge_for_amount_of_buildings(self, buildings):
+        if buildings == 0:
+            return self.zero_apartments
+        elif buildings == 1:
+            return self.one_apartments
+        elif buildings == 2:
+            return self.two_apartments
+        elif buildings == 3:
+            return self.three_apartments
+        elif buildings == 4:
+            return self.four_apartments
+        else:
+            return self.five_apartments
+
 class Card(models.Model):
     name = models.CharField(max_length=50)
     cost = models.IntegerField()

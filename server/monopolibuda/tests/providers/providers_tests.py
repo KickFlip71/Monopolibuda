@@ -1,10 +1,11 @@
-from game.models import Player
-from game.providers import PlayerProvider
+from game.models import Player, Card, Charge, Property
+from game.providers import PlayerProvider, CardProvider, ChargeProvider, PropertyProvider
 from tests.factories.player_factory import PlayerFactory
 from tests.factories.card_factory import CardFactory
 from tests.factories.charge_factory import ChargeFactory
 from tests.factories.property_factory import PropertyFactory
-from game.providers import PropertyProvider
+from tests.factories.card_factory import CardFactory
+from tests.factories.charge_factory import ChargeFactory
 import pytest
 
 
@@ -30,7 +31,7 @@ def test_player_provider_returns_valid_player_when_there_are_more_players():
 
 
 @pytest.mark.django_db(transaction=True)
-def test_card_provider_returns_valid_card():
+def test_property_provider_returns_valid_property():
     # GIVEN
     player = PlayerFactory()
     property = PropertyFactory(player=player, game_id=player.game_id)
@@ -41,7 +42,7 @@ def test_card_provider_returns_valid_card():
 
 
 @pytest.mark.django_db(transaction=True)
-def test_card_provider_returns_valid_card_when_there_are_more_players():
+def test_property_provider_returns_valid_property_when_there_are_more_players():
     # GIVEN
     player = PlayerFactory()
     player2 = PlayerFactory(game_id=player.game_id, order=1)
@@ -52,3 +53,42 @@ def test_card_provider_returns_valid_card_when_there_are_more_players():
     # THEN
     assert provided_properties.first() == property
 
+@pytest.mark.django_db(transaction=True)
+def test_card_provider_returns_valid_card():
+    # GIVEN
+    card = CardFactory()
+    # WHEN
+    provided_card = CardProvider().get_card_with_position(1)
+    # THEN
+    assert provided_card == card
+
+@pytest.mark.django_db(transaction=True)
+def test_card_provider_returns_valid_card_when_there_are_more_cards():
+    # GIVEN
+    card = CardFactory()
+    card2 = CardFactory(position=2)
+    card4 = CardFactory(position=4)
+    # WHEN
+    provided_card = CardProvider().get_card_with_position(2)
+    # THEN
+    assert provided_card == card2
+
+@pytest.mark.django_db(transaction=True)
+def test_charge_provider_returns_valid_charge():
+    # GIVEN
+    charge = ChargeFactory(id=1)
+    # WHEN
+    provided_charge = ChargeProvider().get_charge(1)
+    # THEN
+    assert provided_charge == charge
+
+@pytest.mark.django_db(transaction=True)
+def test_charge_provider_returns_valid_card_when_there_are_more_charges():
+    # GIVEN
+    charge = ChargeFactory(id=1)
+    charge2 = ChargeFactory(pk=2)
+    charge4 = ChargeFactory(pk=4)
+    # WHEN
+    provided_charge = ChargeProvider().get_charge(4)
+    # THEN
+    assert provided_charge == charge4
