@@ -6,6 +6,7 @@ from tests.factories.charge_factory import ChargeFactory
 from tests.factories.property_factory import PropertyFactory
 from tests.factories.card_factory import CardFactory
 from tests.factories.charge_factory import ChargeFactory
+from tests.factories.game_factory import GameFactory
 import pytest
 
 
@@ -52,6 +53,28 @@ def test_property_provider_returns_valid_property_when_there_are_more_players():
     provided_properties = PropertyProvider().get_player_properties(game_id=player.game_id, player_id=player.id)
     # THEN
     assert provided_properties.first() == property
+
+@pytest.mark.django_db(transaction=True)
+def test_is_property_taken_returns_false():
+    # GIVEN
+    game = GameFactory()
+    card = CardFactory()
+    # WHEN
+    is_taken = PropertyProvider().is_property_taken(game_id=game.id, card_id=card.id)
+    # THEN
+    assert is_taken == False
+
+@pytest.mark.django_db(transaction=True)
+def test_is_property_taken_returns_true():
+    # GIVEN
+    game = GameFactory()
+    card = CardFactory()
+    player = PlayerFactory(game_id=game.id)
+    property = PropertyFactory(player=player, game_id=game.id, card_id=card.id)
+    # WHEN
+    is_taken = PropertyProvider().is_property_taken(game_id=game.id, card_id=card.id)
+    # THEN
+    assert is_taken == True
 
 @pytest.mark.django_db(transaction=True)
 def test_card_provider_returns_valid_card():
