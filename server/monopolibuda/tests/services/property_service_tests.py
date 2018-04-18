@@ -119,10 +119,10 @@ import pdb
 def test_buy_property_property_is_taken():
   # GIVEN
   game = GameFactory(players_amount=2)
-  player1 = PlayerFactory(game_id=game.id, position=1)
-  player2 = PlayerFactory(game_id=game.id)
+  player1 = PlayerFactory(game=game, position=1)
+  player2 = PlayerFactory(game=game)
   card = CardFactory(position=1)
-  property2 = PropertyFactory(player_id=player2.id, game_id=game.id, card_id=card.id)
+  property2 = PropertyFactory(player=player2, game=game, card=card)
   # WHEN
   retrieved_property, status = PropertyService().buy_property(game_id=game.id, user_id=player1.user_id)
   # THEN
