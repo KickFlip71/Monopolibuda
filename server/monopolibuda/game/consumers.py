@@ -1,7 +1,7 @@
 from channels.generic.websocket import JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
 from rest_framework.renderers import JSONRenderer
-from game.serializers import GameSerializer, PlayerSerializer, PropertySerializer
+from game.serializers import GameSerializer, PlayerSerializer, PropertySerializer, CardSerializer
 from game.services.game_service import GameService
 from game.services.websocket_service import WebsocketService
 from game.services.position_service import PositionService
@@ -65,16 +65,12 @@ class GameConsumer(JsonWebsocketConsumer):
     self.send_response(response)   
   
   def move(self, content):
-    response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)        
-    response['command'] = 'board_move'
-    print(response['command'])
-    self.send_response(response)
-    response['command'] = 'player_move'
-    self.send_response(response, broadcast=False)
-
-  def buy(self, content):
-    #TODO
-    pass
+    response_to_board = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)        
+    response_to_board['command'] = 'board_move'
+    self.send_response(response_to_board)
+    response_offer_to_player = WebsocketService().offer(game_id==content['game'].id, user_id=content['user'].id)
+    if response_offer_to_player['status']==1000:
+      self.send_response(response_offer_to_player, broadcast=False)
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(

@@ -17,6 +17,8 @@ Errors:
 2001 - Game not found
 2002 - Player not found
 2003 - User not found
-2004 - Player already exists
+2004 - Card does not belong to specific player
+2005 - Card not found
+2006 - Card is occupied
 2010 - Player.move != 1 (cannot skip)
 2011 - Player.move != 2 (cannot move)
