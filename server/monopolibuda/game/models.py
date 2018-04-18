@@ -26,18 +26,27 @@ class Player(models.Model):
         self.active = False
         self.save()
 
-    def update_balance(self):
-        money = 100
+    def update_balance(self, money):
         self.balance += money
+        self.save()
+
+    def reset_balance(self):
+        self.balance = 0
+        self.save()
+
+    def can_pay_tax(self, tax):
+        return self.balance >= tax
 
     def disable_move(self):
-        self.move=1
+        self.move = 1
+        self.save()
 
     def check_position(self):
         return self.position > 24
 
     def fix_position(self):
         self.position = self.position % 24
+        self.save()
 
 class Charge(models.Model):
     zero_apartments = models.IntegerField()

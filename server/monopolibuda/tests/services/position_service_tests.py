@@ -43,7 +43,7 @@ def test_move_player_player_cannot_move():
 def test_update_balance():
 	player = PlayerFactory()
 	old_balance = player.balance
-	player.update_balance()
+	player.update_balance(100)
 	assert old_balance != player.balance
 
 @pytest.mark.django_db(transaction=True)

@@ -31,20 +31,19 @@ class PropertyService:
 				charge = ChargeProvider().get_charge(card.charge_id)
 				property = PropertyProvider().get_property(game_id=game_id, player_id=player2.id, card_id=card.id)
 				tax_to_pay = charge.get_charge_for_amount_of_buildings(property.buildings)
-				if player1.balance >= tax_to_pay:
-					player1.balance -= tax_to_pay
-					player2.balance += tax_to_pay
+			
+				if player1.can_pay_tax(tax_to_pay):	
+					player1.update_balance(-tax_to_pay)
+					player2.update_balance(tax_to_pay)
 				else:
 					user1_properties = PropertyProvider().get_player_properties(game_id=game_id, player_id=player1.id)
 					for prop in user1_properties:
 						prop.delete()
 
-					player2.balance += player1.balance
-					player1.balance = 0
-					player1.active = False	
+					player2.update_balance(player1.balance)
+					player1.reset_balance()
+					player1.defeat()	
 
-				player1.save()
-				player2.save()
 				self.status = 1000
 				return [player1, player2], self.status
 			else:
