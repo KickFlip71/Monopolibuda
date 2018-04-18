@@ -14,10 +14,13 @@ class PropertyProvider:
     property = Property.objects.get(game_id=game_id, player_id=player_id, card_id=card_id)
     return property
 
+  def check_if_exist(self, game_id, card_id):
+    return Property.objects.filter(game_id=game_id,card_id=card_id).exists()
+
 class CardProvider:
   def get_card_with_position(self, position):
-    card = Card.objects.get(position=position)
-    return card
+    card = Card.objects.filter(position=position)
+    return card[0] if card else None
 
 class ChargeProvider:
   def get_charge(self, charge_id):

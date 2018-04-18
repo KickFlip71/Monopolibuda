@@ -5,7 +5,7 @@ from tests.factories.card_factory import CardFactory
 from tests.factories.charge_factory import ChargeFactory
 from tests.factories.property_factory import PropertyFactory
 from tests.factories.card_factory import CardFactory
-from tests.factories.charge_factory import ChargeFactory
+from tests.factories.game_factory import GameFactory
 import pytest
 
 
@@ -54,6 +54,39 @@ def test_property_provider_returns_valid_property_when_there_are_more_players():
     assert provided_properties.first() == property
 
 @pytest.mark.django_db(transaction=True)
+def test_property_provider_returns_if_property_with_card_id_exist():
+    # GIVEN
+    game = GameFactory()
+    card = CardFactory()
+    property = PropertyFactory(game_id=game.id,card_id=card.id)
+    # WHEN
+    if_exist = PropertyProvider().check_if_exist(game_id=game.id,card_id=card.id)
+    # THEN
+    assert if_exist == True
+
+@pytest.mark.django_db(transaction=True)
+def test_property_provider_returns_if_property_with_card_id_not_exist():
+    # GIVEN
+    game = GameFactory()
+    property = PropertyFactory(game_id=game.id,card_id=1)
+    # WHEN
+    if_exist = PropertyProvider().check_if_exist(game_id=game.id,card_id=2)
+    # THEN
+    assert if_exist == False
+
+@pytest.mark.django_db(transaction=True)
+def test_property_provider_returns_if_property_with_card_id_not_exist_in_specified_game():
+    # GIVEN
+    game = GameFactory()
+    game2 = GameFactory()
+    card = CardFactory()
+    property = PropertyFactory(game_id=game2.id,card_id=card.id)
+    # WHEN
+    if_exist = PropertyProvider().check_if_exist(game_id=game.id,card_id=card.id)
+    # THEN
+    assert if_exist == False
+
+@pytest.mark.django_db(transaction=True)
 def test_card_provider_returns_valid_card():
     # GIVEN
     card = CardFactory()
@@ -61,6 +94,15 @@ def test_card_provider_returns_valid_card():
     provided_card = CardProvider().get_card_with_position(1)
     # THEN
     assert provided_card == card
+
+@pytest.mark.django_db(transaction=True)
+def test_card_provider_returns_no_card():
+    # GIVEN
+    card = CardFactory()
+    # WHEN
+    provided_card = CardProvider().get_card_with_position(0)
+    # THEN
+    assert provided_card == None
 
 @pytest.mark.django_db(transaction=True)
 def test_card_provider_returns_valid_card_when_there_are_more_cards():

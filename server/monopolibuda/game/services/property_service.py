@@ -52,6 +52,9 @@ class PropertyService:
 		else:
 			return [], self.status
 
+	def buy_property(self, game_id, user_id, position):
+		#TODO new property with player_id, return property and status
+		pass
 
 	def __player_exists(self, player):
 		result = player != None
