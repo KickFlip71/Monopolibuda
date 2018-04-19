@@ -1,6 +1,7 @@
 from game.services.game_service import GameService
 from game.services.position_service import PositionService
 from game.services.card_service import CardService
+from game.services.property_service import PropertyService
 from game.serializers import GameSerializer
 from game.serializers import PlayerSerializer
 from game.serializers import PropertySerializer
@@ -43,6 +44,11 @@ class WebsocketService:
 
   def offer(self, game_id, user_id):
     record, status = CardService().get_available_card_to_buy(game_id=game_id,user_id=user_id)
+    self.__prepare_response(record, status)
+    return self.response
+
+  def tax(self, game_id, user_id):
+    record, status = PropertyService().pay_tax(game_id=game_id, user_id=user_id)
     self.__prepare_response(record, status)
     return self.response
 

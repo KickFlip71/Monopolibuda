@@ -57,12 +57,12 @@ class GameConsumer(JsonWebsocketConsumer):
     response['command'] = 'player_join'
     self.send_response(response, broadcast=False)
 
-
   def skip(self, content):
     response = WebsocketService().skip(game_id=content['game'].id, user_id=content['user'].id)
-    response['command'] = 'board_skip'
-    self.send_response(response)
     response['command'] = 'player_skip'
+    self.send_response(response)
+    response_skip_turn = WebsocketService().tax(game_id=content['game'].id, user_id=content['user'].id)
+    response['command'] = 'player_tax'
     self.send_response(response)
 
   def leave(self, content):

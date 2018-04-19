@@ -41,6 +41,16 @@ def test_offer_when_success():
   response = WebsocketService().offer(player.game_id, player.user_id)
   assert response['status'] == 1000
 
+@pytest.mark.django_db(transaction=True)
+def test_tax_when_success():
+  game = GameFactory()
+  player = PlayerFactory(game=game, position=1)
+  card = CardFactory(position=1)
+  property = PropertyFactory(player=player, game=game, card=card)
+  response = WebsocketService().tax(player.game_id, player.user_id)
+  assert response['status'] == 1000
+
+
 # ERRORS TESTS
 
 @pytest.mark.django_db(transaction=True)
@@ -57,3 +67,16 @@ def test_offer_when_card_not_exists():
   player = PlayerFactory(position=0)
   response = WebsocketService().offer(player.game_id, player.user_id)
   assert response['status'] == 2005
+
+@pytest.mark.django_db(transaction=True)
+def test_tax_no_card():
+  player = PlayerFactory()
+  response = WebsocketService().tax(player.game_id, player.user_id)
+  assert response['status'] == 2004
+
+@pytest.mark.django_db(transaction=True)
+def test_tax_property_does_not_exists():
+  player = PlayerFactory(position=1)
+  card = CardFactory(position=1)
+  response = WebsocketService().tax(player.game_id, player.user_id)
+  assert response['status'] == 2007

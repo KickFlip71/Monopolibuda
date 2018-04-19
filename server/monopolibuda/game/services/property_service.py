@@ -38,15 +38,15 @@ class PropertyService:
 						player.defeat()	
 
 					self.status = 1000
-					return [player, player2], self.status
+					return player, self.status
 				else:
 					self.status = 2007
-					return [], self.status
+					return None, self.status
 			else:
 				self.status = 2004
-				return [], self.status	
+				return None, self.status	
 		else:
-			return [], self.status
+			return None, self.status
 
 	def buy_property(self, game_id, user_id):
 		player = PlayerProvider().get_player(game_id=game_id, user_id=user_id)
