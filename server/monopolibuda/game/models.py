@@ -42,7 +42,7 @@ class Player(models.Model):
         self.save()
 
     def check_position(self):
-        return self.position > 24
+        return self.position >= 24
 
     def fix_position(self):
         self.position = self.position % 24

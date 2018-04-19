@@ -19,7 +19,7 @@ class PositionService:
 	def change_player_position(self, player):
 		money = 100
 		self.status = 1004
-		rolled_dice = randint(1,7)
+		rolled_dice = randint(1,6)
 		player.position += rolled_dice
 		if player.check_position():
 			player.update_balance(money)
