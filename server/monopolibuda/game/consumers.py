@@ -1,6 +1,7 @@
 from channels.generic.websocket import JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
 from rest_framework.renderers import JSONRenderer
+from game.services.game_service import GameService
 from game.services.websocket_service import WebsocketService
 from random import randint
 
@@ -72,14 +73,15 @@ class GameConsumer(JsonWebsocketConsumer):
   def move(self, content):
     response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)        
     response['command'] = 'board_move'
-    print(response['command'])
     self.send_response(response)
+    response_offer_to_player = WebsocketService().offer(game_id=content['game'].id, user_id=content['user'].id)
+    response_offer_to_player['command'] = 'player_offer'
+    print("PRE OFFER", response_offer_to_player['status'])
+    if response_offer_to_player['status']==1000:
+      print("OFFER")
+      self.send_response(response_offer_to_player, broadcast=False)
     response['command'] = 'player_move'
     self.send_response(response, broadcast=False)
-
-  def buy(self, content):
-    #TODO
-    pass
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(

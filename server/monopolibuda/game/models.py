@@ -25,7 +25,28 @@ class Player(models.Model):
     def defeat(self):
         self.active = False
         self.save()
-        
+
+    def update_balance(self, money):
+        self.balance += money
+        self.save()
+
+    def reset_balance(self):
+        self.balance = 0
+        self.save()
+
+    def can_pay_tax(self, tax):
+        return self.balance >= tax
+
+    def disable_move(self):
+        self.move = 1
+        self.save()
+
+    def check_position(self):
+        return self.position >= 24
+
+    def fix_position(self):
+        self.position = self.position % 24
+        self.save()
 
 class Charge(models.Model):
     zero_apartments = models.IntegerField()
@@ -34,6 +55,20 @@ class Charge(models.Model):
     three_apartments = models.IntegerField()
     four_apartments = models.IntegerField()
     five_apartments = models.IntegerField()
+
+    def get_charge_for_amount_of_buildings(self, buildings):
+        if buildings == 0:
+            return self.zero_apartments
+        elif buildings == 1:
+            return self.one_apartments
+        elif buildings == 2:
+            return self.two_apartments
+        elif buildings == 3:
+            return self.three_apartments
+        elif buildings == 4:
+            return self.four_apartments
+        else:
+            return self.five_apartments
 
 class Card(models.Model):
     name = models.CharField(max_length=50)
@@ -47,8 +82,8 @@ class Card(models.Model):
 
 class Property(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    buildings = models.IntegerField()
-    deposited = models.BooleanField()
+    buildings = models.IntegerField(default=0)
+    deposited = models.BooleanField(default=False)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
 

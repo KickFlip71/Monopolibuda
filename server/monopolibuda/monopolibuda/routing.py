@@ -24,7 +24,6 @@ from channels.auth import AuthMiddlewareStack
 from game.consumers import GameConsumer
 
 application = ProtocolTypeRouter({
-
     # WebSocket chat handler
     "websocket": AuthMiddlewareStack(
         URLRouter([

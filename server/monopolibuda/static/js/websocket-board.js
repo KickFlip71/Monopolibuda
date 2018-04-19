@@ -1,5 +1,6 @@
 $(function () {
   // Correctly decide between ws:// and wss://
+  var current_player = null  
   var code = getUrlParameter('code')
   var game_id = getGameId()
   var websocket_channel = "/game/stream/"+game_id+"/"+code
