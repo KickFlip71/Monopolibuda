@@ -76,12 +76,16 @@ class GameConsumer(JsonWebsocketConsumer):
     self.send_response(response)
     response_offer_to_player = WebsocketService().offer(game_id=content['game'].id, user_id=content['user'].id)
     response_offer_to_player['command'] = 'player_offer'
-    print("PRE OFFER", response_offer_to_player['status'])
     if response_offer_to_player['status']==1000:
-      print("OFFER")
       self.send_response(response_offer_to_player, broadcast=False)
     response['command'] = 'player_move'
     self.send_response(response, broadcast=False)
+
+  def buy(self, content):
+    response = WebsocketService().buy(game_id=content['game'].id, user_id=content['user'].id)
+    response['command'] = 'player_join'
+    if response['status']==1000:
+      self.send_response(response, broadcast=False)
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(
