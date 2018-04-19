@@ -1,11 +1,12 @@
 from game.models import Player
 from game.providers import PlayerProvider
-from random import randint
-
+from django.conf import settings
+from game.utils import Dice
 
 class PositionService:
-	def __init__(self):
+	def __init__(self, dice=Dice()):
 		self.status = 1000
+		self.dice = dice
 		
 	def move_player(self, game_id, user_id):
 		player = PlayerProvider().get_player(game_id, user_id)
@@ -14,12 +15,14 @@ class PositionService:
 				player = self.decrement_player_jail(player)
 			else:
 				player = self.change_player_position(player)
+				if self.__player_on_jail_position(player):
+					self.__move_player_to_jail(player)
 		return player, self.status
 
 	def change_player_position(self, player):
-		money = 100
+		money = settings.DEFAULT_GAME_SETTINGS['start_bonus']
 		self.status = 1004
-		rolled_dice = randint(1,6)
+		rolled_dice = self.dice.roll()
 		player.position += rolled_dice
 		if player.check_position():
 			player.update_balance(money)
@@ -29,19 +32,21 @@ class PositionService:
 		return player
 
 	def decrement_player_jail(self, player):
-		self.status = 1003
+		self.status = 1997
 		player.jailed -= 1
-		player.move = 0
-		player.save()
+		player.skip_turn()		
 		return player
 
-	def move_player_to_jail(self, game_id, user_id):
-		self.status = 1003
-		player = PlayerProvider().get_player(game_id, user_id)
+	def __player_on_jail_position(self, player):
+		return player.position == settings.DEFAULT_GAME_SETTINGS['go_to_jail_position']
+
+	def __move_player_to_jail(self, player):
+		self.status = 1997
 		if self.__player_exists(player):
-			player.jailed = 3
+			player.jailed = settings.DEFAULT_GAME_SETTINGS['jail_turns']
+			player.position = settings.DEFAULT_GAME_SETTINGS['jail_position']
 			player.move = 0
-			player.save()
+			player.skip_turn()
 		return player, self.status
 
 	def __player_exists(self, player):

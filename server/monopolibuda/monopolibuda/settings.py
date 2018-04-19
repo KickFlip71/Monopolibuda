@@ -41,7 +41,7 @@ SECRET_KEY = '(mxw++bn2rp4$7fb1!$q%l(_5j9sue_tubgf=q509q+^z%evcr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','192.168.1.111', '10.182.20.138']
+ALLOWED_HOSTS = ['localhost','192.168.1.111', '10.182.20.138', '192.168.1.16']
 
 
 # Application definition
@@ -158,3 +158,13 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+DEFAULT_GAME_SETTINGS = {
+    'field_count': 24,
+    'start_money': 10000,
+    'start_bonus': 2000,
+    'jail_position': 6,
+    'go_to_jail_position': 18,
+    'jail_turns': 3,
+    'code_len': 4
+}

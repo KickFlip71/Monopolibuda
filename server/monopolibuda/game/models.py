@@ -1,10 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
+import string
+from random import *
 
 class Game(models.Model):
     code = models.CharField(max_length=50)
     players_amount = models.IntegerField()
     host = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        allchar = string.ascii_letters
+        self.code = "".join(choice(allchar) for x in range(settings.DEFAULT_GAME_SETTINGS['code_len'])).upper()
+        super(Game, self).save(*args, **kwargs)
 
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -21,6 +29,13 @@ class Player(models.Model):
         players_count = Player.objects.filter(game_id=self.game_id).count()
         next_player_order = (self.order + 1) % players_count
         return Player.objects.filter(game_id=self.game_id, order=next_player_order).first()
+
+    def skip_turn(self):
+        next_player = self.next_player()
+        self.move = 0
+        next_player.move = 2
+        self.save()
+        next_player.save()
 
     def defeat(self):
         self.active = False
@@ -42,10 +57,10 @@ class Player(models.Model):
         self.save()
 
     def check_position(self):
-        return self.position >= 24
+        return self.position >= settings.DEFAULT_GAME_SETTINGS['field_count']
 
     def fix_position(self):
-        self.position = self.position % 24
+        self.position = self.position % settings.DEFAULT_GAME_SETTINGS['field_count']
         self.save()
 
 class Charge(models.Model):
