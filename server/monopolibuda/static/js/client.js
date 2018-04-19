@@ -1,5 +1,4 @@
 var getPreparedCard = function(property){
-    debugger;
     var template = $('.template').clone();
     var cardHeader = template.find('.card-header');
     var title = template.find('.title');
