@@ -82,8 +82,8 @@ class Card(models.Model):
 
 class Property(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    buildings = models.IntegerField()
-    deposited = models.BooleanField()
+    buildings = models.IntegerField(default=0)
+    deposited = models.BooleanField(default=False)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
 

@@ -2,17 +2,17 @@ from game.models import Property, Game, User, Player, Card, Chance, Charge
 
 class PlayerProvider:
   def get_player(self, game_id, user_id):
-    player = Player.objects.filter(game_id=game_id, user_id=user_id).first()
-    return player
+    return Player.objects.filter(game_id=game_id, user_id=user_id).first()
 
 class PropertyProvider:
   def get_player_properties(self, game_id, player_id):
-    properties = Property.objects.filter(game_id=game_id, player_id=player_id)
-    return properties
+    return Property.objects.filter(game_id=game_id, player_id=player_id)
   
   def get_property(self, game_id, player_id, card_id):
-    property = Property.objects.get(game_id=game_id, player_id=player_id, card_id=card_id)
-    return property
+    return Property.objects.get(game_id=game_id, player_id=player_id, card_id=card_id)
+
+  def is_property_taken(self, game_id, card_id):
+    return Property.objects.filter(game_id=game_id, card_id=card_id).exists()
 
   def check_if_exist(self, game_id, card_id):
     return Property.objects.filter(game_id=game_id,card_id=card_id).exists()
@@ -24,5 +24,4 @@ class CardProvider:
 
 class ChargeProvider:
   def get_charge(self, charge_id):
-    charge = Charge.objects.get(pk=charge_id)
-    return charge
+    return Charge.objects.get(pk=charge_id)
