@@ -5,26 +5,26 @@ var getPreparedCard = function(property){
     var cardBody = template.find('.collapse');
 
     template.removeClass('template');
-    cardHeader.addClass('color-group-'+property.group_number);
-    title.html(property.name);
-    title.attr('data-target', '.card-'+property.card_id+'.collapse');
-    template.attr('id', 'card-'+property.card_id);
-    cardBody.addClass('card-'+property.card_id);
+    cardHeader.addClass('color-group-'+property.card.group_number);
+    title.html(property.card.name);
+    title.attr('data-target', '.card-'+property.card.id+'.collapse');
+    template.attr('id', 'card-'+property.card.id);
+    cardBody.addClass('card-'+property.card.id);
 
     if (property.deposited){
       template.find('.deposited').removeClass('hidden');
     }
     template.find('.buildings').html(property.buildings);
-    template.find('.deposit_value').html(property.deposit_value);
-    template.find('.apartment_cost').html(property.apartment_cost);
-    template.find('.hotel_cost').html(property.hotel_cost);
-    template.find('.a0').html(property.charge.zero_apartments);
-    template.find('.a1').html(property.charge.one_apartments);
-    template.find('.a2').html(property.charge.two_apartments);
-    template.find('.a3').html(property.charge.three_apartments);
-    template.find('.a4').html(property.charge.four_apartments);
-    template.find('.a5').html(property.charge.five_apartments);
-    template.find('.cost').html(property.cost);
+    template.find('.deposit_value').html(property.card.deposit_value);
+    template.find('.apartment_cost').html(property.card.apartment_cost);
+    template.find('.hotel_cost').html(property.card.hotel_cost);
+    template.find('.a0').html(property.card.charge.zero_apartments);
+    template.find('.a1').html(property.card.charge.one_apartments);
+    template.find('.a2').html(property.card.charge.two_apartments);
+    template.find('.a3').html(property.card.charge.three_apartments);
+    template.find('.a4').html(property.card.charge.four_apartments);
+    template.find('.a5').html(property.card.charge.five_apartments);
+    template.find('.cost').html(property.card.cost);
     
     return template;
   }
