@@ -102,3 +102,27 @@ def test_transfer_tax_between_players_fails_player_does_not_have_enough_money():
   assert players[0].balance == 0 and players[1].balance == (player2.balance + player1_balance)
   assert len(PropertyProvider().get_player_properties(game_id=game.id, player_id=player1.id)) == 0
 
+@pytest.mark.django_db(transaction=True)
+def test_buy_property_property_is_not_taken():
+  # GIVEN
+  player = PlayerFactory(position=1)
+  card = CardFactory(position=1)
+  # WHEN
+  property, status = PropertyService().buy_property(game_id=player.game_id, user_id=player.user_id)
+  # THEN
+  assert property != None
+  assert status == 1000
+
+@pytest.mark.django_db(transaction=True)
+def test_buy_property_property_is_taken():
+  # GIVEN
+  game = GameFactory(players_amount=2)
+  player1 = PlayerFactory(game=game, position=1)
+  player2 = PlayerFactory(game=game)
+  card = CardFactory(position=1)
+  property2 = PropertyFactory(player=player2, game=game, card=card)
+  # WHEN
+  retrieved_property, status = PropertyService().buy_property(game_id=game.id, user_id=player1.user_id)
+  # THEN
+  assert retrieved_property == None
+
