@@ -1,16 +1,14 @@
 from game.models import Game, Player, User
 from game.providers import PlayerProvider
-import string
 from random import *
 from django.core import serializers
-
+from django.conf import settings
 class GameService:
   def __init__(self):
     self.status = 1000
 
   def add_game(self, host_id, players_amount):
-    code = self.generate_code(code_length=5)
-    game = Game(code=code, players_amount=players_amount, host_id=host_id)
+    game = Game(players_amount=players_amount, host_id=host_id)
     game.save()
     return game, self.status
 
@@ -20,11 +18,8 @@ class GameService:
     game = Game.objects.get(pk=game_id)
 
     if self.__player_exists(player) and self.__skip_constraint(player):
-      player.move = 0
-      player.save()
-      next_player = player.next_player()
-      next_player.move = 2
-      next_player.save()
+      player.skip_turn()
+
     return game, self.status
 
   def join_player(self, user_id, game_id):
@@ -63,7 +58,7 @@ class GameService:
     player = Player(
               user_id=user_id, 
               game_id=game_id,
-              balance=3000,
+              balance=settings.DEFAULT_GAME_SETTINGS['start_money'],
               jailed=0,
               position=0,
               active=True,
@@ -90,12 +85,6 @@ class GameService:
     players_amount = Player.objects.filter(game_id=game_id).count()
     allowed_players_amount = Game.objects.filter(id=game_id).first().players_amount
     return players_amount < allowed_players_amount
-
-  # TODO: Make it model method instead
-  def generate_code(self, code_length):
-    allchar = string.ascii_letters
-    code = "".join(choice(allchar) for x in range(code_length)).upper()
-    return code
 
 
     
