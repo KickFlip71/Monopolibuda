@@ -75,6 +75,8 @@ def test_is_property_taken_returns_true():
     is_taken = PropertyProvider().is_property_taken(game_id=game.id, card_id=card.id)
     # THEN
     assert is_taken == True
+
+@pytest.mark.django_db(transaction=True)
 def test_property_provider_returns_if_property_with_card_id_exist():
     # GIVEN
     game = GameFactory()

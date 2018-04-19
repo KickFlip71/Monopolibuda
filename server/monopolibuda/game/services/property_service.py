@@ -55,13 +55,16 @@ class PropertyService:
 		player = PlayerProvider().get_player(game_id=game_id, user_id=user_id)
 		if self.__player_exists(player):
 			card = CardProvider().get_card_with_position(player.position)
-			if not PropertyProvider().is_property_taken(game_id, card.id):
-				self.status = 1000
-				property = Property(player_id=player.id, game_id=player.game_id, card_id=card.id)
-				property.save()
-				return property, self.status
+			if card != None:
+				if not PropertyProvider().is_property_taken(game_id, card.id):
+					self.status = 1000
+					property = Property(player_id=player.id, game_id=player.game_id, card_id=card.id)
+					property.save()
+					return property, self.status
+				else:
+					self.status = 2006
 			else:
-				self.status = 2001 #todo
+				self.status = 2005
 		else:
 			self.status = 2002
 		return None, self.status
