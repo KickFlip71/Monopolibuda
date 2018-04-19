@@ -11,29 +11,30 @@ $(function () {
   
     socket.onmessage = function (message) {
       data = JSON.parse(message.data)
-      command = data.command
+      command = data.command;
+      debugger;
       if(data['command'].slice(0,7) == "player_")
-        success = handleError(data['status'])
+        success = handleError(data['status']);
       if(command == "player_join" && success){
-        current_player = data.payload.order
+        current_player = data.payload.order;
         user_id = data.payload.user.id;
         //{balance, properties: {[card_id,buildings,deposited,name,cost,apartment_cost,hotel_cost,deposit_value,group,a0,a1,a2,a3,a4,a5]}}
-        updateBalance(data.payload.balance)
-        updateButtons(data.payload.move)
+        updateBalance(data.payload.balance);
+        updateButtons(data.payload.move);
         data.payload.property_set.forEach(property => {
           $('#properties').append(getPreparedCard(property));
         });
       }
       else if(command=="player_offer" && success){
-        showPreparedPropertyBuyModal(data.payload.offer);
+        showPreparedPropertyBuyModal(data.payload);
       }
-      else if(command=="player_move"){
-        updateBalance(data.payload.balance)
-        updateButtons(data.payload.move)
+      else if(command=="player_move" && success){
+        updateBalance(data.payload.balance);
+        updateButtons(data.payload.move);
       }
-      else if(command=="player_skip"){
-        player = findPlayer(data.payload.player_set, current_player)
-        updateButtons(player.move)
+      else if(command=="player_skip" && success){
+        player = findPlayer(data.payload.player_set, current_player);
+        updateButtons(player.move);
       }
       else
         console.log("Got websocket message " + data);

@@ -77,7 +77,7 @@ def test_get_game_returns_proper_player():
     # WHEN
     get_game = GameService().get_game(game.id)
     # THEN
-    assert get_game == game
+    assert get_game == (game, 1000)
 
 @pytest.mark.django_db(transaction=True)
 def test_remove_player_removes_player_from_game():
