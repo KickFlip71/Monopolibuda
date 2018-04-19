@@ -13,8 +13,7 @@ class PropertyService:
 			return PropertyProvider().get_player_properties(game_id=game_id, player_id=player.id), self.status
 		return [], self.status
 
-	def transfer_tax_between_players(self, game_id, user_id):
-		# player1 pays tax to player2
+	def pay_tax(self, game_id, user_id):
 		player = PlayerProvider().get_player(game_id=game_id, user_id=user_id)
 		if self.__player_exists(player):
 			card = CardProvider().get_card_with_position(player.position)

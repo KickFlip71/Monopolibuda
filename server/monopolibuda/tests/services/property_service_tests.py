@@ -64,7 +64,7 @@ def test_get_charge_for_buildings():
   assert tax_to_pay == tax
 
 @pytest.mark.django_db(transaction=True)
-def test_transfer_tax_between_players():
+def test_pay_tax():
   # GIVEN
   tax = 600
   game = GameFactory(players_amount=2)
@@ -74,14 +74,14 @@ def test_transfer_tax_between_players():
   card = CardFactory(charge=charge)
   property = PropertyFactory(player=player2, game=game, card=card, buildings=1)
   # WHEN
-  players, status = PropertyService().transfer_tax_between_players(game_id=player1.game_id, user_id=player1.user_id)
+  players, status = PropertyService().pay_tax(game_id=player1.game_id, user_id=player1.user_id)
   # THEN
   assert status == 1000
   assert len(players) == 2
   assert players[0].balance == (player1.balance-tax) and players[1].balance == (player2.balance + tax)
 
 @pytest.mark.django_db(transaction=True)
-def test_transfer_tax_between_players_fails_player_does_not_have_enough_money():
+def test_pay_tax_fails_player_does_not_have_enough_money():
   # GIVEN
   tax = 3300
   player1_balance = 1000
@@ -94,7 +94,7 @@ def test_transfer_tax_between_players_fails_player_does_not_have_enough_money():
   property = PropertyFactory(player=player2, game=game, card=card, buildings=1)
   property_user1 = PropertyFactory(player=player1, game=game, card=card_user1, buildings=1)
   # WHEN
-  players, status = PropertyService().transfer_tax_between_players(game_id=player1.game_id, user_id=player1.user_id)
+  players, status = PropertyService().pay_tax(game_id=player1.game_id, user_id=player1.user_id)
   # THEN
   assert status == 1000
   assert len(players) == 2
