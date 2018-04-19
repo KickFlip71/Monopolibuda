@@ -14,9 +14,13 @@ class PropertyProvider:
   def is_property_taken(self, game_id, card_id):
     return Property.objects.filter(game_id=game_id, card_id=card_id).exists()
 
+  def check_if_exist(self, game_id, card_id):
+    return Property.objects.filter(game_id=game_id,card_id=card_id).exists()
+
 class CardProvider:
   def get_card_with_position(self, position):
-    return Card.objects.get(position=position)
+    card = Card.objects.filter(position=position)
+    return card[0] if card else None
 
 class ChargeProvider:
   def get_charge(self, charge_id):
