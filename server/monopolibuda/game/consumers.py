@@ -74,6 +74,7 @@ class GameConsumer(JsonWebsocketConsumer):
     response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)    
     response['command'] = 'board_move'
     self.send_response(response)
+
     if response['status'] != 1997:    
       response_offer_to_player = WebsocketService().offer(game_id=content['game'].id, user_id=content['user'].id)
       response_offer_to_player['command'] = 'player_offer'
@@ -85,6 +86,13 @@ class GameConsumer(JsonWebsocketConsumer):
       response = WebsocketService().check(content['game'].id, content['user'].id)
       response['command'] = 'player_skip'
       self.send_response(response)
+
+
+  def buy(self, content):
+    response = WebsocketService().buy(game_id=content['game'].id, user_id=content['user'].id)
+    response['command'] = 'player_join'
+    if response['status']==1000:
+      self.send_response(response, broadcast=False)
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(

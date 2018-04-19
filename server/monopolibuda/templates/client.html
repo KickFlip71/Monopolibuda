@@ -146,7 +146,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Don't buy</button>
-                <button type="button" class="btn btn-success">Buy</button>
+                <button id="buy-card-button" type="button" class="btn btn-success" data-dismiss="modal">Buy</button>
             </div>
         </div>
     </div>
@@ -187,7 +187,12 @@
         window.socket.send(JSON.stringify({
             "command": "skip"
         }));
-    })
+    });
+    $('#buy-card-button').click(function () {
+        window.socket.send(JSON.stringify({
+            "command": "buy"
+        }));
+    });
 
 
 

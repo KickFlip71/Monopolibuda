@@ -40,6 +40,13 @@ def test_offer_when_success():
   card = CardFactory(position=1)
   response = WebsocketService().offer(player.game_id, player.user_id)
   assert response['status'] == 1000
+  
+@pytest.mark.django_db(transaction=True)
+def test_buy_when_success():
+  player = PlayerFactory(position=1)
+  card = CardFactory(position=1)
+  response = WebsocketService().buy(player.game_id, player.user_id)
+  assert response['status'] == 1000
 
 # ERRORS TESTS
 

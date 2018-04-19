@@ -18,7 +18,8 @@ class PropertyService:
 		player1 = PlayerProvider().get_player(game_id=game_id, user_id=user1_id)
 		player2 = PlayerProvider().get_player(game_id=game_id, user_id=user2_id)
 		if self.__player_exists(player1) and self.__player_exists(player2):
-			user2_properties = PropertyProvider().get_player_properties(game_id=game_id, player_id=player2.id)
+			user2_properties = PropertyProvider().get_player_properties(
+			    game_id=game_id, player_id=player2.id)
 
 			cards = []
 			for prop in user2_properties:
@@ -28,28 +29,31 @@ class PropertyService:
 
 			if card in cards:
 				charge = ChargeProvider().get_charge(card.charge_id)
-				property = PropertyProvider().get_property(game_id=game_id, player_id=player2.id, card_id=card.id)
+				property = PropertyProvider().get_property(
+				    game_id=game_id, player_id=player2.id, card_id=card.id)
 				tax_to_pay = charge.get_charge_for_amount_of_buildings(property.buildings)
-			
-				if player1.can_pay_tax(tax_to_pay):	
+
+				if player1.can_pay_tax(tax_to_pay):
 					player1.update_balance(-tax_to_pay)
 					player2.update_balance(tax_to_pay)
 				else:
-					user1_properties = PropertyProvider().get_player_properties(game_id=game_id, player_id=player1.id)
+					user1_properties = PropertyProvider().get_player_properties(
+					    game_id=game_id, player_id=player1.id)
 					for prop in user1_properties:
 						prop.delete()
 
 					player2.update_balance(player1.balance)
 					player1.reset_balance()
-					player1.defeat()	
+					player1.defeat()
 
 				self.status = 1000
 				return [player1, player2], self.status
 			else:
 				self.status = 2004
-				return [], self.status	
+				return [], self.status
 		else:
 			return [], self.status
+
 
 	def buy_property(self, game_id, user_id):
 		player = PlayerProvider().get_player(game_id=game_id, user_id=user_id)
@@ -58,9 +62,11 @@ class PropertyService:
 			if card != None:
 				if not PropertyProvider().is_property_taken(game_id, card.id):
 					self.status = 1000
-					property = Property(player_id=player.id, game_id=player.game_id, card_id=card.id)
+					property = Property(player_id=player.id,game_id=player.game_id, card_id=card.id)
 					property.save()
-					return property, self.status
+					player.update_balance(-card.cost)
+					player.save()
+					return player, self.status
 				else:
 					self.status = 2006
 			else:
