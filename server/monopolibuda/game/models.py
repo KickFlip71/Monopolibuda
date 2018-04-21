@@ -52,6 +52,9 @@ class Player(models.Model):
     def can_pay_tax(self, tax):
         return self.balance >= tax
 
+    def is_bankrupt(self):
+        return self.balance < 0
+
     def disable_move(self):
         self.move = 1
         self.save()

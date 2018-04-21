@@ -41,9 +41,9 @@ $(function () {
             player = findPlayer(data.payload.player_set, current_player);
             updateButtons(player.move);
         }
-        else if(command=="player" && success){
-            debugger;
-            $('#properties').append(getPreparedCard(data.payload));
+        else if(command=="player_end" && success){
+            debugger
+            window.location.replace("/");
         }
         else
             console.log("Got websocket message " + data);
