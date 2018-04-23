@@ -93,6 +93,8 @@ class GameConsumer(JsonWebsocketConsumer):
     response['command'] = 'player_join'
     if response['status']==1000:
       self.send_response(response, broadcast=False)
+      response['command'] = 'board_join'
+      self.send_response(response)
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(

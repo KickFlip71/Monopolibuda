@@ -53,18 +53,19 @@
     width: 3vh;
     height: 3vh;
     border-radius: 50%;
-    position: absolute;
-    border: 2px solid #000;    
+    position: absolute;  
 }
 
 #board .pointer#player0{
     background-color: red;
+    border: 2px solid darkred;
     top: 2vh;
     left: 2vh;
 }
 
 #board .pointer#player1{
     background-color: green;
+    border: 2px solid darkgreen;  
     top: 2vh;
     right: 2vh;
 }
@@ -73,12 +74,18 @@
     bottom: 2vh;
     left: 2vh;
     background-color: blue;
+    border: 2px solid darkblue;  
 }
 
 #board .pointer#player3{
     bottom: 2vh;
     right: 2vh;
-    background-color: yellow;
+    background-color: orchid;
+    border: 2px solid darkorchid;  
+}
+
+.bought{
+    background-color: #ddd;
 }
 
 .player_disconnected{
