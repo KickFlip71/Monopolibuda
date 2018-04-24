@@ -5,6 +5,7 @@ var getPreparedCard = function(property){
     var cardBody = template.find('.collapse');
 
     template.removeClass('template');
+    template.addClass('property');
     cardHeader.addClass('color-group-'+property.card.group_number);
     title.html(property.card.name);
     title.attr('data-target', '.card-'+property.card.id+'.collapse');

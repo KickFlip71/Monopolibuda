@@ -13,6 +13,7 @@ class PropertyService:
 			return PropertyProvider().get_player_properties(game_id=game_id, player_id=player.id), self.status
 		return [], self.status
 
+
 	def pay_tax(self, game_id, user_id):
 		player = PlayerProvider().get_player(game_id=game_id, user_id=user_id)
 		if self.__player_exists(player):
@@ -20,7 +21,6 @@ class PropertyService:
 			if card != None:
 				if PropertyProvider().check_if_exist(game_id, card.id):
 					property = PropertyProvider().get_property_with_card(game_id, card.id)
-
 					charge = ChargeProvider().get_charge(card.charge_id)
 					player2 = PlayerProvider().get_player(game_id=game_id, user_id=property.player.user_id)
 					tax_to_pay = charge.get_charge_for_amount_of_buildings(property.buildings)
@@ -36,7 +36,6 @@ class PropertyService:
 						player2.update_balance(player.balance)
 						player.reset_balance()
 						player.defeat()	
-
 					self.status = 1000
 					return [player, player2], self.status
 				else:
@@ -44,9 +43,10 @@ class PropertyService:
 					return [], self.status
 			else:
 				self.status = 2004
-				return [], self.status	
+				return [], self.status
 		else:
 			return [], self.status
+
 
 	def buy_property(self, game_id, user_id):
 		player = PlayerProvider().get_player(game_id=game_id, user_id=user_id)
@@ -55,9 +55,11 @@ class PropertyService:
 			if card != None:
 				if not PropertyProvider().is_property_taken(game_id, card.id):
 					self.status = 1000
-					property = Property(player_id=player.id, game_id=player.game_id, card_id=card.id)
+					property = Property(player_id=player.id,game_id=player.game_id, card_id=card.id)
 					property.save()
-					return property, self.status
+					player.update_balance(-card.cost)
+					player.save()
+					return player, self.status
 				else:
 					self.status = 2006
 			else:

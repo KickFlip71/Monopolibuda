@@ -70,18 +70,29 @@ class GameConsumer(JsonWebsocketConsumer):
     response['command'] = 'player_leave'
     self.send_response(response)   
   
-  def move(self, content):
-    response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)        
+  def move(self, content): #TODO: FIX
+    response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)    
     response['command'] = 'board_move'
     self.send_response(response)
-    response_offer_to_player = WebsocketService().offer(game_id=content['game'].id, user_id=content['user'].id)
-    response_offer_to_player['command'] = 'player_offer'
-    print("PRE OFFER", response_offer_to_player['status'])
-    if response_offer_to_player['status']==1000:
-      print("OFFER")
-      self.send_response(response_offer_to_player, broadcast=False)
-    response['command'] = 'player_move'
-    self.send_response(response, broadcast=False)
+
+    if response['status'] != 1997:    
+      response_offer_to_player = WebsocketService().offer(game_id=content['game'].id, user_id=content['user'].id)
+      response_offer_to_player['command'] = 'player_offer'
+      if response_offer_to_player['status']==1000:
+        self.send_response(response_offer_to_player, broadcast=False)
+      response['command'] = 'player_move'
+      self.send_response(response, broadcast=False)
+    else:
+      response = WebsocketService().check(content['game'].id, content['user'].id)
+      response['command'] = 'player_skip'
+      self.send_response(response)
+
+
+  def buy(self, content):
+    response = WebsocketService().buy(game_id=content['game'].id, user_id=content['user'].id)
+    response['command'] = 'player_join'
+    if response['status']==1000:
+      self.send_response(response, broadcast=False)
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(

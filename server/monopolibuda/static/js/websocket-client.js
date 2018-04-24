@@ -25,6 +25,7 @@ $(function () {
             //{balance, properties: {[card_id,buildings,deposited,name,cost,apartment_cost,hotel_cost,deposit_value,group,a0,a1,a2,a3,a4,a5]}}
             updateBalance(data.payload.balance);
             updateButtons(data.payload.move);
+            $(".property").empty();
             data.payload.property_set.forEach(property => {
               $('#properties').append(getPreparedCard(property));
             });
@@ -39,6 +40,10 @@ $(function () {
         else if(command=="player_skip" && success){
             player = findPlayer(data.payload.player_set, current_player);
             updateButtons(player.move);
+        }
+        else if(command=="player" && success){
+            debugger;
+            $('#properties').append(getPreparedCard(data.payload));
         }
         else
             console.log("Got websocket message " + data);
