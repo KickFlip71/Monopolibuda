@@ -17,6 +17,9 @@ class PropertyProvider:
   def check_if_exist(self, game_id, card_id):
     return Property.objects.filter(game_id=game_id,card_id=card_id).exists()
 
+  def get_property_with_card(self, game_id, card_id):
+    return Property.objects.filter(game_id=game_id, card_id=card_id).first()
+
 class CardProvider:
   def get_card_with_position(self, position):
     card = Card.objects.filter(position=position)
