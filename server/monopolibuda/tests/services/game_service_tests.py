@@ -24,6 +24,15 @@ def test_add_game_creates_new_game():
     # THEN
     assert Game.objects.all().count() == 1
 
+@pytest.mark.django_db(transaction=True)
+def test_add_game_creates_new_game_with_code():
+    # GIVEN
+    user = UserFactory()
+    # WHEN
+    new_game, _ = GameService().add_game(host_id=user.id, players_amount=5)
+    # THEN
+    assert Game.objects.get(pk=new_game.id).code is not None
+
 
 @pytest.mark.django_db(transaction=True)
 def test_join_player_creates_new_player():
@@ -108,11 +117,3 @@ def test_skip_turn_doestn_set_move_to_zero_if_move_eq_two():
     GameService().skip_turn(game_id=player.game_id, user_id=player.user_id)
     # THEN
     assert Player.objects.get(pk=player.id).move == 2
-
-def test_code_generator_returns_code_with_proper_length():
-    # GIVEN
-    code_length = 5
-    # WHEN
-    code = GameService().generate_code(code_length=code_length)
-    # THEN
-    assert len(code) == 5

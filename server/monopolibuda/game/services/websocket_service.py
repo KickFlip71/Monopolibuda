@@ -52,6 +52,11 @@ class WebsocketService:
     self.__prepare_response(record, status)
     return self.response
 
+  def buy(self, game_id, user_id):
+    record, status = PropertyService().buy_property(game_id=game_id, user_id=user_id)
+    self.__prepare_response(record, status)
+    return self.response
+
   def __prepare_response(self, record, status = 1000):
     serializers = {
       "Game": GameSerializer,

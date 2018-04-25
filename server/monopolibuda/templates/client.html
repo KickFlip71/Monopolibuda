@@ -17,11 +17,9 @@
             </div>
             <div class="collapse" data-parent="#accordion">
                 <div class="card-body">
-                    <div class="mb-1">
-                        <button class="btn btn-outline-secondary sell-property-button" type="button">Sell property</button>
-                        <button class="btn btn-outline-secondary deposit-property-button" type="button">Deposit property</button>
-                        <button class="btn btn-outline-secondary buyback-property-button" type="button">Buyback property</button>
-                    </div>
+                        <button class="btn btn-outline-secondary sell-property-button mb-1 w-100" type="button">Sell property</button>
+                        <button class="btn btn-outline-secondary deposit-property-button mb-1 w-100" type="button">Deposit property</button>
+                        <button class="btn btn-outline-secondary buyback-property-button mb-1 w-100" type="button">Buyback property</button>
                     <table class="table">
                         <tbody>
                             <tr>
@@ -30,10 +28,9 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div class="mb-1">
-                        <button class="btn btn-outline-secondary buy-apartment-button" type="button">Buy apartment</button>
-                        <button class="btn btn-outline-secondary sell-apartment-button" type="button">Sell apartment</button>
-                    </div>
+
+                        <button class="btn btn-outline-secondary buy-apartment-button mb-1 w-100" type="button">Buy apartment</button>
+                        <button class="btn btn-outline-secondary sell-apartment-button mb-1 w-100" type="button">Sell apartment</button>
                     <table class="table">
                         <tbody>
                             <tr>
@@ -146,7 +143,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Don't buy</button>
-                <button type="button" class="btn btn-success">Buy</button>
+                <button id="buy-card-button" type="button" class="btn btn-success" data-dismiss="modal">Buy</button>
             </div>
         </div>
     </div>
@@ -187,7 +184,12 @@
         window.socket.send(JSON.stringify({
             "command": "skip"
         }));
-    })
+    });
+    $('#buy-card-button').click(function () {
+        window.socket.send(JSON.stringify({
+            "command": "buy"
+        }));
+    });
 
 
 

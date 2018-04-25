@@ -15,3 +15,9 @@ var disable_player = function(player_id){
 var disconnect_player = function(order) {
   $('#player'+order).remove()
 }
+
+var set_bought = function(property_set){
+  property_set.forEach(property => {
+    $('#pos'+property.card.position).addClass('bought')
+  });
+}

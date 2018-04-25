@@ -19,10 +19,12 @@ $(function () {
     if(command=="check"){
       data.payload.player_set.forEach(player => {
         add_player(player.order,player.position);
+        set_bought(player.property_set)
       });
     }
     else if(command=="board_join"){
       add_player(data.payload.order,data.payload.position);
+      set_bought(data.payload.property_set)
     }
     else if(command=="board_move"){
       console.log(data.payload.order)
