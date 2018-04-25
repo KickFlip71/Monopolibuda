@@ -3,7 +3,6 @@ $(function () {
     var current_player = null
     var code = getUrlParameter('code')
     var game_id = getGameId()
-    debugger
     var websocket_channel = "/game/stream/"+game_id+"/"+code
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
     var ws_path = ws_scheme + '://' + window.location.host + websocket_channel;
@@ -40,6 +39,14 @@ $(function () {
         else if(command=="player_skip" && success){
             player = findPlayer(data.payload.player_set, current_player);
             updateButtons(player.move);
+        }
+        else if(command=="player_tax" && success){
+            if(data.payload[0].user.id==user_id){
+                updateBalance(data.payload[0].balance)
+            }
+            else if(data.payload[1].user.id==user_id){
+                updateBalance(data.payload[1].balance)
+            }
         }
         else if(command=="player_end" && success){
             window.location.replace("/");

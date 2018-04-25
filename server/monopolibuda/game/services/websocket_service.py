@@ -65,10 +65,14 @@ class WebsocketService:
       "Card": CardSerializer
     }
     serializer_name = record.__class__.__name__
+    many = False
 
+    if record.__class__.__name__ == 'list':
+      serializer_name = record[0].__class__.__name__
+      many = True
 
     serializer = serializers.get(serializer_name, GameSerializer)
-    data = serializer(record).data
+    data = serializer(record, many=many).data
 
     self.response['status'] = status
     self.response['payload'] = data

@@ -74,33 +74,11 @@ def test_pay_tax():
   card = CardFactory(charge=charge)
   property = PropertyFactory(player=player2, game=game, card=card, buildings=1)
   # WHEN
-  retrieved_player, status = PropertyService().pay_tax(game_id=player1.game_id, user_id=player1.user_id)
+  record, status = PropertyService().pay_tax(game_id=player1.game_id, user_id=player1.user_id)
   # THEN
   p2 = PlayerProvider().get_player(game_id=game.id, user_id=player2.user_id)
   assert status == 1000
-  assert retrieved_player.balance == (player1.balance-tax) and p2.balance == (player2.balance + tax)
-
-@pytest.mark.django_db(transaction=True)
-def test_pay_tax_fails_player_does_not_have_enough_money():
-  # GIVEN
-  tax = 3300
-  player1_balance = 1000
-  game = GameFactory(players_amount=2)
-  player1 = PlayerFactory(game=game, position=1, balance=player1_balance) 
-  player2 = PlayerFactory(game=game, balance=3000)
-  charge = ChargeFactory(one_apartments=tax)
-  card = CardFactory(charge=charge, position=1)
-  card_user1 = CardFactory(charge=charge, position=2)
-  property = PropertyFactory(player=player2, game=game, card=card, buildings=1)
-  property_user1 = PropertyFactory(player=player1, game=game, card=card_user1, buildings=1)
-  # WHEN
-  retrieved_player, status = PropertyService().pay_tax(game_id=player1.game_id, user_id=player1.user_id)
-  # THEN
-  p2 = PlayerProvider().get_player(game_id=game.id, user_id=player2.user_id)
-  assert status == 1000
-  assert retrieved_player.active == False
-  assert retrieved_player.balance == 0 and p2.balance == (player2.balance + player1_balance)
-  assert len(PropertyProvider().get_player_properties(game_id=game.id, player_id=player1.id)) == 0
+  assert record[0].balance == (player1.balance-tax) and record[1].balance == (player2.balance + tax)
 
 @pytest.mark.django_db(transaction=True)
 def test_buy_property_property_is_not_taken():
