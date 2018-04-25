@@ -66,6 +66,14 @@ class GameConsumer(JsonWebsocketConsumer):
     if response_tax['status'] == 1000:
       response_tax['command'] = 'player_tax'
       self.send_response(response_tax)
+    end_response = WebsocketService().end(game_id=content['game'].id, user_id=content['user'].id)
+    if end_response['status']==1000:
+      end_response['command'] = 'player_end'
+      self.send_response(end_response, broadcast=False)
+      end_response['command'] = 'board_end'
+      self.send_response(end_response)
+      WebsocketService().kill(game_id=content['game'].id, user_id=content['user'].id)
+
 
   def leave(self, content):
     response = WebsocketService().leave(game_id=content['game'].id, user_id=content['user'].id)    

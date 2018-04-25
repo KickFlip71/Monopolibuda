@@ -36,6 +36,16 @@ class WebsocketService:
     record, status = GameService().skip_turn(game_id=game_id, user_id=user_id)
     self.__prepare_response(record, status)
     return self.response
+
+  def end(self, game_id, user_id):
+    record, status = GameService().check_bankrupt(game_id=game_id, user_id=user_id)
+    self.__prepare_response(record, status)
+    if status==1000:
+      record, status = PropertyService().release_player_properties(game_id=game_id, user_id=user_id)
+    return self.response
+
+  def kill(self, game_id, user_id):
+    PlayerProvider().get_player(game_id, user_id).delete()
   
   def move(self, game_id, user_id):
     record, status = PositionService().move_player(game_id=game_id, user_id=user_id)

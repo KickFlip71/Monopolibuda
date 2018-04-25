@@ -38,12 +38,23 @@ class GameService:
       player.delete()
     return None, self.status
 
+  def check_bankrupt(self, user_id, game_id):
+    self.status = 2007
+    player = PlayerProvider().get_player(game_id, user_id)
+    if(self.__player_exists(player)):
+      if(player.is_bankrupt()):
+        player.defeat()
+        self.status = 1000
+    return player, self.status
+
+  # old code:
   def set_player_defeated(self, user_id, game_id):
     player = PlayerProvider().get_player(game_id, user_id)    
     if(self.__player_exists(player)):
       player.defeat()
 
     return player, self.status
+  # end
 
   def get_game(self, game_id):
     game = Game.objects.get(pk=game_id)

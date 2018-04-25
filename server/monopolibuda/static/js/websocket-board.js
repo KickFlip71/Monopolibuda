@@ -30,6 +30,10 @@ $(function () {
       console.log(data.payload.order)
       move_player(data.payload.order,data.payload.position)
     }
+    else if(command=="board_end"){
+      debugger
+      disconnect_player(data.payload.order)
+    }
     else if(command=="disconnect"){
       remove_player(data.payload.id,data.payload.position)
     }

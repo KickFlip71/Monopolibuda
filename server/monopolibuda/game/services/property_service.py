@@ -66,6 +66,13 @@ class PropertyService:
 			self.status = 2002
 		return None, self.status
 
+	def release_player_properties(self, game_id, user_id):
+		player = PlayerProvider().get_player(game_id=game_id, user_id=user_id)
+		if self.__player_exists(player):
+			player_properties = PropertyProvider().get_player_properties(game_id=game_id, player_id=player.id)
+			player_properties.delete()
+		return None, self.status
+
 	def __player_exists(self, player):
 		result = player != None
 		if not result:
