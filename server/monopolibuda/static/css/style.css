@@ -88,6 +88,10 @@
     background-color: #ddd;
 }
 
+.position .name{
+    position: absolute;
+}
+
 .player_disconnected{
     opacity: 0.3;
 }
