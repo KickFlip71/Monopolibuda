@@ -90,6 +90,7 @@
 
 .position .name{
     position: absolute;
+    font-size: 2vh;
 }
 
 .player_disconnected{

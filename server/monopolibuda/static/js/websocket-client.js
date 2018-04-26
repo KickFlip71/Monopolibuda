@@ -9,18 +9,19 @@ $(function () {
     console.log("Connecting to " + ws_path);
     var socket = new ReconnectingWebSocket(ws_path);
     var user_id;
+    var player_id;
 
     window.socket = socket;
   
     socket.onmessage = function (message) {
         data = JSON.parse(message.data)
         command = data.command;
-        debugger;
         if(data['command'].slice(0,7) == "player_")
             success = handleError(data['status']);
         if(command == "player_join" && success){
             current_player = data.payload.order;
             user_id = data.payload.user.id;
+            player_id = data.payload.id
             //{balance, properties: {[card_id,buildings,deposited,name,cost,apartment_cost,hotel_cost,deposit_value,group,a0,a1,a2,a3,a4,a5]}}
             updateBalance(data.payload.balance);
             updateButtons(data.payload.move);
@@ -28,6 +29,10 @@ $(function () {
             data.payload.property_set.forEach(property => {
               $('#properties').append(getPreparedCard(property));
             });
+        }
+        else if(command=="start"){
+            debugger
+            updateButtons(data.payload.player_set.find(p => p.id==player_id).move)
         }
         else if(command=="player_offer" && success){
             showPreparedPropertyBuyModal(data.payload);
@@ -41,11 +46,16 @@ $(function () {
             updateButtons(player.move);
         }
         else if(command=="player_tax" && success){
-            if(data.payload[0].user.id==user_id){
+            if(data.payload[0].id==player_id){
                 updateBalance(data.payload[0].balance)
             }
-            else if(data.payload[1].user.id==user_id){
+            else if(data.payload[1].id=player_id){
                 updateBalance(data.payload[1].balance)
+            }
+        }
+        else if(command=="player_update" && success){
+            if(data.payload.id==player_id){
+                updateButtons(data.payload.move)
             }
         }
         else if(command=="player_end" && success){
@@ -82,5 +92,5 @@ var getUrlParameter = function getUrlParameter(sParam) {
 };
 
 var getGameId = function(){
-    return window.location.pathname.substr(window.location.pathname.lastIndexOf('/')-1)[0]
-}
+    return /\/\d*\//g.exec(window.location.pathname)[0].substr(1).slice(0, -1);
+  }

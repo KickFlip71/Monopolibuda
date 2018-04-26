@@ -17,7 +17,7 @@ class GameService:
     player = PlayerProvider().get_player(game_id, user_id)
     game = Game.objects.get(pk=game_id)
 
-    if self.__player_exists(player) and self.__skip_constraint(player):
+    if (self.__player_exists(player) and self.__skip_constraint(player)) or self.__player_exists(player):
       player.skip_turn()
 
     return game, self.status
@@ -59,7 +59,6 @@ class GameService:
   def get_game(self, game_id):
     game = Game.objects.get(pk=game_id)
     return game, self.status
-
 
   def get_user(self, user_id):
     user = User.objects.get(pk=user_id)

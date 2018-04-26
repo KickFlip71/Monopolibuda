@@ -4,6 +4,9 @@ class PlayerProvider:
   def get_player(self, game_id, user_id):
     return Player.objects.filter(game_id=game_id, user_id=user_id).first()
 
+  def get_game_players(self, game_id):
+    return Player.objects.filter(game_id=game_id)
+
 class PropertyProvider:
   def get_player_properties(self, game_id, player_id):
     return Property.objects.filter(game_id=game_id, player_id=player_id)

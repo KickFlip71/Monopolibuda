@@ -21,6 +21,10 @@ $(function () {
         add_player(player.order,player.position);
         set_bought(player.property_set)
       });
+      $("#start-button").prop('disabled', data.payload.active)
+    }
+    else if(command=="start"){
+      $("#start-button").prop('disabled', data.payload.active)
     }
     else if(command=="board_join"){
       add_player(data.payload.order,data.payload.position);
@@ -31,8 +35,8 @@ $(function () {
       move_player(data.payload.order,data.payload.position)
     }
     else if(command=="board_end"){
-      debugger
       disconnect_player(data.payload.order)
+      set_bought(data.payload.property_set,bought=false)
     }
     else if(command=="disconnect"){
       remove_player(data.payload.id,data.payload.position)
@@ -66,5 +70,5 @@ var getUrlParameter = function getUrlParameter(sParam) {
 };
 
 var getGameId = function(){
-  return window.location.pathname.substr(window.location.pathname.lastIndexOf('/')-1)[0]
+  return /\/\d*\//g.exec(window.location.pathname)[0].substr(1).slice(0, -1);
 }

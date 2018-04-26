@@ -7,6 +7,7 @@ from game.serializers import PlayerSerializer
 from game.serializers import PropertySerializer
 from game.serializers import CardSerializer
 from game.models import Player
+from game.models import Game
 from game.providers import PlayerProvider
 
 
@@ -21,6 +22,17 @@ class WebsocketService:
     record, status = GameService().get_game(game_id=game_id)
     self.__prepare_response(record, status)
     return self.response
+
+  def start(self, game_id):
+    game = Game.objects.get(pk=game_id)
+    if not game.active:
+      PlayerProvider().get_game_players(game_id=game_id)[0].enable_move()
+      game.set_active()
+      self.__prepare_response(game, 1000)
+      return self.response
+    self.__prepare_response(game, 2000)
+    return self.response
+    
 
   def join(self, game_id, user_id):
     record, status = GameService().join_player(game_id=game_id, user_id=user_id)
