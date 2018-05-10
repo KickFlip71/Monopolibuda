@@ -1,5 +1,18 @@
 var move_player = function(order, position){
-  $('#player'+order).appendTo("#pos"+position)
+  var interval = setInterval(function(){
+    var success = move_pawn(order, position)
+    if(success)
+      clearInterval(interval)
+    }, 300)
+}
+
+var move_pawn = function(order, position) {
+  current_position = $("#player"+order).parent().attr('id').replace( /^\D+/g, '')*1
+  if(current_position != position){
+    current_position = (current_position + 1) % 24
+    $('#player'+order).appendTo("#pos"+current_position)
+  }
+  return current_position == position
 }
 
 var add_player = function(order, position) {
