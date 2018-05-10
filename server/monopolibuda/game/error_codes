@@ -25,3 +25,4 @@ Errors:
 2010 - Player.move != 1 (cannot skip)
 2011 - Player.move != 2 (cannot move)
 2012 - Player cannot afford
+2013 - Property not for sale

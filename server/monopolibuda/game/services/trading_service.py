@@ -13,31 +13,37 @@ class TradingService:
       self.__property_owner_validations(player, user_property)
 
       if self.__is_valid():
+        user_property.for_sell(price)
         return user_property, self.status
       else:
         return None, self.status        
 
-    def accept_offer(self, game_id, user_id, position, price):
+    def accept_offer(self, game_id, user_id, position):
       player = PlayerProvider().get_player(game_id, user_id)
       user_property = PropertyProvider().get_property_with_position(game_id, position)
       self.__default_validations(player, user_property)
-      self.__player_can_afford(player, price)
+      self.__property_for_sale(user_property)
+      self.__player_can_afford(player, user_property)
 
       if self.__is_valid():
-        self.__finish_exchange(player, user_property, price)
+        self.__finish_exchange(player, user_property)
         return player, self.status
       else:
         return None, self.status  
 
-    def __finish_exchange(self, player, user_property, price):
-      user_property.change_owner(player, price)
+    def __finish_exchange(self, player, user_property):
+      user_property.change_owner(player)
+
+    def __property_for_sale(self, user_property):
+      if self.__is_valid() and user_property.selling_price == 0:
+        self.status = 2013
 
     def __property_owner_validations(self, player, user_property):
       if self.__is_valid() and user_property.player_id != player.id:
         self.status = 2004
 
-    def __player_can_afford(self, player, price):
-      if self.__is_valid() and player.balance < price:
+    def __player_can_afford(self, player, user_property):
+      if self.__is_valid() and player.balance < user_property.selling_price:
         self.status = 2012
 
     def __default_validations(self, player, user_property):

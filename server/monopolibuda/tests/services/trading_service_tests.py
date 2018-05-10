@@ -88,8 +88,8 @@ def test_accept_offer_when_valid():
     player = PlayerFactory(user=user, game=game, balance=6000)
     card = CardFactory(position=5)
     old_owner = PlayerFactory(game=game, balance=1000)
-    user_property = PropertyFactory(card=card, game=game, player=old_owner)
-    [new_owner, status] = TradingService().accept_offer(game.id, user.id, card.position, 5000)
+    user_property = PropertyFactory(card=card, game=game, player=old_owner, selling_price=5000)
+    [new_owner, status] = TradingService().accept_offer(game.id, user.id, card.position)
     old_owner_new_balance = Player.objects.get(pk=old_owner.id).balance
     # THEN
     assert new_owner.balance == 1000
@@ -103,8 +103,22 @@ def test_accept_offer_when_cannot_afford():
     game = GameFactory()
     player = PlayerFactory(user=user, game=game, balance=4000)
     card = CardFactory(position=5)
-    user_property = PropertyFactory(card=card, game=game)
-    [new_owner, status] = TradingService().accept_offer(game.id, user.id, card.position, 5000)
+    user_property = PropertyFactory(card=card, game=game, selling_price=5000)
+    [new_owner, status] = TradingService().accept_offer(game.id, user.id, card.position)
     # THEN
     assert new_owner == None
     assert status == 2012
+
+@pytest.mark.django_db(transaction=True)
+def test_accept_offer_when_not_for_sale():
+    # GIVEN
+    user = UserFactory()
+    # WHEN
+    game = GameFactory()
+    player = PlayerFactory(user=user, game=game, balance=4000)
+    card = CardFactory(position=5)
+    user_property = PropertyFactory(card=card, game=game, selling_price=0)
+    [new_owner, status] = TradingService().accept_offer(game.id, user.id, card.position)
+    # THEN
+    assert new_owner == None
+    assert status == 2013

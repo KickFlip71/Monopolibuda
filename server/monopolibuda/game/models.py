@@ -101,14 +101,24 @@ class Property(models.Model):
     deposited = models.BooleanField(default=False)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
+    selling_price = models.IntegerField(default=0)
 
-    def change_owner(self, new_owner, price):
+    def change_owner(self, new_owner):
         old_owner = self.player
         self.player = new_owner
+        price = self.selling_price
         new_owner.balance -= price
         old_owner.balance += price
         old_owner.save()
         new_owner.save()
+
+    def for_sell(self, price):
+        self.selling_price = price
+        self.save()
+
+    def withdraw():
+        self.selling_price = 0
+        self.save()
 
 class Chance(models.Model):
     chance_type = models.IntegerField()
