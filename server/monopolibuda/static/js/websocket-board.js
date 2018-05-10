@@ -38,6 +38,9 @@ $(function () {
       disconnect_player(data.payload.order)
       set_bought(data.payload.property_set,bought=false)
     }
+    else if(data.status == 1410){
+      winning()
+    }
     else if(command=="disconnect"){
       remove_player(data.payload.id,data.payload.position)
     }

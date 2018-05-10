@@ -28,8 +28,15 @@ def test_leave_player_when_success():
 @pytest.mark.django_db(transaction=True)
 def test_skip_when_success():
   player = PlayerFactory(move=1)
+  player2 = PlayerFactory(game_id=player.game_id)
   response = WebsocketService().skip(player.game_id, player.user_id)
   assert response['status'] == 1003
+
+@pytest.mark.django_db(transaction=True)
+def test_skip_when_success_and_last_player():
+  player = PlayerFactory(move=1)
+  response = WebsocketService().skip(player.game_id, player.user_id)
+  assert response['status'] == 1410
 
 @pytest.mark.django_db(transaction=True)
 def test_move_when_success():

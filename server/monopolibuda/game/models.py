@@ -32,9 +32,11 @@ class Player(models.Model):
     order = models.IntegerField()
 
     def next_player(self):
-        players_count = Player.objects.filter(game_id=self.game_id).count()
-        next_player_order = (self.order + 1) % players_count
-        return Player.objects.filter(game_id=self.game_id, order=next_player_order).first()
+        players = Player.objects.filter(game_id=self.game_id, active=True)
+        next_players = players.filter(order__gt=self.order)
+        if next_players.count() == 0:
+            next_players = players
+        return next_players.first()
 
     def skip_turn(self):
         next_player = self.next_player()

@@ -43,6 +43,7 @@ $(function () {
         else if(command=="player_skip" && success){
             player = findPlayer(data.payload.player_set, current_player);
             updateButtons(player.move);
+            if(data.status == 1410){ winning() }
         }
         else if(command=="player_tax" && success){
             debugger

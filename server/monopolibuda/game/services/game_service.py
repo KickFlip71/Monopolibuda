@@ -19,6 +19,8 @@ class GameService:
 
     if (self.__player_exists(player) and self.__skip_constraint(player)) or self.__player_exists(player):
       player.skip_turn()
+    if PlayerProvider().get_active_game_players(game_id=game_id).count()==1:
+      self.status=1410
 
     return game, self.status
 
@@ -49,10 +51,11 @@ class GameService:
 
   # old code:
   def set_player_defeated(self, user_id, game_id):
+    self.status = 2002
     player = PlayerProvider().get_player(game_id, user_id)    
     if(self.__player_exists(player)):
       player.defeat()
-
+      self.status = 1000
     return player, self.status
   # end
 

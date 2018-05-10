@@ -75,7 +75,6 @@ class GameConsumer(JsonWebsocketConsumer):
       self.send_response(end_response, broadcast=False)
       end_response['command'] = 'board_end'
       self.send_response(end_response)
-      WebsocketService().kill(game_id=content['game'].id, user_id=content['user'].id)
 
     response = WebsocketService().skip(game_id=content['game'].id, user_id=content['user'].id)
     response['command'] = 'player_skip'
