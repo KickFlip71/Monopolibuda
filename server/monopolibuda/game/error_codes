@@ -24,3 +24,5 @@ Errors:
 2007 - Property does not exist
 2010 - Player.move != 1 (cannot skip)
 2011 - Player.move != 2 (cannot move)
+2012 - Player cannot afford
+2014 - Max buildings reached

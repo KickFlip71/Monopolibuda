@@ -102,6 +102,16 @@ class Property(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
 
+    def buy_building(self):
+        owner = self.player
+        self.buildings += 1
+        if self.buildings == 5:
+            owner.balance -= self.card.hotel_cost
+        elif self.buildings < 5 and self.buildings > 0:
+            owner.balance -= self.card.apartment_cost
+        owner.save()
+        self.save()
+
 class Chance(models.Model):
     chance_type = models.IntegerField()
     description = models.CharField(max_length=500)
