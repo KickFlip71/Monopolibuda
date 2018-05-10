@@ -7,6 +7,7 @@ from tests.factories.property_factory import PropertyFactory
 from game.services.building_service import BuildingService
 import pytest
 
+# VALID REQUESTS
 
 @pytest.mark.django_db(transaction=True)
 def test_buy_building_when_valid_buying_apartment():
@@ -33,13 +34,31 @@ def test_buy_building_when_valid_buying_hotel():
     assert new_balance == 0
 
 @pytest.mark.django_db(transaction=True)
-def test_buy_building_when_player_cannot_afford():
+def test_sell_building_when_valid_selling_apartment():
     # GIVEN
-    player = PlayerFactory(balance=100, position=3)
-    card = CardFactory(position=3)
-    property = PropertyFactory(card=card, player=player, game=player.game)
-    [property, status] = BuildingService().buy_building(player.game_id, player.user_id)
-    assert status == 2012
+    player = PlayerFactory(balance=0, position=3)
+    card = CardFactory(position=7)
+    property = PropertyFactory(card=card, player=player, game=player.game, buildings=1)
+    [property, status] = BuildingService().sell_building(player.game_id, player.user_id, card.position)
+    new_balance = Player.objects.get(pk=player.id).balance    
+    assert status == 1000
+    assert property.buildings == 0
+    assert new_balance == 500
+
+@pytest.mark.django_db(transaction=True)
+def test_sell_building_when_valid_selling_hotel():
+    # GIVEN
+    player = PlayerFactory(balance=0, position=3)
+    card = CardFactory(position=7)
+    property = PropertyFactory(card=card, player=player, game=player.game, buildings=5)
+    [property, status] = BuildingService().sell_building(player.game_id, player.user_id, card.position)
+    new_balance = Player.objects.get(pk=player.id).balance
+    assert status == 1000
+    assert property.buildings == 4
+    assert new_balance == 700
+
+# INVALID REQUESTS
+
 
 @pytest.mark.django_db(transaction=True)
 def test_buy_building_when_buildings_limit_reached():
@@ -58,3 +77,40 @@ def test_buy_building_when_player_is_not_owner():
     property = PropertyFactory(card=card, game=player.game)
     [property, status] = BuildingService().buy_building(player.game_id, player.user_id)
     assert status == 2004
+
+
+@pytest.mark.django_db(transaction=True)
+def test_buy_building_when_player_cannot_afford():
+    # GIVEN
+    player = PlayerFactory(balance=100, position=3)
+    card = CardFactory(position=3)
+    property = PropertyFactory(card=card, player=player, game=player.game)
+    [property, status] = BuildingService().buy_building(player.game_id, player.user_id)
+    assert status == 2012
+
+@pytest.mark.django_db(transaction=True)
+def test_buy_building_when_player_is_not_owner():
+    # GIVEN
+    player = PlayerFactory(balance=5000, position=3)
+    card = CardFactory(position=3)
+    property = PropertyFactory(card=card, game=player.game)
+    [property, status] = BuildingService().buy_building(player.game_id, player.user_id)
+    assert status == 2004
+
+@pytest.mark.django_db(transaction=True)
+def test_sell_building_when_player_is_not_owner():
+    # GIVEN
+    player = PlayerFactory(balance=5000, position=3)
+    card = CardFactory(position=3)
+    property = PropertyFactory(card=card, game=player.game)
+    [property, status] = BuildingService().sell_building(player.game_id, player.user_id, card.position)
+    assert status == 2004
+
+@pytest.mark.django_db(transaction=True)
+def test_buy_building_when_minimum_buildings_limit_reached():
+    # GIVEN
+    player = PlayerFactory(balance=5000, position=3)
+    card = CardFactory(position=3)
+    property = PropertyFactory(card=card, player=player, game=player.game, buildings=0)
+    [property, status] = BuildingService().sell_building(player.game_id, player.user_id, card.position)
+    assert status == 2015

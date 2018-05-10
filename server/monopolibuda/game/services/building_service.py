@@ -21,6 +21,20 @@ class BuildingService:
       
     return None, self.status
 
+  def sell_building(self, game_id, user_id, position):
+    player = PlayerProvider().get_player(game_id=game_id, user_id=user_id)
+    self.__player_exists(player)
+    if self.__is_valid():
+      user_property = PropertyProvider().get_property_with_position(game_id, position)
+      self.__property_validations(user_property, player)
+      if self.__is_valid():
+        self.__min_apartment_reach_limit(user_property)
+        if self.__is_valid():
+          user_property.sell_building()
+          return user_property, self.status
+      
+    return None, self.status
+
   def __player_exists(self, player):
     if player == None:
       self.status = 2002
@@ -39,6 +53,10 @@ class BuildingService:
   def __max_apartment_reach_limit(self, user_property):
     if user_property.buildings >= 5:
       self.status = 2014
+
+  def __min_apartment_reach_limit(self, user_property):
+    if user_property.buildings == 0:
+      self.status = 2015
 
   def __is_valid(self):
     return (self.status / 1000) == 1

@@ -26,3 +26,4 @@ Errors:
 2011 - Player.move != 2 (cannot move)
 2012 - Player cannot afford
 2014 - Max buildings reached
+2015 - Min buildings reached

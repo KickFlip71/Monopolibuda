@@ -112,6 +112,18 @@ class Property(models.Model):
         owner.save()
         self.save()
 
+    def sell_building(self):
+        owner = self.player
+        if self.buildings == 5:
+            self.buildings -= 1
+            owner.balance += self.card.hotel_cost
+        elif self.buildings >= 0:
+            self.buildings -= 1            
+            owner.balance += self.card.apartment_cost
+
+        owner.save()
+        self.save()
+
 class Chance(models.Model):
     chance_type = models.IntegerField()
     description = models.CharField(max_length=500)
