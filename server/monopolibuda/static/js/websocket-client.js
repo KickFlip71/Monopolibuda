@@ -31,7 +31,9 @@ $(function () {
             });
         }
         else if(command=="start"){
-            updateButtons(data.payload.player_set.find(p => p.id==player_id).move)
+            player = data.payload.player_set.find(p => p.id==player_id)
+            updateButtons(player.move)
+            vibrateOnMove(player.move)
         }
         else if(command=="player_offer" && success){
             showPreparedPropertyBuyModal(data.payload);
@@ -41,16 +43,22 @@ $(function () {
             updateButtons(data.payload.move);
         }
         else if(command=="player_skip" && success){
-            player = findPlayer(data.payload.player_set, current_player);
-            updateButtons(player.move);
-            if(data.status == 1410){ winning() }
+            player = findPlayer(data.payload.player_set, current_player)
+            updateButtons(player.move)
+            vibrateOnMove(player.move)
+            if(data.status == 1410){ 
+                winning()
+                window.navigator.vibrate([500,110,500,110,450,110,200,110,170,40,450,110,200,110,170,40,500])
+            }
         }
         else if(command=="player_tax" && success){
             debugger
             if(data.payload[0].id==player_id){
+                window.navigator.vibrate([50,300,50,300,50])
                 updateBalance(data.payload[0].balance)
             }
             else if(data.payload[1].id==player_id){
+                window.navigator.vibrate([50,100,50,100,50])
                 updateBalance(data.payload[1].balance)
             }
         }
@@ -95,3 +103,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 var getGameId = function(){
     return /\/\d*\//g.exec(window.location.pathname)[0].substr(1).slice(0, -1);
   }
+
+var vibrateOnMove = function(move){
+    if(move==2){ window.navigator.vibrate([100,50,100]) }
+}
