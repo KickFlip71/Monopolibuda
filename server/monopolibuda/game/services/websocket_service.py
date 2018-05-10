@@ -26,7 +26,7 @@ class WebsocketService:
   def start(self, game_id):
     game = Game.objects.get(pk=game_id)
     if not game.active:
-      PlayerProvider().get_game_players(game_id=game_id)[0].enable_move()
+      PlayerProvider().get_active_game_players(game_id=game_id)[0].enable_move()
       game.set_active()
       self.__prepare_response(game, 1000)
       return self.response
@@ -56,9 +56,6 @@ class WebsocketService:
       record, status = PropertyService().release_player_properties(game_id=game_id, user_id=user_id)
     return self.response
 
-  def kill(self, game_id, user_id):
-    PlayerProvider().get_player(game_id, user_id).delete()
-  
   def move(self, game_id, user_id):
     record, status = PositionService().move_player(game_id=game_id, user_id=user_id)
     self.__prepare_response(record, status)
