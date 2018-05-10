@@ -6,7 +6,7 @@ class TradingService:
     def __init__(self):
         self.status = 1000
 
-    def offer_inquiry(self, game_id, user_id, position, price):
+    def create_offer(self, game_id, user_id, position, price):
       player = PlayerProvider().get_player(game_id, user_id)
       user_property = PropertyProvider().get_property_with_position(game_id, position)
       self.__default_validations(player, user_property)

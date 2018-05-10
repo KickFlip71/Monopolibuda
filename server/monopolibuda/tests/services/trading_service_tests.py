@@ -9,7 +9,7 @@ import pytest
 
 
 @pytest.mark.django_db(transaction=True)
-def test_offer_inquiry_when_valid():
+def test_create_offer_when_valid():
     # GIVEN
     user = UserFactory()
     # WHEN
@@ -17,13 +17,13 @@ def test_offer_inquiry_when_valid():
     player = PlayerFactory(user=user, game=game)
     card = CardFactory(position=5)
     user_property = PropertyFactory(card=card, player=player, game=game)
-    [prop, status] = TradingService().offer_inquiry(game.id, user.id, card.position, 5000)
+    [prop, status] = TradingService().create_offer(game.id, user.id, card.position, 5000)
     # THEN
     assert prop == user_property
     assert status == 1000
 
 @pytest.mark.django_db(transaction=True)
-def test_offer_inquiry_when_player_doesnt_own_property():
+def test_create_offer_when_player_doesnt_own_property():
     # GIVEN
     user = UserFactory()
     # WHEN
@@ -31,13 +31,13 @@ def test_offer_inquiry_when_player_doesnt_own_property():
     player = PlayerFactory(user=user, game=game)
     card = CardFactory(position=5)
     user_property = PropertyFactory(card=card, game=game)
-    [prop, status] = TradingService().offer_inquiry(game.id, user.id, card.position, 5000)
+    [prop, status] = TradingService().create_offer(game.id, user.id, card.position, 5000)
     # THEN
     assert prop == None
     assert status == 2004
 
 @pytest.mark.django_db(transaction=True)
-def test_offer_inquiry_when_player_not_found():
+def test_create_offer_when_player_not_found():
     # GIVEN
     user = UserFactory()
     # WHEN
@@ -45,13 +45,13 @@ def test_offer_inquiry_when_player_not_found():
     player = PlayerFactory(user=user)
     card = CardFactory(position=5)
     user_property = PropertyFactory(card=card, player=player, game=game)
-    [prop, status] = TradingService().offer_inquiry(game.id, user.id, card.position, 5000)
+    [prop, status] = TradingService().create_offer(game.id, user.id, card.position, 5000)
     # THEN
     assert prop == None
     assert status == 2002
 
 @pytest.mark.django_db(transaction=True)
-def test_offer_inquiry_when_property_is_not_present():
+def test_create_offer_when_property_is_not_present():
     # GIVEN
     user = UserFactory()
     # WHEN
@@ -59,7 +59,7 @@ def test_offer_inquiry_when_property_is_not_present():
     player = PlayerFactory(user=user, game=game)
     card = CardFactory(position=5)
     user_property = PropertyFactory(card=card)
-    [prop, status] = TradingService().offer_inquiry(game.id, user.id, card.position, 5000)
+    [prop, status] = TradingService().create_offer(game.id, user.id, card.position, 5000)
     # THEN
     assert prop == None
     assert status == 2007
