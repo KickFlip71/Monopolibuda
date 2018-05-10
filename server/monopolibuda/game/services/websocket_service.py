@@ -2,6 +2,7 @@ from game.services.game_service import GameService
 from game.services.position_service import PositionService
 from game.services.card_service import CardService
 from game.services.property_service import PropertyService
+from game.services.building_service import BuildingService
 from game.serializers import GameSerializer
 from game.serializers import PlayerSerializer
 from game.serializers import PropertySerializer
@@ -54,6 +55,16 @@ class WebsocketService:
 
   def buy(self, game_id, user_id):
     record, status = PropertyService().buy_property(game_id=game_id, user_id=user_id)
+    self.__prepare_response(record, status)
+    return self.response
+
+  def buy_building(self, game_id, user_id):
+    record, status = BuildingService().buy_building(game_id=game_id, user_id=user_id)
+    self.__prepare_response(record, status)
+    return self.response
+
+  def sell_building(self, game_id, user_id, position):
+    record, status = BuildingService().sell_building(game_id=game_id, user_id=user_id, position=position)
     self.__prepare_response(record, status)
     return self.response
 

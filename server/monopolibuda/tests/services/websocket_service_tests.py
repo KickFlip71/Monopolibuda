@@ -57,6 +57,22 @@ def test_tax_when_success():
   response = WebsocketService().tax(player.game_id, player.user_id)
   assert response['status'] == 1000
 
+@pytest.mark.django_db(transaction=True)
+def test_buy_building_when_success():
+  player = PlayerFactory(position=3)
+  card = CardFactory(position=3)
+  property = PropertyFactory(player=player, game=player.game, card=card, buildings=2)
+  response = WebsocketService().buy_building(player.game_id, player.user_id)
+  assert response['status'] == 1000
+
+@pytest.mark.django_db(transaction=True)
+def test_sell_building_when_success():
+  player = PlayerFactory(position=3)
+  card = CardFactory(position=7)
+  property = PropertyFactory(player=player, game=player.game, card=card, buildings=2)
+  response = WebsocketService().sell_building(player.game_id, player.user_id, card.position)
+  assert response['status'] == 1000
+
 
 # ERRORS TESTS
 
