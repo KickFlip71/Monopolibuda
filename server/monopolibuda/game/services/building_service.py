@@ -13,6 +13,7 @@ class BuildingService:
       user_property = PropertyProvider().get_property_with_position(game_id, player.position)
       self.__property_validations(user_property, player)
       if self.__is_valid():
+        self.__is_deposited(user_property)        
         self.__player_can_afford(user_property, player)
         self.__max_apartment_reach_limit(user_property)
         if self.__is_valid():
@@ -28,6 +29,7 @@ class BuildingService:
       user_property = PropertyProvider().get_property_with_position(game_id, position)
       self.__property_validations(user_property, player)
       if self.__is_valid():
+        self.__is_deposited(user_property)
         self.__min_apartment_reach_limit(user_property)
         if self.__is_valid():
           user_property.sell_building()
@@ -57,6 +59,10 @@ class BuildingService:
   def __min_apartment_reach_limit(self, user_property):
     if user_property.buildings == 0:
       self.status = 2015
+
+  def __is_deposited(self, user_property):
+    if user_property.deposited:
+      self.status = 2016
 
   def __is_valid(self):
     return (self.status / 1000) == 1

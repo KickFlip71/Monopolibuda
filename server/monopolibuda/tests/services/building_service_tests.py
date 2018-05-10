@@ -114,3 +114,21 @@ def test_buy_building_when_minimum_buildings_limit_reached():
     property = PropertyFactory(card=card, player=player, game=player.game, buildings=0)
     [property, status] = BuildingService().sell_building(player.game_id, player.user_id, card.position)
     assert status == 2015
+
+@pytest.mark.django_db(transaction=True)
+def test_buy_building_when_property_is_deposited():
+    # GIVEN
+    player = PlayerFactory(position=3)
+    card = CardFactory(position=3)
+    property = PropertyFactory(card=card, player=player, game=player.game, buildings=0, deposited=True)
+    [property, status] = BuildingService().buy_building(player.game_id, player.user_id)
+    assert status == 2016
+
+@pytest.mark.django_db(transaction=True)
+def test_sell_building_when_property_is_deposited():
+    # GIVEN
+    player = PlayerFactory(balance=5000, position=3)
+    card = CardFactory(position=3)
+    property = PropertyFactory(card=card, player=player, game=player.game, buildings=1, deposited=True)
+    [property, status] = BuildingService().sell_building(player.game_id, player.user_id, card.position)
+    assert status == 2016
