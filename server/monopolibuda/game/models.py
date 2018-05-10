@@ -8,11 +8,17 @@ class Game(models.Model):
     code = models.CharField(max_length=50)
     players_amount = models.IntegerField()
     host = models.ForeignKey(User, on_delete=models.CASCADE)
+    active = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         allchar = string.ascii_letters
-        self.code = "".join(choice(allchar) for x in range(settings.DEFAULT_GAME_SETTINGS['code_len'])).upper()
+        if(len(self.code)==0):
+            self.code = "".join(choice(allchar) for x in range(settings.DEFAULT_GAME_SETTINGS['code_len'])).upper()
         super(Game, self).save(*args, **kwargs)
+
+    def set_active(self):
+        self.active = True
+        self.save()
 
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -51,6 +57,13 @@ class Player(models.Model):
 
     def can_pay_tax(self, tax):
         return self.balance >= tax
+
+    def is_bankrupt(self):
+        return self.balance < 0
+
+    def enable_move(self):
+        self.move = 2
+        self.save()
 
     def disable_move(self):
         self.move = 1

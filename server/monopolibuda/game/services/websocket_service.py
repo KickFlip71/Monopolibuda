@@ -7,6 +7,7 @@ from game.serializers import PlayerSerializer
 from game.serializers import PropertySerializer
 from game.serializers import CardSerializer
 from game.models import Player
+from game.models import Game
 from game.providers import PlayerProvider
 
 
@@ -22,6 +23,17 @@ class WebsocketService:
     self.__prepare_response(record, status)
     return self.response
 
+  def start(self, game_id):
+    game = Game.objects.get(pk=game_id)
+    if not game.active:
+      PlayerProvider().get_game_players(game_id=game_id)[0].enable_move()
+      game.set_active()
+      self.__prepare_response(game, 1000)
+      return self.response
+    self.__prepare_response(game, 2000)
+    return self.response
+    
+
   def join(self, game_id, user_id):
     record, status = GameService().join_player(game_id=game_id, user_id=user_id)
     self.__prepare_response(record, status)
@@ -36,6 +48,16 @@ class WebsocketService:
     record, status = GameService().skip_turn(game_id=game_id, user_id=user_id)
     self.__prepare_response(record, status)
     return self.response
+
+  def end(self, game_id, user_id):
+    record, status = GameService().check_bankrupt(game_id=game_id, user_id=user_id)
+    self.__prepare_response(record, status)
+    if status==1000:
+      record, status = PropertyService().release_player_properties(game_id=game_id, user_id=user_id)
+    return self.response
+
+  def kill(self, game_id, user_id):
+    PlayerProvider().get_player(game_id, user_id).delete()
   
   def move(self, game_id, user_id):
     record, status = PositionService().move_player(game_id=game_id, user_id=user_id)
@@ -65,10 +87,14 @@ class WebsocketService:
       "Card": CardSerializer
     }
     serializer_name = record.__class__.__name__
+    many = False
 
+    if record.__class__.__name__ == 'list':
+      serializer_name = record[0].__class__.__name__
+      many = True
 
     serializer = serializers.get(serializer_name, GameSerializer)
-    data = serializer(record).data
+    data = serializer(record, many=many).data
 
     self.response['status'] = status
     self.response['payload'] = data

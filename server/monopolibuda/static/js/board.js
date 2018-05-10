@@ -29,8 +29,13 @@ var disconnect_player = function(order) {
   $('#player'+order).remove()
 }
 
-var set_bought = function(property_set){
+var set_bought = function(property_set, bought=true){
   property_set.forEach(property => {
-    $('#pos'+property.card.position).addClass('bought')
+    if(bought){
+      $('#pos'+property.card.position).addClass('bought')
+    }
+    else{
+      $('#pos'+property.card.position).removeClass('bought')
+    }
   });
 }

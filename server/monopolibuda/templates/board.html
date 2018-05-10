@@ -210,22 +210,15 @@
 </div>
 <div class="jumbotron">
     <h1>{{ game.code }}</h1>
-    <button id="dice-button" class="btn btn-outline-secondary" type="button">Roll a Dice</button>
-    <button id="join-button" class="btn btn-outline-secondary" type="button">Join</button>
+    <button id="start-button" class="btn btn-outline-secondary" type="button" disabled>Start game</button>
 </div>
 {% endblock %} {% block extra_body %}
 <script src="{% static 'js/websocket-board.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/board.js' %}" type="text/javascript"></script>
 <script>
-    $('#dice-button').click(function () {
+    $('#start-button').click(function () {
         window.socket.send(JSON.stringify({
-            "command": "move",
-        }));
-    })
-
-    $('#join-button').click(function () {
-        window.socket.send(JSON.stringify({
-            "command": "join",
+            "command": "start",
         }));
     })
 </script> {% endblock %}

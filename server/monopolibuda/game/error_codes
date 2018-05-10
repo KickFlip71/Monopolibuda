@@ -22,5 +22,6 @@ Errors:
 2005 - Card not found
 2006 - Card is occupied
 2007 - Property does not exist
+2007 - Player is not a bankrupt
 2010 - Player.move != 1 (cannot skip)
 2011 - Player.move != 2 (cannot move)
