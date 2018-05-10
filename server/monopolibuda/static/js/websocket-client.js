@@ -31,7 +31,6 @@ $(function () {
             });
         }
         else if(command=="start"){
-            debugger
             updateButtons(data.payload.player_set.find(p => p.id==player_id).move)
         }
         else if(command=="player_offer" && success){
@@ -46,10 +45,11 @@ $(function () {
             updateButtons(player.move);
         }
         else if(command=="player_tax" && success){
+            debugger
             if(data.payload[0].id==player_id){
                 updateBalance(data.payload[0].balance)
             }
-            else if(data.payload[1].id=player_id){
+            else if(data.payload[1].id==player_id){
                 updateBalance(data.payload[1].balance)
             }
         }
