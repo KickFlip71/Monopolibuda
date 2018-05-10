@@ -116,7 +116,7 @@ class Property(models.Model):
         self.selling_price = price
         self.save()
 
-    def withdraw():
+    def cancel_offer(self):
         self.selling_price = 0
         self.save()
 

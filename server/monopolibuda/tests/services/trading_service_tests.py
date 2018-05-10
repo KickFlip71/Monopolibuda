@@ -1,5 +1,5 @@
 from game.services.trading_service import TradingService
-from game.models import Game, Player
+from game.models import Game, Player, Property
 from tests.factories.user_factory import UserFactory
 from tests.factories.game_factory import GameFactory
 from tests.factories.player_factory import PlayerFactory
@@ -122,3 +122,47 @@ def test_accept_offer_when_not_for_sale():
     # THEN
     assert new_owner == None
     assert status == 2013
+
+@pytest.mark.django_db(transaction=True)
+def test_cancel_offer_when_valid():
+    # GIVEN
+    user = UserFactory()
+    # WHEN
+    game = GameFactory()
+    player = PlayerFactory(user=user, game=game)
+    card = CardFactory(position=5)
+    user_property = PropertyFactory(card=card, player=player, game=game, selling_price=5000)
+    [prop, status] = TradingService().cancel_offer(game.id, user.id, card.position)
+    # THEN
+    assert prop.selling_price == 0
+    assert status == 1000
+
+@pytest.mark.django_db(transaction=True)
+def test_cancel_offer_when_already_not_for_sale():
+    # GIVEN
+    user = UserFactory()
+    # WHEN
+    game = GameFactory()
+    player = PlayerFactory(user=user, game=game)
+    card = CardFactory(position=5)
+    user_property = PropertyFactory(card=card, player=player, game=game)
+    [prop, status] = TradingService().cancel_offer(game.id, user.id, card.position)
+    # THEN
+    assert prop == None
+    assert status == 2013
+
+@pytest.mark.django_db(transaction=True)
+def test_cancel_offer_when_user_is_not_owner():
+    # GIVEN
+    user = UserFactory()
+    # WHEN
+    game = GameFactory()
+    player = PlayerFactory(user=user, game=game)
+    card = CardFactory(position=5)
+    user_property = PropertyFactory(card=card, game=game, selling_price=4000)
+    [prop, status] = TradingService().cancel_offer(game.id, user.id, card.position)
+    # THEN
+    property_price = Property.objects.get(pk=user_property.id).selling_price
+    assert property_price == 4000
+    assert prop == None
+    assert status == 2004

@@ -31,6 +31,19 @@ class TradingService:
       else:
         return None, self.status  
 
+    def cancel_offer(self, game_id, user_id, position):
+      player = PlayerProvider().get_player(game_id, user_id)
+      user_property = PropertyProvider().get_property_with_position(game_id, position)
+      self.__default_validations(player, user_property)
+      self.__property_owner_validations(player, user_property)
+      self.__property_for_sale(user_property)
+
+      if self.__is_valid():
+        user_property.cancel_offer()
+        return user_property, self.status
+      else:
+        return None, self.status  
+
     def __finish_exchange(self, player, user_property):
       user_property.change_owner(player)
 
