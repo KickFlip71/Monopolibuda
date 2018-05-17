@@ -125,6 +125,14 @@ class Property(models.Model):
             owner.save()
             self.save()
 
+    def repurchase(self):
+        owner = self.player
+        if self.deposited:
+            self.deposited = False
+            owner.balance -= self.card.deposit_value
+            owner.save()
+            self.save()
+
 class Chance(models.Model):
     chance_type = models.IntegerField()
     description = models.CharField(max_length=500)
