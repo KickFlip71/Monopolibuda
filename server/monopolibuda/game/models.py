@@ -117,6 +117,14 @@ class Property(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
 
+    def deposit(self):
+        owner = self.player
+        if not self.deposited:
+            self.deposited = True
+            owner.balance += self.card.deposit_value
+            owner.save()
+            self.save()
+
 class Chance(models.Model):
     chance_type = models.IntegerField()
     description = models.CharField(max_length=500)

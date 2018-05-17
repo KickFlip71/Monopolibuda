@@ -23,6 +23,10 @@ class PropertyProvider:
   def get_property_with_card(self, game_id, card_id):
     return Property.objects.filter(game_id=game_id, card_id=card_id).first()
 
+  def get_property_with_position(self, game_id, position):
+    card = CardProvider().get_card_with_position(position)
+    return Property.objects.filter(game_id=game_id, card_id=card.id).first()
+
 class CardProvider:
   def get_card_with_position(self, position):
     card = Card.objects.filter(position=position)

@@ -26,3 +26,4 @@ Errors:
 2007 - Player is not a bankrupt
 2010 - Player.move != 1 (cannot skip)
 2011 - Player.move != 2 (cannot move)
+2016 - Property already deposited
