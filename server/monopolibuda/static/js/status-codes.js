@@ -10,8 +10,15 @@ var status_codes =
   2002: 'Player not found',
   2003: 'User not found',
   2004: 'Player already exists',
+  2005: 'Card not found',
+  2006: 'Card is occupied',
+  2007: 'Property does not exist',
   2010: 'Cannot skip',
-  2011: 'Cannot move'
+  2011: 'Cannot move',
+  2012: 'Player cannot afford',
+  2014: 'Max buildings reached',
+  2015: 'Min buildings reached',
+  2016: 'Property is deposited'
 }
 
 var handleError = function(status) {

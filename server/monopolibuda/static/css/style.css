@@ -90,6 +90,7 @@
 
 .position .name{
     position: absolute;
+    font-size: 2vh;
 }
 
 .player_disconnected{
@@ -174,3 +175,26 @@
 }
 
 
+.center-row .apartments .building {
+    width: 100%;
+    height: 20%;
+    background-color: white;
+    display: table-cell;
+    border-style: double;
+}
+
+.top-row .apartments .building {
+    width: 20%;
+    height: 20px;
+    background-color: white;
+    display: table-cell;
+    border-style: double;
+}
+
+.top-row .apartments .building {
+    width: 20%;
+    height: 20px;
+    background-color: white;
+    display: table-cell;
+    border-style: double;
+}

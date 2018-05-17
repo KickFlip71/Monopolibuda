@@ -8,11 +8,17 @@ class Game(models.Model):
     code = models.CharField(max_length=50)
     players_amount = models.IntegerField()
     host = models.ForeignKey(User, on_delete=models.CASCADE)
+    active = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         allchar = string.ascii_letters
-        self.code = "".join(choice(allchar) for x in range(settings.DEFAULT_GAME_SETTINGS['code_len'])).upper()
+        if(len(self.code)==0):
+            self.code = "".join(choice(allchar) for x in range(settings.DEFAULT_GAME_SETTINGS['code_len'])).upper()
         super(Game, self).save(*args, **kwargs)
+
+    def set_active(self):
+        self.active = True
+        self.save()
 
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -26,9 +32,11 @@ class Player(models.Model):
     order = models.IntegerField()
 
     def next_player(self):
-        players_count = Player.objects.filter(game_id=self.game_id).count()
-        next_player_order = (self.order + 1) % players_count
-        return Player.objects.filter(game_id=self.game_id, order=next_player_order).first()
+        players = Player.objects.filter(game_id=self.game_id, active=True)
+        next_players = players.filter(order__gt=self.order)
+        if next_players.count() == 0:
+            next_players = players
+        return next_players.first()
 
     def skip_turn(self):
         next_player = self.next_player()
@@ -51,6 +59,13 @@ class Player(models.Model):
 
     def can_pay_tax(self, tax):
         return self.balance >= tax
+
+    def is_bankrupt(self):
+        return self.balance < 0
+
+    def enable_move(self):
+        self.move = 2
+        self.save()
 
     def disable_move(self):
         self.move = 1
@@ -101,6 +116,62 @@ class Property(models.Model):
     deposited = models.BooleanField(default=False)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
+    selling_price = models.IntegerField(default=0)
+
+    def change_owner(self, new_owner):
+        old_owner = self.player
+        self.player = new_owner
+        price = self.selling_price
+        new_owner.balance -= price
+        old_owner.balance += price
+        old_owner.save()
+        new_owner.save()
+
+    def for_sell(self, price):
+        self.selling_price = price
+        self.save()
+
+    def cancel_offer(self):
+        self.selling_price = 0
+        self.save()
+
+    def deposit(self):
+        owner = self.player
+        if not self.deposited:
+            self.deposited = True
+            owner.balance += self.card.deposit_value
+            owner.save()
+            self.save()
+
+    def repurchase(self):
+        owner = self.player
+        if self.deposited:
+            self.deposited = False
+            owner.balance -= self.card.deposit_value
+            owner.save()
+            self.save()
+
+    def buy_building(self):
+        owner = self.player
+        self.buildings += 1
+        if self.buildings == 5:
+            owner.balance -= self.card.hotel_cost
+        elif self.buildings < 5 and self.buildings > 0:
+            owner.balance -= self.card.apartment_cost
+        owner.save()
+        self.save()
+
+    def sell_building(self):
+        owner = self.player
+        if self.buildings == 5:
+            self.buildings -= 1
+            owner.balance += self.card.hotel_cost
+        elif self.buildings >= 0:
+            self.buildings -= 1            
+            owner.balance += self.card.apartment_cost
+
+        owner.save()
+        self.save()
 
 class Chance(models.Model):
     chance_type = models.IntegerField()

@@ -4,6 +4,9 @@ class PlayerProvider:
   def get_player(self, game_id, user_id):
     return Player.objects.filter(game_id=game_id, user_id=user_id).first()
 
+  def get_active_game_players(self, game_id):
+    return Player.objects.filter(game_id=game_id, active=True)
+
 class PropertyProvider:
   def get_player_properties(self, game_id, player_id):
     return Property.objects.filter(game_id=game_id, player_id=player_id)
@@ -19,6 +22,10 @@ class PropertyProvider:
 
   def get_property_with_card(self, game_id, card_id):
     return Property.objects.filter(game_id=game_id, card_id=card_id).first()
+  
+  def get_property_with_position(self, game_id, position):
+    card = CardProvider().get_card_with_position(position)
+    return Property.objects.filter(game_id=game_id, card=card).first()
 
 class CardProvider:
   def get_card_with_position(self, position):

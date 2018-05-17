@@ -15,8 +15,9 @@
   <h1>Hello {{user}}</h1>
   <div class="alert alert-info">
     <form method="get" action="{% url 'new_game' %}">
-      <p>New game:</p>      
-      <input type="text" name="players_amount" placeholder="players_amount">
+      <h5>Create a new game</h5>
+      <p>Enter number of players:</p>      
+      <input type="number" name="players_amount" placeholder="players_amount" min="2" max="4" value="2">
       <button class="btn btn-info" type="submit">Create Game</button>
     </form>
   </div>  
@@ -24,10 +25,11 @@
     {% for game in games %}
         <div class="alert alert-success">
           <form method="get" action="{% url 'board' game.id %}">
-            <p>Game hosted by {{ game.host }}:</p>
-            <input type="text" name="code" placeholder="Code">
+            <p>Game nr {{ game.id }} hosted by {{ game.host }}:</p>
+            <input type="text" name="code" placeholder="Code" oninput="this.value = this.value.toUpperCase()">
             <div>
-              <button type="submit" class="btn btn-success">Connect</a>
+              <button type="submit" class="btn btn-success">View board</button>
+              <button type="submit" class="btn btn-success" formaction="{% url 'client' game.id %}">Play</button>
             </div>
           </form>
         </div>

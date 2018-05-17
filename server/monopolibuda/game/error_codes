@@ -10,6 +10,7 @@ Success:
 1002 - Leave
 1003 - Skip Turn
 1004 - Move
+1410 - Win
 1997 - in jail
 
 Errors:
@@ -22,5 +23,12 @@ Errors:
 2005 - Card not found
 2006 - Card is occupied
 2007 - Property does not exist
+2007 - Player is not a bankrupt
 2010 - Player.move != 1 (cannot skip)
 2011 - Player.move != 2 (cannot move)
+2012 - Player cannot afford
+2013 - Property not for sale
+2014 - Max buildings reached
+2015 - Min buildings reached
+2016 - Property is deposited
+2017 - Property not deposited
