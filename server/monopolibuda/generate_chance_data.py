@@ -23,6 +23,7 @@ if __name__ == '__main__':
         fields = {}
         fields['description'] = description
         fields['value'] = value
+        fields['chance_type'] = 1
         entry['fields'] = fields
         data.append(entry)
 
