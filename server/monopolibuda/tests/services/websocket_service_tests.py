@@ -136,6 +136,22 @@ def test_cancel_offer_when_success():
   card = CardFactory(position=5)
   user_property = PropertyFactory(card=card, player=player, game=game, selling_price=5000)
   response = WebsocketService().cancel_offer(player.game_id, player.user_id, position=card.position)
+  assert response['status'] == 1000  
+
+@pytest.mark.django_db(transaction=True)
+def test_buy_building_when_success():
+  player = PlayerFactory(position=3)
+  card = CardFactory(position=3)
+  property = PropertyFactory(player=player, game=player.game, card=card, buildings=2, deposited=False)
+  response = WebsocketService().buy_building(player.game_id, player.user_id)
+  assert response['status'] == 1000
+
+@pytest.mark.django_db(transaction=True)
+def test_sell_building_when_success():
+  player = PlayerFactory(position=3)
+  card = CardFactory(position=7)
+  property = PropertyFactory(player=player, game=player.game, card=card, buildings=2, deposited=False)
+  response = WebsocketService().sell_building(player.game_id, player.user_id, card.position)
   assert response['status'] == 1000
 
 

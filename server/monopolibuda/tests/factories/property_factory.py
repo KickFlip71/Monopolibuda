@@ -16,6 +16,5 @@ class PropertyFactory(DjangoModelFactory):
   player = factory.SubFactory(PlayerFactory)
   buildings = 2
   deposited = True
-  selling_price = 0
   game = factory.SubFactory(GameFactory)
   card = factory.SubFactory(CardFactory)
