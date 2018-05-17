@@ -2,7 +2,11 @@ from game.services.game_service import GameService
 from game.services.position_service import PositionService
 from game.services.card_service import CardService
 from game.services.property_service import PropertyService
+<<<<<<< HEAD
 from game.services.deposit_service import DepositService
+=======
+from game.services.trading_service import TradingService
+>>>>>>> feature/trading
 from game.serializers import GameSerializer
 from game.serializers import PlayerSerializer
 from game.serializers import PropertySerializer
@@ -84,6 +88,21 @@ class WebsocketService:
 
   def repurchase(self, game_id, user_id, position):
     record, status = DepositService().repurchase(game_id=game_id, user_id=user_id, position=position)
+    self.__prepare_response(record, status)
+    return self.response
+
+  def create_offer(self, game_id, user_id, position, price):
+    record, status = TradingService().create_offer(game_id=game_id, user_id=user_id, position=position, price=price)
+    self.__prepare_response(record, status)
+    return self.response
+
+  def accept_offer(self, game_id, user_id, position):
+    record, status = TradingService().accept_offer(game_id=game_id, user_id=user_id, position=position)
+    self.__prepare_response(record, status)
+    return self.response
+
+  def cancel_offer(self, game_id, user_id, position):
+    record, status = TradingService().cancel_offer(game_id=game_id, user_id=user_id, position=position)
     self.__prepare_response(record, status)
     return self.response
 

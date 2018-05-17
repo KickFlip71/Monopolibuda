@@ -104,6 +104,37 @@ def test_repurchase_when_valid():
     response = WebsocketService().repurchase(user_id=player.user.id, game_id=game.id, position=card.position)
     # THEN
     assert response['status'] == 1000
+def test_create_offer_when_success():
+  user = UserFactory()
+  game = GameFactory()
+  player = PlayerFactory(user=user, game=game)
+  card = CardFactory(position=5)
+  user_property = PropertyFactory(card=card, player=player, game=game)
+  response = WebsocketService().create_offer(player.game_id, player.user_id, position=card.position, price=5000)
+  assert response['status'] == 1000
+
+@pytest.mark.django_db(transaction=True)
+def test_accept_offer_when_success():
+  user = UserFactory()
+  game = GameFactory()
+  player = PlayerFactory(user=user, game=game, balance=6000)
+  card = CardFactory(position=5)
+  old_owner = PlayerFactory(game=game, balance=1000)
+  user_property = PropertyFactory(card=card, game=game, player=old_owner, selling_price=5000)
+  response = WebsocketService().accept_offer(player.game_id, player.user_id, position=card.position)
+  assert response['status'] == 1000
+
+@pytest.mark.django_db(transaction=True)
+def test_cancel_offer_when_success():
+  # GIVEN
+  user = UserFactory()
+  # WHEN
+  game = GameFactory()
+  player = PlayerFactory(user=user, game=game)
+  card = CardFactory(position=5)
+  user_property = PropertyFactory(card=card, player=player, game=game, selling_price=5000)
+  response = WebsocketService().cancel_offer(player.game_id, player.user_id, position=card.position)
+  assert response['status'] == 1000
 
 
 # ERRORS TESTS
