@@ -81,6 +81,31 @@ def test_tax_when_success():
   assert Player.objects.get(pk=player.id).balance == init_balance-cost
   assert Player.objects.get(pk=player2.id).balance == init_balance+cost
 
+@pytest.mark.django_db(transaction=True)
+def test_deposit_when_valid():
+    # GIVEN
+    game = GameFactory()
+    card = CardFactory(position=1)
+    player = PlayerFactory(game_id=game.id)
+    user_property = PropertyFactory(player=player, card=card, game=game, deposited=False)
+    # WHEN
+    response = WebsocketService().deposit(user_id=player.user.id, game_id=game.id, position=card.position)
+    # THEN
+    assert response['status'] == 1000
+
+@pytest.mark.django_db(transaction=True)
+def test_repurchase_when_valid():
+    # GIVEN
+    game = GameFactory()
+    card = CardFactory(position=1)
+    player = PlayerFactory(game_id=game.id)
+    user_property = PropertyFactory(player=player, card=card, game=game, deposited=True)
+    # WHEN
+    response = WebsocketService().repurchase(user_id=player.user.id, game_id=game.id, position=card.position)
+    # THEN
+    assert response['status'] == 1000
+
+
 # ERRORS TESTS
 
 @pytest.mark.django_db(transaction=True)
