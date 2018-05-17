@@ -2,11 +2,8 @@ from game.services.game_service import GameService
 from game.services.position_service import PositionService
 from game.services.card_service import CardService
 from game.services.property_service import PropertyService
-<<<<<<< HEAD
 from game.services.deposit_service import DepositService
-=======
 from game.services.trading_service import TradingService
->>>>>>> feature/trading
 from game.serializers import GameSerializer
 from game.serializers import PlayerSerializer
 from game.serializers import PropertySerializer

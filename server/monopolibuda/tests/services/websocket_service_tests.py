@@ -104,6 +104,8 @@ def test_repurchase_when_valid():
     response = WebsocketService().repurchase(user_id=player.user.id, game_id=game.id, position=card.position)
     # THEN
     assert response['status'] == 1000
+
+@pytest.mark.django_db(transaction=True)    
 def test_create_offer_when_success():
   user = UserFactory()
   game = GameFactory()
