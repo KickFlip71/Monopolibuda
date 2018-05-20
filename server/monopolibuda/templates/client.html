@@ -190,6 +190,21 @@
             "command": "buy"
         }));
     });
+    $(document).on('click', '.buy-apartment-button', function() {
+        console.log('buy-button')
+        window.socket.send(JSON.stringify({
+            "command": "buy_building"
+        }));
+    });
+    $(document).on('click', '.sell-apartment-button', function() {
+        console.log('sell-button')
+        var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
+        window.socket.send(JSON.stringify({
+            "command": "sell_building",
+            "card_id": card_id
+        }));
+    });
+
 
 
 

@@ -84,7 +84,7 @@ class GameConsumer(JsonWebsocketConsumer):
   def leave(self, content):
     response = WebsocketService().leave(game_id=content['game'].id, user_id=content['user'].id)    
     response['command'] = 'player_leave'
-    self.send_response(response)   
+    self.send_response(response)
   
   def move(self, content): #TODO: FIX
     response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)    
@@ -114,18 +114,19 @@ class GameConsumer(JsonWebsocketConsumer):
 
   def buy_building(self, content):
     response = WebsocketService().buy_building(game_id=content['game'].id, user_id=content['user'].id)
-    response['command'] = 'player_building_buy'
-    self.send_response(response, broadcast=False)
-    response['command'] = 'board_building_buy'
+    response['command'] = 'board_building_update'
     self.send_response(response)
+    response = WebsocketService().join(game_id=content['game'].id, user_id=content['user'].id)
+    response['command'] = 'player_join'
+    self.send_response(response, broadcast=False)
 
   def sell_building(self, content):
-    position = response['position']
-    response = WebsocketService().sell_building(game_id=content['game'].id, user_id=content['user'].id, position=position)
-    response['command'] = 'player_building_sell'
-    self.send_response(response, broadcast=False)
-    response['command'] = 'board_building_sell'
+    response = WebsocketService().sell_building(game_id=content['game'].id, user_id=content['user'].id, card_id=content['card_id'])
+    response['command'] = 'board_building_update'
     self.send_response(response)
+    response = WebsocketService().join(game_id=content['game'].id, user_id=content['user'].id)
+    response['command'] = 'player_join'
+    self.send_response(response, broadcast=False)
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(

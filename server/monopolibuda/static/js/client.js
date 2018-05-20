@@ -59,6 +59,10 @@ function updateBalance(money) {
   $('#balance').html(money);
 }
 
+function updateBuildingsCount(card_id, new_value){
+  $('#card-'+card_id+' .buildings').html(new_value)
+}
+
 function updateButtons(move){
   console.log(move)
   if(move == 2){

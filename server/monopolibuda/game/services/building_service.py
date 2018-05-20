@@ -22,11 +22,11 @@ class BuildingService:
       
     return None, self.status
 
-  def sell_building(self, game_id, user_id, position):
+  def sell_building(self, game_id, user_id, card_id):
     player = PlayerProvider().get_player(game_id=game_id, user_id=user_id)
     self.__player_exists(player)
     if self.__is_valid():
-      user_property = PropertyProvider().get_property_with_position(game_id, position)
+      user_property = PropertyProvider().get_property_with_card(game_id, card_id=card_id)
       self.__property_validations(user_property, player)
       if self.__is_valid():
         self.__is_deposited(user_property)

@@ -109,8 +109,8 @@ class WebsocketService:
     self.__prepare_response(record, status)
     return self.response
 
-  def sell_building(self, game_id, user_id, position):
-    record, status = BuildingService().sell_building(game_id=game_id, user_id=user_id, position=position)
+  def sell_building(self, game_id, user_id, card_id):
+    record, status = BuildingService().sell_building(game_id=game_id, user_id=user_id, card_id=card_id)
     self.__prepare_response(record, status)
     return self.response
 
