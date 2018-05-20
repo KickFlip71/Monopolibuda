@@ -34,8 +34,9 @@ $(function () {
       console.log(data.payload.order)
       move_player(data.payload.order,data.payload.position)
     }
-    else if(command=="board_buiding_update"){
+    else if(command=="board_building_update"){
       set_bought(data.payload.property_set)
+      debugger
     }
     else if(command=="board_end"){
       disconnect_player(data.payload.order)
