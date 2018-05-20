@@ -1,4 +1,5 @@
 from game.models import Property, Game, User, Player, Card, Chance, Charge
+from random import choice
 
 class PlayerProvider:
   def get_player(self, game_id, user_id):
@@ -35,3 +36,7 @@ class CardProvider:
 class ChargeProvider:
   def get_charge(self, charge_id):
     return Charge.objects.get(pk=charge_id)
+
+class ChanceProvider:
+  def get_chance(self):
+    return choice(Chance.objects.all())
