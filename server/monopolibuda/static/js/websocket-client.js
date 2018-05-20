@@ -14,7 +14,6 @@ $(function () {
     window.socket = socket
   
     socket.onmessage = function (message) {
-        debugger
         data = JSON.parse(message.data)
         command = data.command;
         if(data['command'].slice(0,7) == "player_")
@@ -51,6 +50,10 @@ $(function () {
                 winning()
                 window.navigator.vibrate([500,110,500,110,450,110,200,110,170,40,450,110,200,110,170,40,500])
             }
+        }
+        else if(command=="player_chance" && success){
+            chance(data.payload)
+            fixBalance(data.payload.value)
         }
         else if(command=="player_tax" && success){
             debugger

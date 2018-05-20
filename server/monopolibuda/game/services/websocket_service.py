@@ -10,6 +10,7 @@ from game.serializers import GameSerializer
 from game.serializers import PlayerSerializer
 from game.serializers import PropertySerializer
 from game.serializers import CardSerializer
+from game.serializers import ChanceSerializer
 from game.models import Player
 from game.models import Game
 from game.providers import PlayerProvider
@@ -125,7 +126,8 @@ class WebsocketService:
       "Game": GameSerializer,
       "Player": PlayerSerializer,
       "Property": PropertySerializer,
-      "Card": CardSerializer
+      "Card": CardSerializer,
+      "Chance": ChanceSerializer
     }
     serializer_name = record.__class__.__name__
     many = False

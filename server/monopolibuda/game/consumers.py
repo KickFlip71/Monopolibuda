@@ -97,13 +97,16 @@ class GameConsumer(JsonWebsocketConsumer):
       if response_offer_to_player['status']==1000:
         self.send_response(response_offer_to_player, broadcast=False)
       
-      response_chance_card = WebsocketService().chance(game_id=content['game'].id, user_id=content['user'].id)
-      if response_chance_card['status']==1000:
-        response['command'] = 'player_chance'
-        self.send_response(response_chance_card, broadcast=False)
-
       response['command'] = 'player_move'
       self.send_response(response, broadcast=False)
+      
+      response_chance_card = WebsocketService().chance(game_id=content['game'].id, user_id=content['user'].id)
+      
+      if response_chance_card['status']==1000:
+        response_chance_card['command'] = 'player_chance'
+        self.send_response(response_chance_card, broadcast=False)
+        #self.join(content)
+
     else:
       response = WebsocketService().check(content['game'].id, content['user'].id)
       response['command'] = 'player_skip'

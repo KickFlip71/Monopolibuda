@@ -22,6 +22,7 @@ var status_codes =
 }
 
 var handleError = function(status) {
+  $.toast().reset('all')
   status = String(status)
   if(status.length != 4)
     return false 
