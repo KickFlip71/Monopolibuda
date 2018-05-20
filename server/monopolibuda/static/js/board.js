@@ -31,11 +31,21 @@ var disconnect_player = function(order) {
 
 var set_bought = function(property_set, bought=true){
   property_set.forEach(property => {
+    var property_div = $('#pos'+property.card.position)
     if(bought){
-      $('#pos'+property.card.position).addClass('bought')
+      property_div.addClass('bought')
+      property_div.find('div.apartments > div').each( function( index, element ){
+        if(index<property.buildings){
+          $(this).addClass('apartment-bought')
+        }
+        else{
+          $(this).removeClass('apartment-bought')
+        }
+      })
     }
     else{
-      $('#pos'+property.card.position).removeClass('bought')
+      property_div.removeClass('bought')
+      property_div.find('.apartment-bought').removeClass('apartment-bought')
     }
   });
 }

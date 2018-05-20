@@ -116,7 +116,6 @@ class GameConsumer(JsonWebsocketConsumer):
     response = WebsocketService().buy_building(game_id=content['game'].id, user_id=content['user'].id)
     response['command'] = 'board_building_update'
     self.send_response(response)
-    response = WebsocketService().join(game_id=content['game'].id, user_id=content['user'].id)
     response['command'] = 'player_join'
     self.send_response(response, broadcast=False)
 
@@ -124,7 +123,6 @@ class GameConsumer(JsonWebsocketConsumer):
     response = WebsocketService().sell_building(game_id=content['game'].id, user_id=content['user'].id, card_id=content['card_id'])
     response['command'] = 'board_building_update'
     self.send_response(response)
-    response = WebsocketService().join(game_id=content['game'].id, user_id=content['user'].id)
     response['command'] = 'player_join'
     self.send_response(response, broadcast=False)
 
