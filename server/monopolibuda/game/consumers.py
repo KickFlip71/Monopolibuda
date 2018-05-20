@@ -132,6 +132,20 @@ class GameConsumer(JsonWebsocketConsumer):
     response['command'] = 'player_join'
     self.send_response(response, broadcast=False)
 
+  def deposit(self, content):
+    response = WebsocketService().deposit(game_id=content['game'].id, user_id=content['user'].id, card_id=content['card_id'])
+    response['command'] = 'board_building_update'
+    self.send_response(response)
+    response['command'] = 'player_join'
+    self.send_response(response, broadcast=False)
+
+  def buyback(self, content):
+    response = WebsocketService().repurchase(game_id=content['game'].id, user_id=content['user'].id, card_id=content['card_id'])
+    response['command'] = 'board_building_update'
+    self.send_response(response)
+    response['command'] = 'player_join'
+    self.send_response(response, broadcast=False)
+
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(
       self.__get_game(),

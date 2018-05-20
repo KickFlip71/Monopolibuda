@@ -204,6 +204,22 @@
             "card_id": card_id
         }));
     });
+    $(document).on('click', '.deposit-property-button', function() {
+        console.log('deposit')
+        var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
+        window.socket.send(JSON.stringify({
+            "command": "deposit",
+            "card_id": card_id
+        }));
+    });
+    $(document).on('click', '.buyback-property-button', function() {
+        console.log('buyback')
+        var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
+        window.socket.send(JSON.stringify({
+            "command": "buyback",
+            "card_id": card_id
+        }));
+    });
 
 
 

@@ -6,27 +6,27 @@ class DepositService:
     def __init__(self):
         self.status = 1000
 
-    def deposit(self, game_id, user_id, position):
+    def deposit(self, game_id, user_id, card_id):
         player = PlayerProvider().get_player(game_id,user_id)
-        user_property = PropertyProvider().get_property_with_position(game_id, position)
+        user_property = PropertyProvider().get_property_with_card(game_id=game_id,card_id=card_id)
         self.check_default_validations(player, user_property)
         if self.__is_valid():
           self.is_not_deposited(user_property)
           if self.__is_valid():
             user_property.deposit()
-            return user_property, self.status
+            return PlayerProvider().get_player(game_id,user_id), self.status
         
         return None, self.status
 
-    def repurchase(self, game_id, user_id, position):
+    def repurchase(self, game_id, user_id, card_id):
         player = PlayerProvider().get_player(game_id,user_id)
-        user_property = PropertyProvider().get_property_with_position(game_id, position)
+        user_property = PropertyProvider().get_property_with_card(game_id=game_id,card_id=card_id)
         self.check_default_validations(player, user_property)
         if self.__is_valid():
           self.is_deposited(user_property)
           if self.__is_valid():
             user_property.repurchase()
-            return user_property, self.status
+            return PlayerProvider().get_player(game_id,user_id), self.status
         
         return None, self.status
 
@@ -44,7 +44,9 @@ class DepositService:
       elif user_property == None:
         self.status = 2007
       elif user_property.player != player:
-        self.status = 2004 
+        self.status = 2004
+      elif player.move != 1:
+        self.status = 2011
 
     def __is_valid(self):
       indicator = self.status / 1000

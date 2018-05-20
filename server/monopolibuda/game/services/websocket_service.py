@@ -80,13 +80,13 @@ class WebsocketService:
     self.__prepare_response(record, status)
     return self.response
 
-  def deposit(self, game_id, user_id, position):
-    record, status = DepositService().deposit(game_id=game_id, user_id=user_id, position=position)
+  def deposit(self, game_id, user_id, card_id):
+    record, status = DepositService().deposit(game_id=game_id, user_id=user_id, card_id=card_id)
     self.__prepare_response(record, status)
     return self.response
 
-  def repurchase(self, game_id, user_id, position):
-    record, status = DepositService().repurchase(game_id=game_id, user_id=user_id, position=position)
+  def repurchase(self, game_id, user_id, card_id):
+    record, status = DepositService().repurchase(game_id=game_id, user_id=user_id, card_id=card_id)
     self.__prepare_response(record, status)
     return self.response
 

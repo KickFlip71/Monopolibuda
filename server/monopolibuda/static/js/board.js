@@ -32,8 +32,15 @@ var disconnect_player = function(order) {
 var set_bought = function(property_set, bought=true){
   property_set.forEach(property => {
     var property_div = $('#pos'+property.card.position)
+    var apartments = property_div.find('div.apartments')
     if(bought){
       property_div.addClass('bought')
+      if(property.deposited){
+        apartments.addClass('deposited')
+      }
+      else{
+        apartments.removeClass('deposited')
+      }
       property_div.find('div.apartments > div').each( function( index, element ){
         if(index<property.buildings){
           $(this).addClass('apartment-bought')
@@ -45,6 +52,7 @@ var set_bought = function(property_set, bought=true){
     }
     else{
       property_div.removeClass('bought')
+      apartments.removeClass('deposited')
       property_div.find('.apartment-bought').removeClass('apartment-bought')
     }
   });
