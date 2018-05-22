@@ -30,8 +30,19 @@ var getPreparedCard = function(property){
   return template;
 }
 
-var showPreparedPropertyBuyModal = function(property){
-  var modal = $('#cardModal');
+var showPreparedPropertyBuyModal = function(property, rebuy=false){
+  if(rebuy){
+    var modal = $('#cardModal').clone()
+    modal.removeAttr('id')
+    $('.modal-rebuy-offer').remove()
+    modal.addClass('modal-rebuy-offer')
+    var real_property = property
+    property = property.card
+  }
+  else{
+    var modal = $('#cardModal')
+  }
+  
 
   
   modal.find('.deposit_value').html(property.deposit_value);
@@ -43,16 +54,28 @@ var showPreparedPropertyBuyModal = function(property){
   modal.find('.a3').html(property.charge.three_apartments);
   modal.find('.a4').html(property.charge.four_apartments);
   modal.find('.a5').html(property.charge.five_apartments);
-  modal.find('.cost').html(property.cost);
-  modal.find('.name').remove();
-  modal.find('.table').before("<button class='name btn group text-white color-group-"+property.group_number+"'  type='button'>"+property.name+"   <span class='badge badge-secondary deposited hidden'>Deposited</span></button>")
-  if (property.deposited){
-    modal.find('.deposited').removeClass('hidden');
+  
+  if(rebuy){
+    modal.find('.cost').html(real_property.selling_price)
+    modal.find('.buildings').html(real_property.buildings)
+    modal.find('.hidden-card-id').html(property.id)
+    modal.find('#buy-card-button').remove()
+    modal.find('.hidden').removeClass('hidden')
   }
   else{
-    modal.find('.deposited').addClass('hidden');
+    modal.find('.cost').html(property.cost)
   }
-  modal.modal('show');
+  modal.find('.name').remove();
+  modal.find('.table').before("<button class='name btn group text-white color-group-"+property.group_number+"'  type='button'>"+property.name+"   <span class='badge badge-secondary deposited hidden'>Deposited</span></button>")
+  if(rebuy){
+    if (real_property.deposited){
+      modal.find('.deposited').removeClass('hidden')
+    }
+  }
+  modal.modal('show')
+  if(rebuy){
+    $('#cardModal').before(modal)
+  }
 }
 
 function updateBalance(money) {

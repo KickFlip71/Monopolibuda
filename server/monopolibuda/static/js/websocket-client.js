@@ -38,6 +38,9 @@ $(function () {
         else if(command=="player_offer" && success){
             showPreparedPropertyBuyModal(data.payload)
         }
+        else if(command=="player_resell_offer" && success){
+            showPreparedPropertyBuyModal(data.payload, rebuy=true)
+        }
         else if(command=="player_move" && success){
             updateBalance(data.payload.balance)
             updateButtons(data.payload.move)

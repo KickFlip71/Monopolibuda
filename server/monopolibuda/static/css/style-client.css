@@ -40,7 +40,8 @@
     border-color: #BEE019;
 }
 .template,
-.hidden
+.hidden,
+.hidden-card-id
 {
     display: none;
 }

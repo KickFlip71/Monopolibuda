@@ -126,6 +126,7 @@ class Property(models.Model):
         old_owner.balance += price
         old_owner.save()
         new_owner.save()
+        self.save()
 
     def for_sell(self, price):
         self.selling_price = price

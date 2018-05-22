@@ -17,6 +17,7 @@
             </div>
             <div class="collapse" data-parent="#accordion">
                 <div class="card-body">
+
                         <button class="btn btn-outline-secondary sell-property-button mb-1 w-100" type="button">Sell property</button>
                         <button class="btn btn-outline-secondary deposit-property-button mb-1 w-100" type="button">Deposit property</button>
                         <button class="btn btn-outline-secondary buyback-property-button mb-1 w-100" type="button">Buyback property</button>
@@ -97,6 +98,10 @@
 
                 <table class="table">
                     <tbody>
+                        <tr class="hidden">
+                            <td>Buildings</td>
+                            <td class="buildings"></td>
+                        </tr>
                         <tr>
                             <td>Buying cost</td>
                             <td class="cost"></td>
@@ -142,8 +147,10 @@
                 </table>
             </div>
             <div class="modal-footer">
+                <div class="hidden-card-id"></div>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Don't buy</button>
                 <button id="buy-card-button" type="button" class="btn btn-success" data-dismiss="modal">Buy</button>
+                <button type="button" class="btn btn-success rebuy-button hidden" data-dismiss="modal">Buy</button>
             </div>
         </div>
     </div>
@@ -217,6 +224,23 @@
         var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
         window.socket.send(JSON.stringify({
             "command": "buyback",
+            "card_id": card_id
+        }));
+    });
+    $(document).on('click', '.sell-property-button', function() {
+        console.log('sell_property')
+        var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
+        window.socket.send(JSON.stringify({
+            "command": "sell_property",
+            "card_id": card_id,
+            "price": prompt()
+        }));
+    });
+    $(document).on('click', '.rebuy-button', function() {
+        console.log('rebuy')
+        var card_id = $(this).parent().find('.hidden-card-id').text()
+        window.socket.send(JSON.stringify({
+            "command": "rebuy_property",
             "card_id": card_id
         }));
     });

@@ -6,11 +6,12 @@ class TradingService:
     def __init__(self):
         self.status = 1000
 
-    def create_offer(self, game_id, user_id, position, price):
+    def create_offer(self, game_id, user_id, card_id, price):
       player = PlayerProvider().get_player(game_id, user_id)
-      user_property = PropertyProvider().get_property_with_position(game_id, position)
+      user_property = PropertyProvider().get_property_with_card(game_id, card_id)
       self.__default_validations(player, user_property)
       self.__property_owner_validations(player, user_property)
+      self.__player_has_move(player)
 
       if self.__is_valid():
         user_property.for_sell(price)
@@ -18,9 +19,9 @@ class TradingService:
       else:
         return None, self.status        
 
-    def accept_offer(self, game_id, user_id, position):
+    def accept_offer(self, game_id, user_id, card_id):
       player = PlayerProvider().get_player(game_id, user_id)
-      user_property = PropertyProvider().get_property_with_position(game_id, position)
+      user_property = PropertyProvider().get_property_with_card(game_id, card_id)
       self.__default_validations(player, user_property)
       self.__property_for_sale(user_property)
       self.__player_can_afford(player, user_property)
@@ -31,9 +32,9 @@ class TradingService:
       else:
         return None, self.status  
 
-    def cancel_offer(self, game_id, user_id, position):
+    def cancel_offer(self, game_id, user_id, card_id):
       player = PlayerProvider().get_player(game_id, user_id)
-      user_property = PropertyProvider().get_property_with_position(game_id, position)
+      user_property = PropertyProvider().get_property_with_card(game_id, card_id)
       self.__default_validations(player, user_property)
       self.__property_owner_validations(player, user_property)
       self.__property_for_sale(user_property)
@@ -42,22 +43,34 @@ class TradingService:
         user_property.cancel_offer()
         return user_property, self.status
       else:
-        return None, self.status  
+        return None, self.status
+
+    def cancel_players_offers(self, game_id, user_id):
+      player = PlayerProvider().get_player(game_id, user_id)
+      user_properties = PropertyProvider().get_player_properties(game_id=game_id,player_id=player.id)
+      for user_property in user_properties:
+        self.__property_for_sale(user_property)
+        if self.__is_valid():
+          user_property.cancel_offer()
 
     def __finish_exchange(self, player, user_property):
       user_property.change_owner(player)
 
     def __property_for_sale(self, user_property):
-      if self.__is_valid() and user_property.selling_price == 0:
+      if user_property.selling_price == 0:
         self.status = 2013
 
     def __property_owner_validations(self, player, user_property):
-      if self.__is_valid() and user_property.player_id != player.id:
+      if user_property.player_id != player.id:
         self.status = 2004
 
     def __player_can_afford(self, player, user_property):
-      if self.__is_valid() and player.balance < user_property.selling_price:
+      if player.balance < user_property.selling_price:
         self.status = 2012
+
+    def __player_has_move(self, player):
+      if player.move != 1:
+        self.status = 2010
 
     def __default_validations(self, player, user_property):
       if player == None:
