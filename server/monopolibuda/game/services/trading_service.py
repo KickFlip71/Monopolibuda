@@ -20,15 +20,16 @@ class TradingService:
         return None, self.status        
 
     def accept_offer(self, game_id, user_id, card_id):
-      player = PlayerProvider().get_player(game_id, user_id)
+      new_owner = PlayerProvider().get_player(game_id, user_id)
       user_property = PropertyProvider().get_property_with_card(game_id, card_id)
-      self.__default_validations(player, user_property)
+      old_owner = PlayerProvider().get_owner(property_id=user_property.id)
+      self.__default_validations(new_owner, user_property)
       self.__property_for_sale(user_property)
-      self.__player_can_afford(player, user_property)
+      self.__player_can_afford(new_owner, user_property)
 
       if self.__is_valid():
-        self.__finish_exchange(player, user_property)
-        return player, self.status
+        self.__finish_exchange(new_owner, old_owner, user_property)
+        return [new_owner, old_owner], self.status
       else:
         return None, self.status  
 
@@ -53,8 +54,8 @@ class TradingService:
         if self.__is_valid():
           user_property.cancel_offer()
 
-    def __finish_exchange(self, player, user_property):
-      user_property.change_owner(player)
+    def __finish_exchange(self, new_owner, old_owner, user_property):
+      user_property.change_owner(new_owner, old_owner)
 
     def __property_for_sale(self, user_property):
       if user_property.selling_price == 0:

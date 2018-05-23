@@ -8,6 +8,10 @@ class PlayerProvider:
   def get_active_game_players(self, game_id):
     return Player.objects.filter(game_id=game_id, active=True)
 
+  def get_owner(self, property_id):
+    property = Property.objects.get(pk=property_id)
+    return Player.objects.get(pk=property.player_id)
+
 class PropertyProvider:
   def get_player_properties(self, game_id, player_id):
     return Property.objects.filter(game_id=game_id, player_id=player_id)

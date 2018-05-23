@@ -39,7 +39,9 @@ $(function () {
             showPreparedPropertyBuyModal(data.payload)
         }
         else if(command=="player_resell_offer" && success){
-            showPreparedPropertyBuyModal(data.payload, rebuy=true)
+            if(data.payload.player_id!==player_id){
+                showPreparedPropertyBuyModal(data.payload, rebuy=true)
+            }
         }
         else if(command=="player_move" && success){
             updateBalance(data.payload.balance)
@@ -59,7 +61,6 @@ $(function () {
             fixBalance(data.payload.value)
         }
         else if(command=="player_tax" && success){
-            debugger
             if(data.payload[0].id==player_id){
                 window.navigator.vibrate([50,300,50,300,50])
                 updateBalance(data.payload[0].balance)
@@ -67,6 +68,22 @@ $(function () {
             else if(data.payload[1].id==player_id){
                 window.navigator.vibrate([50,100,50,100,50])
                 updateBalance(data.payload[1].balance)
+            }
+        }
+        else if(command=="player_resell_update" && success){
+            if(data.payload[0].id==player_id){
+                updateBalance(data.payload[0].balance)
+                $(".property").empty()
+                data.payload[0].property_set.forEach(property => {
+                    $('#properties').append(getPreparedCard(property))
+                })
+            }
+            else if(data.payload[1].id==player_id){
+                updateBalance(data.payload[1].balance)
+                $(".property").empty()
+                data.payload[1].property_set.forEach(property => {
+                    $('#properties').append(getPreparedCard(property))
+                })
             }
         }
         else if(command=="player_update" && success){

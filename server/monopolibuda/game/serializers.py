@@ -28,7 +28,7 @@ class PropertySerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Property
-    fields = ('id', 'buildings', 'deposited', 'card', 'selling_price')
+    fields = ('id', 'player_id', 'buildings', 'deposited', 'card', 'selling_price')
 
 class PlayerSerializer(serializers.ModelSerializer):
   user = UserSerializer(read_only=True)

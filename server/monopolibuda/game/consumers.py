@@ -156,8 +156,8 @@ class GameConsumer(JsonWebsocketConsumer):
 
   def rebuy_property(self, content):
     response = WebsocketService().accept_offer(game_id=content['game'].id, user_id=content['user'].id, card_id=content['card_id'])
-    response['command'] = 'player_join'
-    self.send_response(response, broadcast=False)
+    response['command'] = 'player_resell_update'
+    self.send_response(response)
 
   def disconnect(self, code):
     async_to_sync(self.channel_layer.group_discard)(

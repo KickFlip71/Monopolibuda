@@ -118,14 +118,14 @@ class Property(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
     selling_price = models.IntegerField(default=0)
 
-    def change_owner(self, new_owner):
-        old_owner = self.player
+    def change_owner(self, new_owner, old_owner):
         self.player = new_owner
         price = self.selling_price
         new_owner.balance -= price
         old_owner.balance += price
         old_owner.save()
         new_owner.save()
+        self.selling_price = 0
         self.save()
 
     def for_sell(self, price):

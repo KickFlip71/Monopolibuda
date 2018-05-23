@@ -97,16 +97,18 @@ function updateButtons(move){
   if(move == 2){
     $("#dice-button").prop('disabled', false)
     $("#end-round-button").prop('disabled', true)
+    $(".active-on-move").prop('disabled', true)
   }
   else if(move == 1){
     $("#dice-button").prop('disabled', true)
     $("#end-round-button").prop('disabled', false)
+    $(".active-on-move").prop('disabled', false)
   }
   else{
     $("#dice-button").prop('disabled', true)
     $("#end-round-button").prop('disabled', true)
+    $(".active-on-move").prop('disabled', true)
   }
-
 }
 
 function findPlayer(players, current_player) {
