@@ -26,11 +26,11 @@
         <div class="alert alert-success">
           <form method="get" action="{% url 'board' game.id %}">
             <p>Game nr {{ game.id }} hosted by {{ game.host }}:</p>
-            <input type="text" name="code" placeholder="Code" oninput="this.value = this.value.toUpperCase()">
-            <div>
-              <button type="submit" class="btn btn-success">View board</button>
-              <button type="submit" class="btn btn-success" formaction="{% url 'client' game.id %}">Play</button>
-            </div>
+            {% if game.host.id != user.id %}
+            <input type="text" name="code" placeholder="Code" maxlength="4" oninput="this.value = this.value.toUpperCase()">
+            {% endif %}
+            <button type="submit" class="btn btn-success">View board</button>
+            <button type="submit" class="btn btn-success" formaction="{% url 'client' game.id %}">Play</button>
           </form>
         </div>
     {% empty %}

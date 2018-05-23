@@ -10,16 +10,24 @@
             <div class="card-header collapsed">
                 <h5 class="mb-0">
                     <button class="title btn text-white btn-link" data-toggle="collapse" aria-expanded="false">
-
                     </button>
                     <span class="badge badge-secondary deposited hidden">Deposited</span>
                 </h5>
             </div>
             <div class="collapse" data-parent="#accordion">
                 <div class="card-body">
-                        <button class="btn btn-outline-secondary sell-property-button mb-1 w-100" type="button">Sell property</button>
-                        <button class="btn btn-outline-secondary deposit-property-button mb-1 w-100" type="button">Deposit property</button>
-                        <button class="btn btn-outline-secondary buyback-property-button mb-1 w-100" type="button">Buyback property</button>
+                        <form>
+                                <div class="form-row align-items-center mb-4">
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control" name="price" min="1" placeholder="Your price">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-outline-secondary sell-property-button w-100 active-on-move" type="button">Sell property</button>
+                                    </div>
+                                </div>
+                            </form>
+                    <button class="btn btn-outline-secondary deposit-property-button mb-1 w-100 active-on-move" type="button">Deposit property</button>
+                    <button class="btn btn-outline-secondary buyback-property-button mb-1 w-100 active-on-move" type="button">Buyback property</button>
                     <table class="table">
                         <tbody>
                             <tr>
@@ -29,8 +37,8 @@
                         </tbody>
                     </table>
 
-                        <button class="btn btn-outline-secondary buy-apartment-button mb-1 w-100" type="button">Buy apartment</button>
-                        <button class="btn btn-outline-secondary sell-apartment-button mb-1 w-100" type="button">Sell apartment</button>
+                        <button class="btn btn-outline-secondary buy-apartment-button mb-1 w-100 active-on-move" type="button">Buy apartment</button>
+                        <button class="btn btn-outline-secondary sell-apartment-button mb-1 w-100 active-on-move" type="button">Sell apartment</button>
                     <table class="table">
                         <tbody>
                             <tr>
@@ -97,6 +105,10 @@
 
                 <table class="table">
                     <tbody>
+                        <tr class="hidden">
+                            <td>Buildings</td>
+                            <td class="buildings"></td>
+                        </tr>
                         <tr>
                             <td>Buying cost</td>
                             <td class="cost"></td>
@@ -142,30 +154,10 @@
                 </table>
             </div>
             <div class="modal-footer">
+                <div class="hidden-card-id"></div>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Don't buy</button>
                 <button id="buy-card-button" type="button" class="btn btn-success" data-dismiss="modal">Buy</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="makeOfferModal" tabindex="-1" role="dialog" aria-labelledby="makeOfferModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="makeOfferModalLabel">Make an offer</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="inputValue">Price</label>
-                    <input id="inputValue" type="number" class="form-control" min="1">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">Make a public offer</button>
+                <button type="button" class="btn btn-success rebuy-button hidden" data-dismiss="modal">Buy</button>
             </div>
         </div>
     </div>
@@ -201,6 +193,41 @@
         var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
         window.socket.send(JSON.stringify({
             "command": "sell_building",
+            "card_id": card_id
+        }));
+    });
+    $(document).on('click', '.deposit-property-button', function() {
+        console.log('deposit')
+        var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
+        window.socket.send(JSON.stringify({
+            "command": "deposit",
+            "card_id": card_id
+        }));
+    });
+    $(document).on('click', '.buyback-property-button', function() {
+        console.log('buyback')
+        var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
+        window.socket.send(JSON.stringify({
+            "command": "buyback",
+            "card_id": card_id
+        }));
+    });
+    $(document).on('click', '.sell-property-button', function() {
+        console.log('sell_property')
+        var parent = $(this).parents(':eq(5)')
+        var card_id = parent.attr('id').slice(5)
+        var price = parent.find('input').val()
+        window.socket.send(JSON.stringify({
+            "command": "sell_property",
+            "card_id": card_id,
+            "price": price
+        }));
+    });
+    $(document).on('click', '.rebuy-button', function() {
+        console.log('rebuy')
+        var card_id = $(this).parent().find('.hidden-card-id').text()
+        window.socket.send(JSON.stringify({
+            "command": "rebuy_property",
             "card_id": card_id
         }));
     });

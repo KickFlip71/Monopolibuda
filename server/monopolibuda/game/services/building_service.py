@@ -14,11 +14,12 @@ class BuildingService:
       self.__property_validations(user_property, player)
       if self.__is_valid():
         self.__is_deposited(user_property)        
-        self.__player_can_afford(user_property, player)
+        #self.__player_can_afford(user_property, player) <- git gud
+        self.__player_has_move(player)
         self.__max_apartment_reach_limit(user_property)
         if self.__is_valid():
           user_property.buy_building()
-          return user_property, self.status
+          return PlayerProvider().get_player(game_id=game_id, user_id=user_id), self.status
       
     return None, self.status
 
@@ -30,10 +31,11 @@ class BuildingService:
       self.__property_validations(user_property, player)
       if self.__is_valid():
         self.__is_deposited(user_property)
+        self.__player_has_move(player)
         self.__min_apartment_reach_limit(user_property)
         if self.__is_valid():
           user_property.sell_building()
-          return user_property, self.status
+          return PlayerProvider().get_player(game_id=game_id, user_id=user_id), self.status
       
     return None, self.status
 
@@ -74,3 +76,7 @@ class BuildingService:
     else:
       cost = user_property.card.apartment_cost
     return cost
+
+  def __player_has_move(self, player):
+    if(player.move != 1):
+      self.status = 2011

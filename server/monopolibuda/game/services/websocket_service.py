@@ -5,10 +5,12 @@ from game.services.property_service import PropertyService
 from game.services.deposit_service import DepositService
 from game.services.trading_service import TradingService
 from game.services.building_service import BuildingService
+from game.services.chance_service import ChanceService
 from game.serializers import GameSerializer
 from game.serializers import PlayerSerializer
 from game.serializers import PropertySerializer
 from game.serializers import CardSerializer
+from game.serializers import ChanceSerializer
 from game.models import Player
 from game.models import Game
 from game.providers import PlayerProvider
@@ -48,6 +50,7 @@ class WebsocketService:
     return self.response
   
   def skip(self, game_id, user_id):
+    TradingService().cancel_players_offers(game_id=game_id, user_id=user_id)
     record, status = GameService().skip_turn(game_id=game_id, user_id=user_id)
     self.__prepare_response(record, status)
     return self.response
@@ -79,28 +82,28 @@ class WebsocketService:
     self.__prepare_response(record, status)
     return self.response
 
-  def deposit(self, game_id, user_id, position):
-    record, status = DepositService().deposit(game_id=game_id, user_id=user_id, position=position)
+  def deposit(self, game_id, user_id, card_id):
+    record, status = DepositService().deposit(game_id=game_id, user_id=user_id, card_id=card_id)
     self.__prepare_response(record, status)
     return self.response
 
-  def repurchase(self, game_id, user_id, position):
-    record, status = DepositService().repurchase(game_id=game_id, user_id=user_id, position=position)
+  def repurchase(self, game_id, user_id, card_id):
+    record, status = DepositService().repurchase(game_id=game_id, user_id=user_id, card_id=card_id)
     self.__prepare_response(record, status)
     return self.response
 
-  def create_offer(self, game_id, user_id, position, price):
-    record, status = TradingService().create_offer(game_id=game_id, user_id=user_id, position=position, price=price)
+  def create_offer(self, game_id, user_id, card_id, price):
+    record, status = TradingService().create_offer(game_id=game_id, user_id=user_id, card_id=card_id, price=price)
     self.__prepare_response(record, status)
     return self.response
 
-  def accept_offer(self, game_id, user_id, position):
-    record, status = TradingService().accept_offer(game_id=game_id, user_id=user_id, position=position)
+  def accept_offer(self, game_id, user_id, card_id):
+    record, status = TradingService().accept_offer(game_id=game_id, user_id=user_id, card_id=card_id)
     self.__prepare_response(record, status)
     return self.response
 
-  def cancel_offer(self, game_id, user_id, position):
-    record, status = TradingService().cancel_offer(game_id=game_id, user_id=user_id, position=position)
+  def cancel_offer(self, game_id, user_id, card_id):
+    record, status = TradingService().cancel_offer(game_id=game_id, card_id=card_id, position=position)
     self.__prepare_response(record, status)
     return self.response
 
@@ -114,12 +117,18 @@ class WebsocketService:
     self.__prepare_response(record, status)
     return self.response
 
+  def chance(self, game_id, user_id):
+    record, status = ChanceService().get_chance_card(game_id=game_id, user_id=user_id)
+    self.__prepare_response(record, status)
+    return self.response
+
   def __prepare_response(self, record, status = 1000):
     serializers = {
       "Game": GameSerializer,
       "Player": PlayerSerializer,
       "Property": PropertySerializer,
-      "Card": CardSerializer
+      "Card": CardSerializer,
+      "Chance": ChanceSerializer
     }
     serializer_name = record.__class__.__name__
     many = False

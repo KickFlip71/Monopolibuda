@@ -30,8 +30,19 @@ var getPreparedCard = function(property){
   return template;
 }
 
-var showPreparedPropertyBuyModal = function(property){
-  var modal = $('#cardModal');
+var showPreparedPropertyBuyModal = function(property, rebuy=false){
+  if(rebuy){
+    var modal = $('#cardModal').clone()
+    modal.removeAttr('id')
+    $('.modal-rebuy-offer').remove()
+    modal.addClass('modal-rebuy-offer')
+    var real_property = property
+    property = property.card
+  }
+  else{
+    var modal = $('#cardModal')
+  }
+  
 
   
   modal.find('.deposit_value').html(property.deposit_value);
@@ -43,20 +54,38 @@ var showPreparedPropertyBuyModal = function(property){
   modal.find('.a3').html(property.charge.three_apartments);
   modal.find('.a4').html(property.charge.four_apartments);
   modal.find('.a5').html(property.charge.five_apartments);
-  modal.find('.cost').html(property.cost);
-  modal.find('.name').remove();
-  modal.find('.table').before("<button class='name btn group text-white color-group-"+property.group_number+"'  type='button'>"+property.name+"   <span class='badge badge-secondary deposited hidden'>Deposited</span></button>")
-  if (property.deposited){
-    modal.find('.deposited').removeClass('hidden');
+  
+  if(rebuy){
+    modal.find('.cost').html(real_property.selling_price)
+    modal.find('.buildings').html(real_property.buildings)
+    modal.find('.hidden-card-id').html(property.id)
+    modal.find('#buy-card-button').remove()
+    modal.find('.hidden').removeClass('hidden')
   }
   else{
-    modal.find('.deposited').addClass('hidden');
+    modal.find('.cost').html(property.cost)
   }
-  modal.modal('show');
+  modal.find('.name').remove();
+  modal.find('.table').before("<button class='name btn group text-white color-group-"+property.group_number+"'  type='button'>"+property.name+"   <span class='badge badge-secondary deposited hidden'>Deposited</span></button>")
+  if(rebuy){
+    if (real_property.deposited){
+      modal.find('.deposited').removeClass('hidden')
+    }
+  }
+  modal.modal('show')
+  if(rebuy){
+    $('#cardModal').before(modal)
+  }
 }
 
 function updateBalance(money) {
-  $('#balance').html(money);
+  $('#balance').html(money)
+}
+
+function fixBalance(money) {  // i am also ashamed
+  var temp = $('#balance').text()
+  var temp2 = parseInt(temp)+money
+  $('#balance').html(temp2)
 }
 
 function updateBuildingsCount(card_id, new_value){
@@ -68,16 +97,18 @@ function updateButtons(move){
   if(move == 2){
     $("#dice-button").prop('disabled', false)
     $("#end-round-button").prop('disabled', true)
+    $(".active-on-move").prop('disabled', true)
   }
   else if(move == 1){
     $("#dice-button").prop('disabled', true)
     $("#end-round-button").prop('disabled', false)
+    $(".active-on-move").prop('disabled', false)
   }
   else{
     $("#dice-button").prop('disabled', true)
     $("#end-round-button").prop('disabled', true)
+    $(".active-on-move").prop('disabled', true)
   }
-
 }
 
 function findPlayer(players, current_player) {
@@ -89,4 +120,27 @@ function findPlayer(players, current_player) {
     }
   })
   return player
+}
+
+var chance = function(chance){
+  $.toast().reset('all')
+  $.toast({
+    heading: chance.description, // Optional heading to be shown on the toast
+    text: chance.value,
+    showHideTransition: 'fade', // fade, slide or plain
+    allowToastClose: true, // Boolean value true or false
+    hideAfter: false, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
+    stack: false, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
+    position: 'mid-center', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
+    
+    bgColor: '#444444',  // Background color of the toast
+    textColor: '#eeeeee',  // Text color of the toast
+    textAlign: 'center',  // Text alignment i.e. left, right or center
+    loader: true,  // Whether to show loader or not. True by default
+    loaderBg: '#9EC600',  // Background color of the toast loader
+    beforeShow: function () {}, // will be triggered before the toast is shown
+    afterShown: function () {}, // will be triggered after the toat has been shown
+    beforeHide: function () {}, // will be triggered before the toast gets hidden
+    afterHidden: function () {}  // will be triggered after the toast has been hidden
+  })
 }

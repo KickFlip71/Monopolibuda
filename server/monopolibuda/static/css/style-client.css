@@ -1,3 +1,12 @@
+@font-face {
+    font-family: 'Museo'; /*a name to be used later*/
+    src: url('/static/fonts/MuseoSans_500.otf'); /*URL to font*/
+}
+
+*{
+    font-family: 'Museo'
+}
+
 .color-group-0{
     background-color: #E8C51A;
     border-color: #E8C51A;
@@ -31,7 +40,8 @@
     border-color: #BEE019;
 }
 .template,
-.hidden
+.hidden,
+.hidden-card-id
 {
     display: none;
 }

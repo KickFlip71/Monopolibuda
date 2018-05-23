@@ -1,10 +1,15 @@
 from rest_framework import serializers
-from game.models import User, Game, Player, Card, Property, Charge
+from game.models import User, Game, Player, Card, Property, Charge, Chance
 
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = ('id', 'username', 'email')
+
+class ChanceSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Chance
+    fields = ('id', 'chance_type', 'description', 'value')
 
 class ChargeSerializer(serializers.ModelSerializer):
   class Meta:
@@ -23,7 +28,7 @@ class PropertySerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Property
-    fields = ('id', 'buildings', 'deposited', 'card')
+    fields = ('id', 'player_id', 'buildings', 'deposited', 'card', 'selling_price')
 
 class PlayerSerializer(serializers.ModelSerializer):
   user = UserSerializer(read_only=True)
