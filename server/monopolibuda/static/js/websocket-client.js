@@ -71,6 +71,7 @@ $(function () {
             }
         }
         else if(command=="player_resell_update" && success){
+            $('.modal-rebuy-offer').modal('hide')
             if(data.payload[0].id==player_id){
                 updateBalance(data.payload[0].balance)
                 $(".property").empty()
