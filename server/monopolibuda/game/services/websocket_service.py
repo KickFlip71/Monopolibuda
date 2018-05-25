@@ -103,7 +103,7 @@ class WebsocketService:
     return self.response
 
   def cancel_offer(self, game_id, user_id, card_id):
-    record, status = TradingService().cancel_offer(game_id=game_id, card_id=card_id, position=position)
+    record, status = TradingService().cancel_offer(game_id=game_id, user_id=user_id, card_id=card_id)
     self.__prepare_response(record, status)
     return self.response
 

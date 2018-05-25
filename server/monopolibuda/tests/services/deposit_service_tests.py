@@ -1,4 +1,4 @@
-from game.models import Game, Player
+from game.models import Game, Player, Property
 from tests.factories.user_factory import UserFactory
 from tests.factories.game_factory import GameFactory
 from tests.factories.player_factory import PlayerFactory
@@ -15,15 +15,16 @@ def test_deposit_when_valid():
     # GIVEN
     game = GameFactory()
     card = CardFactory(position=1)
-    player = PlayerFactory(game_id=game.id)
+    player = PlayerFactory(game_id=game.id, move=1)
     user_property = PropertyFactory(player=player, card=card, game=game, deposited=False)
     # WHEN
-    deposit_property, status = DepositService().deposit(user_id=player.user.id, game_id=game.id, position=card.position)
+    deposit_player, status = DepositService().deposit(user_id=player.user.id, game_id=game.id, card_id=card.id)
     # THEN
     new_balance = Player.objects.get(pk=player.id).balance
-    assert deposit_property == user_property 
+    new_property = Property.objects.get(pk=user_property.id)
+    assert new_property == user_property 
     assert status == 1000
-    assert deposit_property.deposited == True
+    assert new_property.deposited == True
     assert new_balance == (player.balance + card.deposit_value)
 
 
@@ -32,15 +33,16 @@ def test_repurchase_when_valid():
     # GIVEN
     game = GameFactory()
     card = CardFactory(position=1)
-    player = PlayerFactory(game_id=game.id)
+    player = PlayerFactory(game_id=game.id, move=1)
     user_property = PropertyFactory(player=player, card=card, game=game, deposited=True)
     # WHEN
-    deposit_property, status = DepositService().repurchase(user_id=player.user.id, game_id=game.id, position=card.position)
+    deposit_property, status = DepositService().repurchase(user_id=player.user.id, game_id=game.id, card_id=card.id)
     # THEN
     new_balance = Player.objects.get(pk=player.id).balance
-    assert deposit_property == user_property 
+    new_property = Property.objects.get(pk=user_property.id)
+    assert new_property == user_property 
     assert status == 1000
-    assert deposit_property.deposited == False
+    assert new_property.deposited == False
     assert new_balance == (player.balance - card.deposit_value)
 
 
@@ -51,10 +53,10 @@ def test_deposit_when_not_owner():
     # GIVEN
     game = GameFactory()
     card = CardFactory(position=1)
-    player = PlayerFactory(game_id=game.id)
+    player = PlayerFactory(game_id=game.id, move=1)
     user_property = PropertyFactory(card=card, game=game, deposited=False)
     # WHEN
-    deposit_property, status = DepositService().deposit(user_id=player.user.id, game_id=game.id, position=card.position)
+    deposit_property, status = DepositService().deposit(user_id=player.user.id, game_id=game.id, card_id=card.id)
     # THEN
     assert deposit_property == None 
     assert status == 2004
@@ -64,10 +66,10 @@ def test_deposit_when_already_deposited():
     # GIVEN
     game = GameFactory()
     card = CardFactory(position=1)
-    player = PlayerFactory(game_id=game.id)
+    player = PlayerFactory(game_id=game.id, move=1)
     user_property = PropertyFactory(player=player, card=card, game=game)
     # WHEN
-    deposit_property, status = DepositService().deposit(user_id=player.user.id, game_id=game.id, position=card.position)
+    deposit_property, status = DepositService().deposit(user_id=player.user.id, game_id=game.id, card_id=card.id)
     # THEN
     assert deposit_property == None 
     assert status == 2016
@@ -77,10 +79,10 @@ def test_repurchase_when_not_owner():
     # GIVEN
     game = GameFactory()
     card = CardFactory(position=1)
-    player = PlayerFactory(game_id=game.id)
+    player = PlayerFactory(game_id=game.id,move=1)
     user_property = PropertyFactory(card=card, game=game, deposited=False)
     # WHEN
-    deposit_property, status = DepositService().repurchase(user_id=player.user.id, game_id=game.id, position=card.position)
+    deposit_property, status = DepositService().repurchase(user_id=player.user.id, game_id=game.id, card_id=card.id)
     # THEN
     assert deposit_property == None 
     assert status == 2004
@@ -90,10 +92,10 @@ def test_repurchase_when_already_deposited():
     # GIVEN
     game = GameFactory()
     card = CardFactory(position=1)
-    player = PlayerFactory(game_id=game.id)
+    player = PlayerFactory(game_id=game.id,move=1)
     user_property = PropertyFactory(player=player, card=card, game=game, deposited=False)
     # WHEN
-    deposit_property, status = DepositService().repurchase(user_id=player.user.id, game_id=game.id, position=card.position)
+    deposit_property, status = DepositService().repurchase(user_id=player.user.id, game_id=game.id, card_id=card.id)
     # THEN
     assert deposit_property == None 
     assert status == 2017
