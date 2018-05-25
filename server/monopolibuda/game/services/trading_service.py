@@ -10,14 +10,14 @@ class TradingService:
       player = PlayerProvider().get_player(game_id, user_id)
       user_property = PropertyProvider().get_property_with_card(game_id, card_id)
       self.__default_validations(player, user_property)
-      self.__property_owner_validations(player, user_property)
-      self.__player_has_move(player)
-
       if self.__is_valid():
-        user_property.for_sell(price)
-        return user_property, self.status
-      else:
-        return None, self.status        
+        self.__property_owner_validations(player, user_property)
+        self.__player_has_move(player)
+        if self.__is_valid():
+          user_property.for_sell(price)
+          return user_property, self.status
+      
+      return None, self.status        
 
     def accept_offer(self, game_id, user_id, card_id):
       new_owner = PlayerProvider().get_player(game_id, user_id)
