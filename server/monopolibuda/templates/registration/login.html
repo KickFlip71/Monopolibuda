@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load socialaccount %}
 
 {% block title %}Login{% endblock %}
 {% block header_text %}Login{% endblock %}
@@ -11,6 +12,8 @@
         <button class="btn btn-info">Login</button>
         <a href="/accounts/signup" class="btn btn-info">Sign Up</a>
     </form>	
+    <br/>
+    <a class="btn btn-primary" href="{% provider_login_url "facebook" method="oauth2" %}">Facebook</a>
 </div>
 
 {% endblock %}

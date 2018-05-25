@@ -8,6 +8,7 @@ urlpatterns = [
     path('', include('game.urls')),
     path('accounts/login/', login),
     path('accounts/logout/', logout),
-    path('accounts/signup/', views.signup, name='signup'),
+    # path('accounts/signup/', views.signup, name='signup'),
+    path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls)
 ]
