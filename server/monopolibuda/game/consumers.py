@@ -4,6 +4,7 @@ from rest_framework.renderers import JSONRenderer
 from game.services.game_service import GameService
 from game.services.websocket_service import WebsocketService
 from random import randint
+from game.proxy import Proxy
 
 from game.models import Game
 
@@ -27,7 +28,6 @@ class GameConsumer(JsonWebsocketConsumer):
 
   def receive_json(self, content):
     game_id = self.__get_game()
-    
     command = content.get("command", None)
     content['user'] = self.scope['user']
     content['game'] = Game.objects.get(pk=game_id)
