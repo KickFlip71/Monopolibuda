@@ -3,13 +3,45 @@ from asgiref.sync import async_to_sync
 from rest_framework.renderers import JSONRenderer
 from game.services.game_service import GameService
 from game.services.websocket_service import WebsocketService
+from game.proxy import Proxy
 from random import randint
 from game.proxy import Proxy
-
 from game.models import Game
+import threading
+import time
+
+class ThreadingExample(object):
+  """ Threading example class
+  The run() method will be started and it will run in the background
+  until the application exits.
+  """
+
+  def __init__(self, interval=1):
+    """ Constructor
+    :type interval: int
+    :param interval: Check interval, in seconds
+    """
+    self.interval = interval
+
+    thread = threading.Thread(target=self.run, args=())
+    thread.daemon = True                            # Daemonize thread
+    thread.start()                                  # Start the execution
+
+  def run(self):
+    """ Method that runs forever """
+    while True:
+      # Do something
+      Proxy().save()
+      print('FUCKIN SAVED BRO')
+      time.sleep(self.interval)
+
 
 class GameConsumer(JsonWebsocketConsumer):
+  
+  Proxy()
 
+  test = ThreadingExample(interval=10)
+  
   def connect(self):
     if self.scope["user"].is_anonymous:
       self.close()

@@ -28,13 +28,13 @@ class PositionService:
 			player.update_balance(money)
 			player.fix_position()
 		player.disable_move()
-		player.save()	
+		#player.save()	
 		return player
 
 	def decrement_player_jail(self, player):
 		self.status = 1997
 		player.jailed -= 1
-		player.skip_turn()		
+		PlayerProvider().skip_turn(player.id)		
 		return player
 
 	def __player_on_jail_position(self, player):
@@ -46,7 +46,7 @@ class PositionService:
 			player.jailed = settings.DEFAULT_GAME_SETTINGS['jail_turns']
 			player.position = settings.DEFAULT_GAME_SETTINGS['jail_position']
 			player.move = 0
-			player.skip_turn()
+			PlayerProvider().skip_turn(player.id)
 		return player, self.status
 
 	def __player_exists(self, player):

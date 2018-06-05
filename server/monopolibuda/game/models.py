@@ -18,7 +18,6 @@ class Game(models.Model):
 
     def set_active(self):
         self.active = True
-        self.save()
 
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -31,31 +30,14 @@ class Player(models.Model):
     move = models.IntegerField()
     order = models.IntegerField()
 
-    def next_player(self):
-        players = Player.objects.filter(game_id=self.game_id, active=True)
-        next_players = players.filter(order__gt=self.order)
-        if next_players.count() == 0:
-            next_players = players
-        return next_players.first()
-
-    def skip_turn(self):
-        next_player = self.next_player()
-        self.move = 0
-        next_player.move = 2
-        self.save()
-        next_player.save()
-
     def defeat(self):
         self.active = False
-        self.save()
 
     def update_balance(self, money):
         self.balance += money
-        self.save()
 
     def reset_balance(self):
         self.balance = 0
-        self.save()
 
     def can_pay_tax(self, tax):
         return self.balance >= tax
@@ -65,18 +47,15 @@ class Player(models.Model):
 
     def enable_move(self):
         self.move = 2
-        self.save()
 
     def disable_move(self):
         self.move = 1
-        self.save()
 
     def check_position(self):
         return self.position >= settings.DEFAULT_GAME_SETTINGS['field_count']
 
     def fix_position(self):
         self.position = self.position % settings.DEFAULT_GAME_SETTINGS['field_count']
-        self.save()
 
 class Charge(models.Model):
     zero_apartments = models.IntegerField()
@@ -123,34 +102,25 @@ class Property(models.Model):
         price = self.selling_price
         new_owner.balance -= price
         old_owner.balance += price
-        old_owner.save()
-        new_owner.save()
         self.selling_price = 0
-        self.save()
 
     def for_sell(self, price):
         self.selling_price = price
-        self.save()
 
     def cancel_offer(self):
         self.selling_price = 0
-        self.save()
 
     def deposit(self):
         owner = self.player
         if not self.deposited:
             self.deposited = True
             owner.balance += self.card.deposit_value
-            owner.save()
-            self.save()
 
     def repurchase(self):
         owner = self.player
         if self.deposited:
             self.deposited = False
             owner.balance -= self.card.deposit_value
-            owner.save()
-            self.save()
 
     def buy_building(self):
         owner = self.player
@@ -159,8 +129,6 @@ class Property(models.Model):
             owner.balance -= self.card.hotel_cost
         elif self.buildings < 5 and self.buildings > 0:
             owner.balance -= self.card.apartment_cost
-        owner.save()
-        self.save()
 
     def sell_building(self):
         owner = self.player
@@ -170,9 +138,6 @@ class Property(models.Model):
         elif self.buildings >= 0:
             self.buildings -= 1            
             owner.balance += self.card.apartment_cost
-
-        owner.save()
-        self.save()
 
 class Chance(models.Model):
     chance_type = models.IntegerField()
