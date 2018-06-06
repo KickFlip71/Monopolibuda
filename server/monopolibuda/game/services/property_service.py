@@ -56,9 +56,7 @@ class PropertyService:
 				if not PropertyProvider().is_property_taken(game_id, card.id):
 					self.status = 1000
 					property = Property(player_id=player.id,game_id=player.game_id, card_id=card.id)
-					#TODO jak dodać do dictionary nowe property
-					#Proxy().propertys_dict
-					property.save()
+					Proxy().propertys_dict[property.id]=property
 					player.update_balance(-card.cost)
 					return player, self.status
 				else:
@@ -81,3 +79,4 @@ class PropertyService:
 		if not result:
 			self.status = 2002
 		return result
+		

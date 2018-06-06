@@ -98,7 +98,7 @@ class Property(models.Model):
     selling_price = models.IntegerField(default=0)
 
     def change_owner(self, new_owner, old_owner):
-        self.player = new_owner
+        self.player_id = new_owner.id
         price = self.selling_price
         new_owner.balance -= price
         old_owner.balance += price
@@ -109,35 +109,6 @@ class Property(models.Model):
 
     def cancel_offer(self):
         self.selling_price = 0
-
-    def deposit(self):
-        owner = self.player
-        if not self.deposited:
-            self.deposited = True
-            owner.balance += self.card.deposit_value
-
-    def repurchase(self):
-        owner = self.player
-        if self.deposited:
-            self.deposited = False
-            owner.balance -= self.card.deposit_value
-
-    def buy_building(self):
-        owner = self.player
-        self.buildings += 1
-        if self.buildings == 5:
-            owner.balance -= self.card.hotel_cost
-        elif self.buildings < 5 and self.buildings > 0:
-            owner.balance -= self.card.apartment_cost
-
-    def sell_building(self):
-        owner = self.player
-        if self.buildings == 5:
-            self.buildings -= 1
-            owner.balance += self.card.hotel_cost
-        elif self.buildings >= 0:
-            self.buildings -= 1            
-            owner.balance += self.card.apartment_cost
 
 class Chance(models.Model):
     chance_type = models.IntegerField()

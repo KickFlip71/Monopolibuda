@@ -13,6 +13,7 @@ class GameService:
   def add_game(self, host_id, players_amount):
     game = Game(players_amount=players_amount, host_id=host_id)
     game.save()
+    Proxy().games_dict[game.id]=game
     return game, self.status
 
   def skip_turn(self, user_id, game_id):
@@ -79,6 +80,7 @@ class GameService:
               order=order,
             )
     player.save()
+    Proxy().players_dict[player.id]=player
     return player
 
   def __player_exists(self, player):

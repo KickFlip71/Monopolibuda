@@ -43,11 +43,6 @@ class WebsocketService:
     record, status = GameService().join_player(game_id=game_id, user_id=user_id)
     self.__prepare_response(record, status)
     return self.response
-
-  def leave(self, game_id, user_id):
-    record, status = GameService().remove_player(game_id=game_id, user_id=user_id)
-    self.__prepare_response(record, status)
-    return self.response
   
   def skip(self, game_id, user_id):
     TradingService().cancel_players_offers(game_id=game_id, user_id=user_id)

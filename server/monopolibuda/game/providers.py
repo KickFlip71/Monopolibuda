@@ -41,6 +41,9 @@ class PropertyProvider:
   def get_property(self, game_id, player_id, card_id):
     return Proxy().get_property(game_id, player_id, card_id)
 
+  def get_property_with_id(self, property_id):
+    return Proxy().propertys_dict[property_id]
+
   def is_property_taken(self, game_id, card_id):
     return Proxy().is_property_taken(game_id, card_id)
 
@@ -54,6 +57,9 @@ class PropertyProvider:
     return Proxy().get_property_with_position(game_id, position)
 
 class CardProvider:
+  def get_card(self, card_id):
+    return Proxy().cards_dict[card_id]
+
   def get_card_with_position(self, position):
     return Proxy().get_card_with_position(position)
 
