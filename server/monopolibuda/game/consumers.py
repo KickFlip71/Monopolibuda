@@ -112,37 +112,31 @@ class GameConsumer(JsonWebsocketConsumer):
     response['command'] = 'player_skip'
     self.send_response(response)
 
-
-  def leave(self, content):
-    response = WebsocketService().leave(game_id=content['game'].id, user_id=content['user'].id)    
-    response['command'] = 'player_leave'
-    self.send_response(response)
-  
   def move(self, content): #TODO: FIX
     response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)    
     response['command'] = 'board_move'
     self.send_response(response)
+    if response['status'] != 2011:
+      if response['status'] != 1997:
+        response_offer_to_player = WebsocketService().offer(game_id=content['game'].id, user_id=content['user'].id)
+        response_offer_to_player['command'] = 'player_offer'
+        if response_offer_to_player['status']==1000:
+          self.send_response(response_offer_to_player, broadcast=False)
+        
+        response['command'] = 'player_move'
+        self.send_response(response, broadcast=False)
+        
+        response_chance_card = WebsocketService().chance(game_id=content['game'].id, user_id=content['user'].id)
+        
+        if response_chance_card['status']==1000:
+          response_chance_card['command'] = 'player_chance'
+          self.send_response(response_chance_card, broadcast=False)
+          #self.join(content)
 
-    if response['status'] != 1997:
-      response_offer_to_player = WebsocketService().offer(game_id=content['game'].id, user_id=content['user'].id)
-      response_offer_to_player['command'] = 'player_offer'
-      if response_offer_to_player['status']==1000:
-        self.send_response(response_offer_to_player, broadcast=False)
-      
-      response['command'] = 'player_move'
-      self.send_response(response, broadcast=False)
-      
-      response_chance_card = WebsocketService().chance(game_id=content['game'].id, user_id=content['user'].id)
-      
-      if response_chance_card['status']==1000:
-        response_chance_card['command'] = 'player_chance'
-        self.send_response(response_chance_card, broadcast=False)
-        #self.join(content)
-
-    else:
-      response = WebsocketService().check(content['game'].id, content['user'].id)
-      response['command'] = 'player_skip'
-      self.send_response(response)
+      else:
+        response = WebsocketService().check(content['game'].id, content['user'].id)
+        response['command'] = 'player_skip'
+        self.send_response(response)
 
 
   def buy(self, content):

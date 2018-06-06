@@ -13,7 +13,7 @@ class GameService:
   def add_game(self, host_id, players_amount):
     game = Game(players_amount=players_amount, host_id=host_id)
     game.save()
-    Proxy().games_dict[game.id]=game
+    Proxy().load()
     return game, self.status
 
   def skip_turn(self, user_id, game_id):
@@ -36,13 +36,6 @@ class GameService:
       player = self.__add_player(user_id, game_id, player_order)
       
     return player, self.status
-
-  def remove_player(self, user_id, game_id):
-    self.status = 1002
-    player = PlayerProvider().get_player(game_id, user_id)
-    if(self.__player_exists(player)):
-      player.delete()
-    return None, self.status
 
   def check_bankrupt(self, user_id, game_id):
     self.status = 2007
@@ -80,7 +73,7 @@ class GameService:
               order=order,
             )
     player.save()
-    Proxy().players_dict[player.id]=player
+    Proxy().load()
     return player
 
   def __player_exists(self, player):
@@ -97,7 +90,7 @@ class GameService:
 
   def __free_slot(self, game_id):
     players_amount = len(PlayerProvider().get_game_players(game_id)) #Player.objects.filter(game_id=game_id).count()
-    allowed_players_amount = GameProvider().get_game(game_id).players_amount #Game.objects.filter(id=game_id).first().players_amount
+    allowed_players_amount = int(GameProvider().get_game(game_id).players_amount) #Game.objects.filter(id=game_id).first().players_amount
     return players_amount < allowed_players_amount
 
 
