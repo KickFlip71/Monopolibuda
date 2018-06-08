@@ -1,5 +1,6 @@
 from game.models import Property, Game, User, Player, Card, Chance, Charge
 from game.providers import PlayerProvider, PropertyProvider, CardProvider, ChargeProvider
+from game.proxy import Proxy
 
 
 class PropertyService:
@@ -55,7 +56,7 @@ class PropertyService:
 				if not PropertyProvider().is_property_taken(game_id, card.id):
 					self.status = 1000
 					property = Property(player_id=player.id,game_id=player.game_id, card_id=card.id)
-					property.save()
+					Proxy().propertys_dict[property.id]=property
 					player.update_balance(-card.cost)
 					return player, self.status
 				else:
@@ -78,3 +79,4 @@ class PropertyService:
 		if not result:
 			self.status = 2002
 		return result
+		

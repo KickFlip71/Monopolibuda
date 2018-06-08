@@ -13,7 +13,8 @@ from game.serializers import CardSerializer
 from game.serializers import ChanceSerializer
 from game.models import Player
 from game.models import Game
-from game.providers import PlayerProvider
+from game.proxy import Proxy
+from game.providers import PlayerProvider, GameProvider
 
 
 class WebsocketService:
@@ -29,7 +30,7 @@ class WebsocketService:
     return self.response
 
   def start(self, game_id):
-    game = Game.objects.get(pk=game_id)
+    game = GameProvider().get_game(game_id)
     if not game.active:
       PlayerProvider().get_active_game_players(game_id=game_id)[0].enable_move()
       game.set_active()
@@ -41,11 +42,6 @@ class WebsocketService:
 
   def join(self, game_id, user_id):
     record, status = GameService().join_player(game_id=game_id, user_id=user_id)
-    self.__prepare_response(record, status)
-    return self.response
-
-  def leave(self, game_id, user_id):
-    record, status = GameService().remove_player(game_id=game_id, user_id=user_id)
     self.__prepare_response(record, status)
     return self.response
   
@@ -124,11 +120,11 @@ class WebsocketService:
 
   def __prepare_response(self, record, status = 1000):
     serializers = {
-      "Game": GameSerializer,
-      "Player": PlayerSerializer,
-      "Property": PropertySerializer,
-      "Card": CardSerializer,
-      "Chance": ChanceSerializer
+      "Game": Proxy().get_serialized_game,
+      "Player": Proxy().get_serialized_player,
+      "Property": Proxy().get_serialized_property,
+      "Card": Proxy().get_serialized_card,
+      "Chance": Proxy().get_serialized_chance
     }
     serializer_name = record.__class__.__name__
     many = False
@@ -137,8 +133,8 @@ class WebsocketService:
       serializer_name = record[0].__class__.__name__
       many = True
 
-    serializer = serializers.get(serializer_name, GameSerializer)
-    data = serializer(record, many=many).data
+    serializer = serializers.get(serializer_name, Proxy().get_serialized_game)
+    data = serializer(record, many=many)
 
     self.response['status'] = status
     self.response['payload'] = data

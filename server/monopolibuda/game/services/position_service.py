@@ -12,9 +12,9 @@ class PositionService:
 		player = PlayerProvider().get_player(game_id, user_id)
 		if self.__player_exists(player) and self.__players_turn(player):
 			if self.__player_jailed(player):
-				player = self.decrement_player_jail(player)
+				self.decrement_player_jail(player)
 			else:
-				player = self.change_player_position(player)
+				self.change_player_position(player)
 				if self.__player_on_jail_position(player):
 					self.__move_player_to_jail(player)
 		return player, self.status
@@ -28,14 +28,14 @@ class PositionService:
 			player.update_balance(money)
 			player.fix_position()
 		player.disable_move()
-		player.save()	
-		return player
+		#player.save()	
+		#return player
 
 	def decrement_player_jail(self, player):
 		self.status = 1997
 		player.jailed -= 1
-		player.skip_turn()		
-		return player
+		PlayerProvider().skip_turn(player.id)		
+		#return player
 
 	def __player_on_jail_position(self, player):
 		return player.position == settings.DEFAULT_GAME_SETTINGS['go_to_jail_position']
@@ -46,7 +46,7 @@ class PositionService:
 			player.jailed = settings.DEFAULT_GAME_SETTINGS['jail_turns']
 			player.position = settings.DEFAULT_GAME_SETTINGS['jail_position']
 			player.move = 0
-			player.skip_turn()
+			PlayerProvider().skip_turn(player.id)
 		return player, self.status
 
 	def __player_exists(self, player):

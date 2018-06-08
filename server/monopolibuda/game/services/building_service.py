@@ -18,7 +18,7 @@ class BuildingService:
         self.__player_has_move(player)
         self.__max_apartment_reach_limit(user_property)
         if self.__is_valid():
-          user_property.buy_building()
+          self.__buy_building(user_property)
           return PlayerProvider().get_player(game_id=game_id, user_id=user_id), self.status
       
     return None, self.status
@@ -34,7 +34,7 @@ class BuildingService:
         self.__player_has_move(player)
         self.__min_apartment_reach_limit(user_property)
         if self.__is_valid():
-          user_property.sell_building()
+          self.__sell_building(user_property)
           return PlayerProvider().get_player(game_id=game_id, user_id=user_id), self.status
       
     return None, self.status
@@ -71,12 +71,32 @@ class BuildingService:
 
   def __building_cost(self, user_property):
     cost = 0
+    card = CardProvider().get_card(user_property.card_id)
     if user_property.buildings == 4:
-      cost = user_property.card.hotel_cost
+      cost = card.hotel_cost
     else:
-      cost = user_property.card.apartment_cost
+      cost = card.apartment_cost
     return cost
 
   def __player_has_move(self, player):
     if(player.move != 1):
       self.status = 2011
+
+  def __buy_building(self, property):
+    owner = PlayerProvider().get_owner(property.id)
+    property.buildings += 1
+    card = CardProvider().get_card(property.card_id)
+    if property.buildings == 5:
+      owner.balance -= card.hotel_cost
+    elif property.buildings < 5 and property.buildings > 0:
+      owner.balance -= card.apartment_cost
+
+  def __sell_building(self, property):
+    owner = PlayerProvider().get_owner(property.id)
+    card = CardProvider().get_card(property.card_id)
+    if property.buildings == 5:
+      property.buildings -= 1
+      owner.balance += card.hotel_cost
+    elif property.buildings >= 0:
+      property.buildings -= 1            
+      owner.balance += card.apartment_cost

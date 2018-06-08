@@ -5,12 +5,12 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from game.models import Game
 from game.services.game_service import GameService
-
+from game.providers import GameProvider
 
 @login_required
 def index(request):
     current_user = request.user
-    games = Game.objects.all()
+    games = GameProvider().all()  # Game.objects.all()
     return render(request, 'home/index.html', {
         "user": current_user,
         "games": games,
@@ -20,7 +20,7 @@ def index(request):
 @login_required
 def board(request, game_id):
     code = request.GET.get('code', '')
-    game = Game.objects.get(pk=game_id)
+    game = GameProvider().get_game(game_id) #Game.objects.get(pk=game_id)
     current_user = request.user
 
     if current_user.id == game.host.id or game.code == code:
@@ -47,7 +47,7 @@ def new_game(request):
 @login_required
 def client(request, game_id):
     current_user = request.user
-    game = Game.objects.get(pk=game_id)
+    game = GameProvider().get_game(game_id) #Game.objects.get(pk=game_id)
     return render(request, 'client.html', {
         "user": current_user,
         "game": game
