@@ -193,7 +193,7 @@
         var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
         window.socket.send(JSON.stringify({
             "command": "sell_building",
-            "card_id": card_id
+            "card_id": parseInt(card_id)
         }));
     });
     $(document).on('click', '.deposit-property-button', function() {
@@ -201,7 +201,7 @@
         var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
         window.socket.send(JSON.stringify({
             "command": "deposit",
-            "card_id": card_id
+            "card_id": parseInt(card_id)
         }));
     });
     $(document).on('click', '.buyback-property-button', function() {
@@ -209,7 +209,7 @@
         var card_id = $(this).parents(':eq(2)').attr('id').slice(5)
         window.socket.send(JSON.stringify({
             "command": "buyback",
-            "card_id": card_id
+            "card_id": parseInt(card_id)
         }));
     });
     $(document).on('click', '.sell-property-button', function() {
@@ -217,10 +217,11 @@
         var parent = $(this).parents(':eq(5)')
         var card_id = parent.attr('id').slice(5)
         var price = parent.find('input').val()
+        debugger
         window.socket.send(JSON.stringify({
             "command": "sell_property",
-            "card_id": card_id,
-            "price": price
+            "card_id": parseInt(card_id),
+            "price": parseInt(price)
         }));
     });
     $(document).on('click', '.rebuy-button', function() {
@@ -228,7 +229,7 @@
         var card_id = $(this).parent().find('.hidden-card-id').text()
         window.socket.send(JSON.stringify({
             "command": "rebuy_property",
-            "card_id": card_id
+            "card_id": parseInt(card_id)
         }));
     });
 

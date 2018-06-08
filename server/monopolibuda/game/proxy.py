@@ -1,4 +1,6 @@
 from game.models import Game, Player, Property, User, Card, Chance, Charge
+from django.forms.models import model_to_dict
+
 from random import choice
 
 def singleton(class_):
@@ -32,12 +34,13 @@ class Proxy:
             self.chances_dict = dict( (o.pk, o) for o in Chance.objects.all())
 
     def save(self):
-        for game in self.games_dict.values():
+        for game in self.games_dict.copy().values():
             game.save()
-        for player in self.players_dict.values():
+        for player in self.players_dict.copy().values():
             player.save()
-        for proper in self.propertys_dict.values():
+        for proper in self.propertys_dict.copy().values():
             proper.save()
+        self.load()
 
     def get_player(self, game_id, user_id):
         for pk,player in self.players_dict.items():
@@ -73,6 +76,13 @@ class Proxy:
         result = []
         for pk,proper in self.propertys_dict.items():
             if proper.game_id == game_id and proper.player_id==player_id:
+                result.append(proper)
+        return result
+
+    def get_player_properties_with_player_id(self, player_id):
+        result = []
+        for pk,proper in self.propertys_dict.items():
+            if proper.player_id==player_id:
                 result.append(proper)
         return result
   
@@ -117,3 +127,71 @@ class Proxy:
 
     def get_chance(self):
         return self.chances_dict[choice(list(self.chances_dict))]
+
+    def get_serialized_chance(self, chance, many=False):
+        if chance:
+            chance = model_to_dict(chance)
+            return chance
+        return None
+
+    def get_serialized_charge(self, charge, many=False):
+        if charge:
+            charge = model_to_dict(charge)
+            return charge
+        return None
+
+    def get_serialized_card(self, card, many=False):
+        if card:
+            card = model_to_dict(card)
+            card['charge']=self.get_serialized_charge(self.charges_dict[card['charge']])
+            return card
+        return None
+
+    def get_serialized_property(self, property, many=False):
+        if property:
+            property = model_to_dict(property)
+            property['card']=self.get_serialized_card(self.cards_dict[property['card']])
+            return property
+        return None
+    
+    def get_serialized_player(self, player, many=False):
+        if player:
+            if not many:
+                player = model_to_dict(player)
+                property_set = []
+                for property in self.get_player_properties_with_player_id(player['id']):
+                    property_set.append(self.get_serialized_property(property))
+                player['property_set']=property_set
+                return player
+            
+            result=[]
+            for p in player:
+                p = model_to_dict(p)
+                property_set = []
+                for property in self.get_player_properties_with_player_id(p['id']):
+                    property_set.append(self.get_serialized_property(property))
+                p['property_set']=property_set
+                result.append(p)
+            return result
+        return None
+
+    def get_serialized_game(self, game, many=False):
+        if game:
+            if not many:
+                game = model_to_dict(game)
+                player_set = []
+                for player in self.get_game_players(game['id']):
+                    player_set.append(self.get_serialized_player(player))
+                game['player_set']=player_set
+                return game
+            
+            result = []
+            for g in game:
+                g = model_to_dict(g)
+                player_set = []
+                for player in self.get_game_players(g['id']):
+                    player_set.append(self.get_serialized_player(player))
+                g['player_set']=player_set
+                result.append(g)
+            return result
+        return None

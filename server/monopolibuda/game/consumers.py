@@ -10,37 +10,22 @@ from game.models import Game
 import threading
 import time
 
-class ThreadingExample(object):
-  """ Threading example class
-  The run() method will be started and it will run in the background
-  until the application exits.
-  """
-
-  def __init__(self, interval=1):
-    """ Constructor
-    :type interval: int
-    :param interval: Check interval, in seconds
-    """
+class SyncWithDatebaseThread(object):
+  def __init__(self, interval):
     self.interval = interval
-
     thread = threading.Thread(target=self.run, args=())
-    thread.daemon = True                            # Daemonize thread
-    thread.start()                                  # Start the execution
+    thread.daemon = True
+    thread.start()
 
   def run(self):
-    """ Method that runs forever """
     while True:
-      # Do something
       Proxy().save()
-      print('FUCKIN SAVED BRO')
       time.sleep(self.interval)
 
 
 class GameConsumer(JsonWebsocketConsumer):
-  
   Proxy()
-
-  test = ThreadingExample(interval=10)
+  SyncWithDatebaseThread(120)
   
   def connect(self):
     if self.scope["user"].is_anonymous:
@@ -113,7 +98,7 @@ class GameConsumer(JsonWebsocketConsumer):
     self.send_response(response)
 
   def move(self, content): #TODO: FIX
-    response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)    
+    response = WebsocketService().move(game_id=content['game'].id, user_id=content['user'].id)   
     response['command'] = 'board_move'
     self.send_response(response)
     if response['status'] != 2011:

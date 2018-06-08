@@ -1,6 +1,7 @@
 #from game.models import Property, Game, User, Player, Card, Chance, Charge
 from game.proxy import Proxy
 from random import choice
+from operator import attrgetter
 
 class PlayerProvider:
   def get_player(self, game_id, user_id):
@@ -27,7 +28,7 @@ class PlayerProvider:
     next_players = self.get_active_game_players_with_order_gt(player.game_id, player.order) #players.filter(order__gt=self.order)
     if len(next_players) == 0:
       next_players = players
-    return next(iter(next_players))
+    return min(next_players,key=attrgetter('order'))
 
   def skip_turn(self, player_id):
     next_player = self.next_player(player_id)
